@@ -21,8 +21,8 @@ func findOption(args:[String], option:String) -> Bool {
     return found
 }
 
-func getOption(args:[String], option:String) -> String {
-    var found:String = ""
+func getOption(args:[String], option:String) -> String? {
+    var found:String? = nil
     for argument in args {
         if argument == option {
             var indx = args.indexOf(argument)

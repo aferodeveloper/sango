@@ -17,4 +17,8 @@ distro: clean
 	@echo done!
 
 run: distro
-	@./$(TARGET) -f example.json
+	@rm -f output.swift
+	@rm -f output.java
+	@./$(TARGET) -f example.json -swift -o output.swift
+	@./$(TARGET) -f example.json -java -o output.java
+
