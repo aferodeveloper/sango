@@ -38,11 +38,11 @@ func getOption(args:[String], option:String) -> String {
     return found
 }
 
-func fromJSON(data:NSData) -> AnyObject
+func fromJSON(data:NSData) -> Dictionary<String, AnyObject>
 {
-    var dict: AnyObject!
+    var dict:Dictionary<String, AnyObject>!
     do {
-        dict = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions())
+        dict = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as! Dictionary<String, AnyObject>
     }
     catch {
         print(error)
