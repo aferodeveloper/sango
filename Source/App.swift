@@ -109,6 +109,7 @@ class App
 
             for (key, value) in constants {
                 var type = "int"
+                var endQuote = ";"
                 var useQuotes = false
                 var strValue = String(value)
                 if (value is String) {
@@ -133,6 +134,8 @@ class App
                     let line = String((alpha << 24) | (red << 16) | (green << 8) | blue)
                     strValue = String(line + ";\t// \(value)")
                     useQuotes = false
+                    type = "int"
+                    endQuote = ""
                 }
                 else if (strValue.hasPrefix("#")) {
                     var hexStr = strValue.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
@@ -161,16 +164,18 @@ class App
                     let line = String((alpha << 24) | (red << 16) | (green << 8) | blue)
                     strValue = String(line + ";\t// \(value)")
                     useQuotes = false
+                    type = "int"
+                    endQuote = ""
                 }
 
                 let line = "\tpublic static final " + type + " " + key + " = "
                 outputString.appendContentsOf(line)
                 if (useQuotes) {
-                    let line = "\"" + strValue + "\";"
+                    let line = "\"" + strValue + "\"" + endQuote
                     outputString.appendContentsOf(line);
                 }
                 else {
-                    let line = strValue + ";"
+                    let line = strValue + endQuote
                     outputString.appendContentsOf(line);
                 }
                 outputString.appendContentsOf("\n")
