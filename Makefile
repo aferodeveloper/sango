@@ -2,9 +2,9 @@ TARGET = sango
 
 all:
 	@echo "Targets:"
-	@echo "	distro"
-	@echo " run"
-	@echo " clean"
+	@echo "   distro"
+	@echo "   run"
+	@echo "   clean"
 
 clean:
 	@xcodebuild clean &>/dev/null
