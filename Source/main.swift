@@ -38,18 +38,6 @@ func getOption(args:[String], option:String) -> String? {
     return found
 }
 
-func fromJSON(data:NSData) -> Dictionary<String, AnyObject>
-{
-    var dict:Dictionary<String, AnyObject>!
-    do {
-        dict = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as! Dictionary<String, AnyObject>
-    }
-    catch {
-        print(error)
-    }
-    return dict
-}
-
 print("Hello, World!")
 var args = Process.arguments
 args.removeFirst()

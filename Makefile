@@ -10,6 +10,8 @@ clean:
 	@xcodebuild clean &>/dev/null
 	@rm -rdf build
 	@rm -f $(TARGET)
+	@rm -f output.swift
+	@rm -f output.java
 
 distro: clean
 	@xcodebuild
