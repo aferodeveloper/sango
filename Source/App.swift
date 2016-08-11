@@ -19,11 +19,10 @@ class App
 
     func usage() -> Void {
         print("Usage:")
-        print("-f [file.json]")
-        print("-o outputFile")
-        print("-java")
-        print("-swift")
-        exit(0)
+        print("     -f [file.json]")
+        print("     -o outputFile")
+        print("     -java")
+        print("     -swift")
     }
 
     private enum LangType {
@@ -236,8 +235,9 @@ class App
     }
 
     func start(options: [String]) -> Void {
-        if findOption(args, option: "-h") {
+        if (findOption(args, option: "-h") || options.count == 0) {
             usage()
+            exit(0)
         }
 
         var type:LangType = .Swift
