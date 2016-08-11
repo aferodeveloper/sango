@@ -21,7 +21,7 @@ class App
 
     func usage() -> Void {
         print("Usage:")
-        print("     -f [file.json]")
+        print("     -i [file.json]")
         print("     -o outputFile")
         print("     -java")
         print("     -swift")
@@ -289,7 +289,7 @@ class App
             exit(-1)
         }
 
-        let inputFile = getOption(args, option: "-f")
+        let inputFile = getOption(args, option: "-i")
         var outputFile = getOption(args, option: "-o")
         if (outputFile == nil) {
             print("Error: missing output file")

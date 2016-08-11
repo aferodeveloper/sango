@@ -10,8 +10,8 @@ clean:
 	@xcodebuild clean &>/dev/null
 	@rm -rdf build
 	@rm -f $(TARGET)
-	@rm -f output.swift
-	@rm -f output.java
+	@rm -f Constants.swift
+	@rm -f Constants.java
 
 distro: clean
 	@xcodebuild
@@ -19,8 +19,8 @@ distro: clean
 	@echo done!
 
 run: distro
-	@rm -f output.swift
-	@rm -f output.java
-	@./$(TARGET) -f example.json -swift -o output.swift
-	@./$(TARGET) -f example.json -java -o output.java
+	@rm -f Constants.swift
+	@rm -f Constants.java
+	@./$(TARGET) -i example.json -swift -o Constants.swift
+	@./$(TARGET) -i example.json -java -o Constants.java
 
