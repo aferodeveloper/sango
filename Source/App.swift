@@ -16,6 +16,8 @@ import Foundation
 class App
 {
     private let SchemaVersion = 1
+    private var package:String = ""
+    private var baseClass:String = ""
 
     func usage() -> Void {
         print("Usage:")
@@ -31,7 +33,7 @@ class App
     }
 
     private func writeConstants(name: String, constants: Dictionary<String, AnyObject>, type: LangType, outputFile: String) -> String {
-        var outputString = ""
+        var outputString = "\n"
         if (type == .Swift) {
             outputString.appendContentsOf("public struct ")
             outputString.appendContentsOf(name + " {\n")
@@ -100,16 +102,17 @@ class App
                 }
                 outputString.appendContentsOf("\n")
             }
-            outputString.appendContentsOf("}\n")
+            outputString.appendContentsOf("}")
         }
         else if (type == .Java) {
             outputString.appendContentsOf("public final class ")
             outputString.appendContentsOf(name + " {\n")
-            outputString.appendContentsOf("\tprivate \(name)() {\n\t\t// restrict\n\t}\n")
+//            outputString.appendContentsOf("\tprivate \(name)() {\n\t\t// restrict\n\t}\n")
 
             for (key, value) in constants {
                 var type = "int"
                 var endQuote = ";"
+                var parmSize = ""
                 var useQuotes = false
                 var strValue = String(value)
                 if (value is String) {
@@ -128,13 +131,15 @@ class App
                     let green:Int = Int(parts[1])!
                     let blue:Int = Int(parts[2])!
                     var alpha:Int = 1
+                    type = "int"
                     if (parts.count == 4) {
                         alpha = Int(parts[3])!
+                        parmSize = "L"
+                        type = "long"
                     }
                     let line = String((alpha << 24) | (red << 16) | (green << 8) | blue)
-                    strValue = String(line + ";\t// \(value)")
+                    strValue = String(line + parmSize + ";\t// \(value)")
                     useQuotes = false
-                    type = "int"
                     endQuote = ""
                 }
                 else if (strValue.hasPrefix("#")) {
@@ -153,6 +158,7 @@ class App
                         exit(-1)
                     }
                     
+                    type = "int"
                     if (hexStr.characters.count >= 6) {
                         red = Int((rgbValue & 0x00FF0000) >> 16)
                         green = Int((rgbValue & 0x0000FF00) >> 8)
@@ -160,11 +166,12 @@ class App
                     }
                     if (hexStr.characters.count == 8) {
                         alpha = Int((rgbValue & 0xFF000000) >> 24)
+                        type = "long"
+                        parmSize = "L"
                     }
                     let line = String((alpha << 24) | (red << 16) | (green << 8) | blue)
-                    strValue = String(line + ";\t// \(value)")
+                    strValue = String(line + parmSize + ";\t// \(value)")
                     useQuotes = false
-                    type = "int"
                     endQuote = ""
                 }
 
@@ -180,7 +187,7 @@ class App
                 }
                 outputString.appendContentsOf("\n")
             }
-            outputString.appendContentsOf("}\n")
+            outputString.appendContentsOf("}")
         }
         else {
             print("Error: invalide output type")
@@ -196,8 +203,7 @@ class App
         catch {
         }
 
-        var genString = ""
-        // process defined keys, copied, fonts, schemaVersion, images, everything else is converted to Java, Swift
+        // process defined keys, copied, fonts, schemaVersion, images, first
         for (key, value) in data {
             if (key == "copied") {
                 
@@ -215,21 +221,50 @@ class App
             else if (key == "images") {
                 
             }
-            else {
+            else if (key == "java") {
+                let options = value as! Dictionary<String, AnyObject>
+                baseClass = options["base"] as! String
+                package = options["package"] as! String
+            }
+            else if (key == "swift") {
+                let options = value as! Dictionary<String, AnyObject>
+                baseClass = options["base"] as! String
+            }
+        }
+        // everything else is converted to Java, Swift
+        let ignores = ["copied", "fonts", "schemaVersion", "images", "java", "swift"]
+        var genString = ""
+        for (key, value) in data {
+            if (ignores.contains(key) == false) {
                 let constants = value as! Dictionary<String, AnyObject>
                 let line = writeConstants(key, constants:constants, type: type, outputFile: outputFile)
-                genString.appendContentsOf(line + "\n")
+                genString.appendContentsOf(line)
             }
         }
         if (genString.isEmpty == false) {
             var outputStr = "/* machine generated */\n\n"
             if (type == .Swift) {
-                outputStr.appendContentsOf("import UIKit\n\n")
+                outputStr.appendContentsOf("import UIKit\n")
             }
             else if (type == .Java) {
-                outputStr.appendContentsOf("package java.lang;\n\n")
+                if (package.isEmpty) {
+                    outputStr.appendContentsOf("package java.lang;\n")
+                }
+                else {
+                    outputStr.appendContentsOf("package \(package);\n")
+                }
             }
-            outputStr.appendContentsOf(genString)
+            if (baseClass.isEmpty == false) {
+                genString = genString.stringByReplacingOccurrencesOfString("\n", withString: "\n\t")
+                if (type == .Swift) {
+                    outputStr.appendContentsOf("public struct \(baseClass) {")
+                }
+                else if (type == .Java) {
+                    outputStr.appendContentsOf("public final class \(baseClass) {")
+                }
+                genString.appendContentsOf("\n}")
+            }
+            outputStr.appendContentsOf(genString + "\n")
             do {
                 try outputStr.writeToFile(outputFile, atomically: true, encoding: NSUTF8StringEncoding)
             }
@@ -265,8 +300,8 @@ class App
             let location = NSString(string: inputFile!).stringByExpandingTildeInPath
             let fileContent = NSData(contentsOfFile: location)
             if (fileContent != nil) {
-                let d = fromJSON(fileContent!)
-                consume(d, type: type, outputFile: outputFile!)
+                let result:Dictionary<String, AnyObject> = Dictionary.fromJSON(fileContent!)
+                consume(result, type: type, outputFile: outputFile!)
             }
             else {
                 print("Error: file \(inputFile) not found")
@@ -278,16 +313,18 @@ class App
     }
 }
 
-private func fromJSON(data:NSData) -> Dictionary<String, AnyObject>
+private extension Dictionary
 {
-    var dict:Dictionary<String, AnyObject>!
-    do {
-        dict = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as! Dictionary<String, AnyObject>
+    static func fromJSON(data:NSData) -> Dictionary {
+        var dict:Dictionary!
+        do {
+            dict = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as? Dictionary
+        }
+        catch {
+            print(error)
+        }
+        return dict
     }
-    catch {
-        print(error)
-    }
-    return dict
 }
 
 private extension Double

@@ -16,7 +16,14 @@
 		"file_data1",
 		"file_data2"
 	],
-	"Constants": {
+	"java": {
+		"package": "io.afero.core",
+		"base": "Constants"
+	},
+	"swift": {
+		"base": "Constants"
+	},
+	"Colors": {
 		"UI_BASE_COLOR": "67,163,199,1",
 		"UI_SECONDARY_COLOR": "#431298",
 		"UI_SECONDARY_COLOR_LOW": "#80431298",
