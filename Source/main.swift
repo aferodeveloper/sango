@@ -39,7 +39,7 @@ func getOption(args:[String], option:String) -> String? {
 }
 
 print("Hello, World!")
-var args = Process.arguments
+private var args = Process.arguments
 args.removeFirst()
 
 let app = App()

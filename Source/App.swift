@@ -36,7 +36,8 @@ class App
     func usage() -> Void {
         print("Usage:")
         print("     -i [file.json]")
-        print("     -o outputFile")
+        print("     -o output path")
+        print("     -a asset folder")
         print("     -java")
         print("     -swift")
     }
@@ -121,7 +122,6 @@ class App
         else if (type == .Java) {
             outputString.appendContentsOf("public final class ")
             outputString.appendContentsOf(name + " {\n")
-//            outputString.appendContentsOf("\tprivate \(name)() {\n\t\t// restrict\n\t}\n")
 
             for (key, value) in constants {
                 var type = "int"
@@ -211,11 +211,7 @@ class App
     }
     
     private func consume(data: Dictionary <String, AnyObject>, type: LangType, outputFile: String) -> Void {
-        do {
-            try NSFileManager.defaultManager().removeItemAtPath(outputFile)
-        }
-        catch {
-        }
+        deleteFile(outputFile)
 
         // process first pass keys
         for (key, value) in data {
@@ -296,7 +292,7 @@ class App
         }
     }
 
-    func copyFile(src: String, dest: String) -> Bool {
+    private func copyFile(src: String, dest: String) -> Bool {
         var ok = true
         do {
             try NSFileManager.defaultManager().copyItemAtPath(src, toPath: dest)
@@ -309,8 +305,20 @@ class App
         return ok
     }
     
-    func start(options: [String]) -> Void {
-        if (findOption(args, option: "-h") || options.count == 0) {
+    private func deleteFile(src: String) -> Bool {
+        var ok = true
+        do {
+            try NSFileManager.defaultManager().removeItemAtPath(src)
+        }
+        catch {
+            ok = false
+        }
+        
+        return ok
+    }
+    
+    func start(args: [String]) -> Void {
+        if (findOption(args, option: "-h") || args.count == 0) {
             usage()
             exit(0)
         }
@@ -324,13 +332,10 @@ class App
             exit(-1)
         }
 
-        let inputFile = getOption(args, option: "-i")
         var outputFile = getOption(args, option: "-o")
-        if (outputFile == nil) {
-            print("Error: missing output file")
-            exit(-1)
-        }
         outputFile = NSString(string: outputFile!).stringByExpandingTildeInPath
+
+        let inputFile = getOption(args, option: "-i")
         if (inputFile != nil) {
             let location = NSString(string: inputFile!).stringByExpandingTildeInPath
             let fileContent = NSData(contentsOfFile: location)
@@ -340,13 +345,17 @@ class App
             }
             else {
                 print("Error: file \(inputFile) not found")
+                exit(-1)
             }
         }
         else {
             print("Error: missing input file")
+            exit(-1)
         }
     }
 }
+
+// MARK: - Extras
 
 private extension Dictionary
 {
