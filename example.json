@@ -12,6 +12,26 @@
 		"account_avatar1@2x.png",
 		"account_avatar1@3x.png"
 	],
+	"imagesIos": [
+		"account_avatar2.png",
+		"account_avatar2@2x.png",
+		"account_avatar2@3x.png"
+	],
+	"imagesAndroid": [
+		"account_avatar3.png",
+		"account_avatar3@2x.png",
+		"account_avatar3@3x.png"
+	],
+	"imagesTinted": {
+		"UI_SECONDARY_COLOR": [
+			"account_avatar1",
+			"account_avatar2"
+		],
+		"UI_SECONDARY_COLOR_LOW": [
+			"account_avatar3",
+			"account_avatar4"
+		]
+	},
 	"copied": [
 		"file_data1",
 		"file_data2"

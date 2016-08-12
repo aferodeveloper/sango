@@ -13,9 +13,23 @@ import Foundation
 // for more details
 
 
+private let SchemaVersion = 1
+
+private let keySchemaVersion = "schemaVersion"
+private let keyFonts = "fonts"
+private let keyImages = "images"
+private let keyImagesIos = "imagesIos"
+private let keyImagesAndroid = "imagesAndroid"
+private let keyImagesTinted = "imagesTinted"
+private let keyCopied = "copied"
+private let keyJava = "java"
+private let keySwift = "swift"
+private let firstPassIgnoredKeys = [keyCopied, keyFonts, keySchemaVersion, keyImages,
+                                    keyImagesIos, keyImagesAndroid, keyImagesTinted,
+                                    keyJava, keySwift]
+
 class App
 {
-    private let SchemaVersion = 1
     private var package:String = ""
     private var baseClass:String = ""
 
@@ -203,39 +217,47 @@ class App
         catch {
         }
 
-        // process defined keys, copied, fonts, schemaVersion, images, first
+        // process first pass keys
         for (key, value) in data {
-            if (key == "copied") {
+            if (key == keyCopied) {
                 
             }
-            else if (key == "fonts") {
+            else if (key == keyFonts) {
                 
             }
-            else if (key == "schemaVersion") {
+            else if (key == keySchemaVersion) {
                 let version = value as! Int
                 if (version != SchemaVersion) {
                     print("Error: mismatched SchemaVersion")
                     exit(-1)
                 }
             }
-            else if (key == "images") {
+            else if (key == keyImages) {
                 
             }
-            else if (key == "java") {
+            else if (key == keyImagesIos) {
+                
+            }
+            else if (key == keyImagesAndroid) {
+                
+            }
+            else if (key == keyImagesTinted) {
+                
+            }
+            else if (key == keyJava) {
                 let options = value as! Dictionary<String, AnyObject>
                 baseClass = options["base"] as! String
                 package = options["package"] as! String
             }
-            else if (key == "swift") {
+            else if (key == keySwift) {
                 let options = value as! Dictionary<String, AnyObject>
                 baseClass = options["base"] as! String
             }
         }
-        // everything else is converted to Java, Swift
-        let ignores = ["copied", "fonts", "schemaVersion", "images", "java", "swift"]
+        // everything else is converted to Java, Swift classes
         var genString = ""
         for (key, value) in data {
-            if (ignores.contains(key) == false) {
+            if (firstPassIgnoredKeys.contains(key) == false) {
                 let constants = value as! Dictionary<String, AnyObject>
                 let line = writeConstants(key, constants:constants, type: type, outputFile: outputFile)
                 genString.appendContentsOf(line)
@@ -274,6 +296,19 @@ class App
         }
     }
 
+    func copyFile(src: String, dest: String) -> Bool {
+        var ok = true
+        do {
+            try NSFileManager.defaultManager().copyItemAtPath(src, toPath: dest)
+        }
+        catch {
+            print("Error: copying file \(src) to \(dest)")
+            ok = false
+        }
+
+        return ok
+    }
+    
     func start(options: [String]) -> Void {
         if (findOption(args, option: "-h") || options.count == 0) {
             usage()
