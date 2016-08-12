@@ -12,7 +12,6 @@ import Foundation
 // https://docs.google.com/document/d/1X-pHtwzB6Qbkh0uuhmqtG98o2_Dv_okDUim6Ohxhd8U/edit
 // for more details
 
-
 private let SchemaVersion = 1
 
 private let keySchemaVersion = "schemaVersion"
@@ -32,12 +31,15 @@ class App
 {
     private var package:String = ""
     private var baseClass:String = ""
+    private var sourceAssetFolder:String? = nil
+    private var outputAssetFolder:String? = nil
 
     func usage() -> Void {
         print("Usage:")
-        print("     -i [file.json]")
-        print("     -o output path")
-        print("     -a asset folder")
+        print("     -i  [file.json]")
+        print("     -o  [source.java|swift")
+        print("     -a  asset source folder")
+        print("     -oa asset copied folder")
         print("     -java")
         print("     -swift")
     }
@@ -47,7 +49,32 @@ class App
         case Swift
     }
 
-    private func writeConstants(name: String, constants: Dictionary<String, AnyObject>, type: LangType, outputFile: String) -> String {
+    private func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
+        var outputString = "\n"
+        if (type == .Swift) {
+            // public static let UI_SECONDARY_COLOR_TINTED = ["account_avatar1", "account_avatar2"]
+            for (key, value) in stringArray {
+                outputString.appendContentsOf("\tpublic static let \(key) = [\"")
+                let strValue = String(value)
+                outputString.appendContentsOf(strValue + "\"]\n")
+            }
+        }
+        else if (type == .Java) {
+            // public static final String[] UI_SECONDARY_COLOR_TINTED = {"account_avatar1", "account_avatar2"};
+            for (key, value) in stringArray {
+                outputString.appendContentsOf("\tpublic static final String[] \(key) = {\"")
+                let strValue = String(value)
+                outputString.appendContentsOf(strValue + "\"};\n")
+            }
+        }
+        else {
+            print("Error: invalide output type")
+            exit(-1)
+        }
+        return outputString
+    }
+
+    private func writeConstants(name: String, constants: Dictionary<String, AnyObject>, type: LangType) -> String {
         var outputString = "\n"
         if (type == .Swift) {
             outputString.appendContentsOf("public struct ")
@@ -209,36 +236,33 @@ class App
         }
         return outputString
     }
+
+    private func copyFiles(files: Array<String>, type: LangType) -> Void {
+        // our copy function is special,
+        
+        
+        for file in files {
+            let filePath = sourceAssetFolder! + "/" + file
+            let destFile = outputAssetFolder! + "/" + file
+            let destPath = NSString(string: destFile).stringByDeletingLastPathComponent
+            createFolder(destPath)
+            if (copyFile(filePath, dest: destFile) == false) {
+                exit(-1)
+            }
+        }
+    }
     
     private func consume(data: Dictionary <String, AnyObject>, type: LangType, outputFile: String) -> Void {
         deleteFile(outputFile)
 
         // process first pass keys
         for (key, value) in data {
-            if (key == keyCopied) {
-                
-            }
-            else if (key == keyFonts) {
-                
-            }
-            else if (key == keySchemaVersion) {
+            if (key == keySchemaVersion) {
                 let version = value as! Int
                 if (version != SchemaVersion) {
-                    print("Error: mismatched SchemaVersion")
+                    print("Error: mismatched schema. Got \(version), expected \(SchemaVersion)")
                     exit(-1)
                 }
-            }
-            else if (key == keyImages) {
-                
-            }
-            else if (key == keyImagesIos) {
-                
-            }
-            else if (key == keyImagesAndroid) {
-                
-            }
-            else if (key == keyImagesTinted) {
-                
             }
             else if (key == keyJava) {
                 let options = value as! Dictionary<String, AnyObject>
@@ -250,13 +274,35 @@ class App
                 baseClass = options["base"] as! String
             }
         }
+        
         // everything else is converted to Java, Swift classes
         var genString = ""
         for (key, value) in data {
             if (firstPassIgnoredKeys.contains(key) == false) {
                 let constants = value as! Dictionary<String, AnyObject>
-                let line = writeConstants(key, constants:constants, type: type, outputFile: outputFile)
+                let line = writeConstants(key, constants:constants, type: type)
                 genString.appendContentsOf(line)
+            }
+        }
+        for (key, value) in data {
+            if (key == keyCopied) {
+//                copyFiles(value as! Array, type: type)
+            }
+            else if (key == keyFonts) {
+                copyFiles(value as! Array, type: type)
+            }
+            else if (key == keyImages) {
+                copyFiles(value as! Array, type: type)
+            }
+            else if (key == keyImagesIos) {
+                
+            }
+            else if (key == keyImagesAndroid) {
+                
+            }
+            else if (key == keyImagesTinted) {
+//                let constants = value as! Dictionary<String, AnyObject>
+//                print("image tinted \(constants)")
             }
         }
         if (genString.isEmpty == false) {
@@ -292,10 +338,25 @@ class App
         }
     }
 
+    func createFolder(src: String) -> Bool {
+        var ok = true
+        do {
+            try NSFileManager.defaultManager().createDirectoryAtPath(src, withIntermediateDirectories: true, attributes: nil)
+        }
+        catch {
+            print("Error: creating folder \(src)")
+            ok = false
+        }
+        
+        return ok
+    }
+
     private func copyFile(src: String, dest: String) -> Bool {
+        deleteFile(dest)
         var ok = true
         do {
             try NSFileManager.defaultManager().copyItemAtPath(src, toPath: dest)
+            print("Copy \(src) -> \(dest)")
         }
         catch {
             print("Error: copying file \(src) to \(dest)")
@@ -334,6 +395,24 @@ class App
 
         var outputFile = getOption(args, option: "-o")
         outputFile = NSString(string: outputFile!).stringByExpandingTildeInPath
+
+        sourceAssetFolder = getOption(args, option: "-a")
+        if (sourceAssetFolder != nil) {
+            sourceAssetFolder = NSString(string: sourceAssetFolder!).stringByExpandingTildeInPath
+        }
+        else {
+            print("Error: missing source asset folder")
+            exit(-1)
+        }
+        
+        outputAssetFolder = getOption(args, option: "-ao")
+        if (outputAssetFolder != nil) {
+            outputAssetFolder = NSString(string: outputAssetFolder!).stringByExpandingTildeInPath
+        }
+        else {
+            print("Error: missing output asset folder")
+            exit(-1)
+        }
 
         let inputFile = getOption(args, option: "-i")
         if (inputFile != nil) {

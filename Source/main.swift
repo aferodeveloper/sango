@@ -38,12 +38,13 @@ func getOption(args:[String], option:String) -> String? {
     return found
 }
 
-print("Hello, World!")
+// MARK: main
+print("Sango - © 2016 Afero, Inc")
+
 private var args = Process.arguments
 args.removeFirst()
 
-let app = App()
-app.start(args)
+App().start(args)
 
 
 

@@ -64,7 +64,15 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-f example.json"
+            argument = "-i example.json"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-ao temp"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-a assets"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
