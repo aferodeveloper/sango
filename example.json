@@ -2,15 +2,27 @@
 	"schemaVersion": 1,
 	"fonts": [
 		"GT-Walsheim-Black-Oblique.ttf",
-		"GT-Walsheim-Black.ttf",
-		"GT-Walsheim-Bold-Oblique.ttf",
-		"GT-Walsheim-Bold.ttf",
-		"GT-Walsheim-Light-Oblique.ttf"
+		"GT-Walsheim-Black.ttf"
 	],
 	"images": [
-		"account_avatar1.png",
-		"account_avatar1@2x.png",
-		"account_avatar1@3x.png"
+		"Afero/ASR-1/ASR-1.png",
+		"Afero/ASR-1/ASR-1@2x.png",
+		"Afero/ASR-1/ASR-1@3x.png",
+		"Afero/AferoHexFull/AferoHexFull.png",
+		"Afero/AferoHexFull/AferoHexFull@2x.png",
+		"Afero/AferoHexFull/AferoHexFull@3x.png",
+		"Afero/AferoLogo200/AferoLogo200.png",
+		"Afero/AferoLogo200/AferoLogo200@2x.png",
+		"Afero/AferoLogo200/AferoLogo200@3x.png",
+		"Afero/AferoLogo58/AferoLogo58.png",
+		"Afero/AferoLogo58/AferoLogo58@2x.png",
+		"Afero/AferoLogo58/AferoLogo58@3x.png",
+		"Afero/bg_texture/bg_texture.png",
+		"Afero/bg_texture/bg_texture@2x.png",
+		"Afero/bg_texture/bg_texture@3x.png",
+		"Afero/splash_logo/splash_logo.png",
+		"Afero/splash_logo/splash_logo@2x.png",
+		"Afero/splash_logo/splash_logo@3x.png"
 	],
 	"imagesIos": [
 		"account_avatar2.png",
@@ -23,11 +35,11 @@
 		"account_avatar3@3x.png"
 	],
 	"imagesTinted": {
-		"UI_SECONDARY_COLOR": [
+		"UI_SECONDARY_COLOR_TINTED": [
 			"account_avatar1",
 			"account_avatar2"
 		],
-		"UI_SECONDARY_COLOR_LOW": [
+		"UI_SECONDARY_COLOR_LOW_TINTED": [
 			"account_avatar3",
 			"account_avatar4"
 		]
@@ -37,7 +49,7 @@
 		"file_data2"
 	],
 	"java": {
-		"package": "io.afero.core",
+		"package": "afero.ui.testandroid",
 		"base": "Constants"
 	},
 	"swift": {
@@ -58,4 +70,3 @@
 		"BASE_URL_STAGE": "api.dev.afero.io"
 	}
 }
-
