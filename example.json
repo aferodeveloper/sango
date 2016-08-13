@@ -24,6 +24,10 @@
 		"Afero/splash_logo/splash_logo@2x.png",
 		"Afero/splash_logo/splash_logo@3x.png"
 	],
+	"imagesScaled": [
+		"large/splash_logo.png",
+		"large/ASR-1.png"
+	],
 	"imagesIos": [
 		"account_avatar2.png",
 		"account_avatar2@2x.png",

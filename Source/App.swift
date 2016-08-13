@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import AppKit
+import CoreGraphics
 
 // See:
 // https://docs.google.com/document/d/1X-pHtwzB6Qbkh0uuhmqtG98o2_Dv_okDUim6Ohxhd8U/edit
@@ -17,6 +19,7 @@ private let SchemaVersion = 1
 private let keySchemaVersion = "schemaVersion"
 private let keyFonts = "fonts"
 private let keyImages = "images"
+private let keyImagesScaled = "imagesScaled"
 private let keyImagesIos = "imagesIos"
 private let keyImagesAndroid = "imagesAndroid"
 private let keyImagesTinted = "imagesTinted"
@@ -24,8 +27,8 @@ private let keyCopied = "copied"
 private let keyJava = "java"
 private let keySwift = "swift"
 private let firstPassIgnoredKeys = [keyCopied, keyFonts, keySchemaVersion, keyImages,
-                                    keyImagesIos, keyImagesAndroid, keyImagesTinted,
-                                    keyJava, keySwift]
+                                    keyImagesScaled, keyImagesIos, keyImagesAndroid,
+                                    keyImagesTinted, keyJava, keySwift]
 
 class App
 {
@@ -252,6 +255,36 @@ class App
         }
     }
     
+    private func scaleAndCopyImages(files: Array<String>, type: LangType) -> Void {
+        for file in files {
+            let filePath = sourceAssetFolder! + "/" + file
+            let destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
+            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
+            createFolder(destPath)
+
+            var fileName = (file as NSString).lastPathComponent
+            fileName = (fileName as NSString).stringByDeletingPathExtension
+            
+            let image = NSImage.loadFrom(filePath)
+            let image2 = image.scale(75)
+            let image3 = image.scale(50)
+            let image4 = image.scale(25)
+            if (image.savePNGTo(destPath + "/" + fileName + "_A.png") == false) {
+                exit(-1)
+            }
+            if (image2.savePNGTo(destPath + "/" + fileName + "_B.png") == false) {
+                exit(-1)
+            }
+            if (image3.savePNGTo(destPath + "/" + fileName + "_C.png") == false) {
+                exit(-1)
+            }
+            if (image4.savePNGTo(destPath + "/" + fileName + "_D.png") == false) {
+                exit(-1)
+            }
+            print("Image scale and copy \(filePath) -> \(destPath)")
+        }
+    }
+    
     private func consume(data: Dictionary <String, AnyObject>, type: LangType, outputFile: String) -> Void {
         deleteFile(outputFile)
 
@@ -293,6 +326,9 @@ class App
             }
             else if (key == keyImages) {
                 copyFiles(value as! Array, type: type)
+            }
+            else if (key == keyImagesScaled) {
+                scaleAndCopyImages(value as! Array, type: type)
             }
             else if (key == keyImagesIos) {
                 
@@ -435,6 +471,80 @@ class App
 }
 
 // MARK: - Extras
+
+private extension NSImage
+{
+    static func loadFrom(file: String) -> NSImage! {
+        let newImage = NSImage(contentsOfFile: file)
+        return newImage
+    }
+
+    func savePNGTo(file: String) -> Bool {
+        let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
+                                      pixelsWide: Int(self.size.width),
+                                      pixelsHigh: Int(self.size.height),
+                                      bitsPerSample: 8, samplesPerPixel: 4,
+                                      hasAlpha: true,
+                                      isPlanar: false,
+                                      colorSpaceName: NSDeviceRGBColorSpace,
+                                      bytesPerRow: 0,
+                                      bitsPerPixel: 0)!
+        bitmap.size = self.size
+        
+        NSGraphicsContext.saveGraphicsState()
+        
+        NSGraphicsContext.setCurrentContext(NSGraphicsContext(bitmapImageRep: bitmap))
+        self.drawAtPoint(CGPoint.zero, fromRect: NSRect.zero, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0)
+        NSGraphicsContext.restoreGraphicsState()
+        
+        var ok = false
+        let imageData = bitmap.representationUsingType(NSBitmapImageFileType.NSPNGFileType,
+                                                          properties: [NSImageCompressionFactor: 1.0])
+        if (imageData != nil) {
+            ok = imageData!.writeToFile((file as NSString).stringByStandardizingPath, atomically: true)
+        }
+        if (ok == false) {
+            print("Error: Can't save image to \(file)")
+        }
+        return ok
+    }
+    
+    func scale(percent: CGFloat) -> NSImage {
+        var newR = CGRectMake(0, 0, self.size.width, self.size.height)
+        let Width = CGRectGetWidth(newR)
+        let Height = CGRectGetHeight(newR)
+        let newWidth = (Width * percent) / 100
+        let newHeight = (Height * percent) / 100
+        
+        let ratioOld = Width / Height
+        let ratioNew = newWidth / newHeight
+        
+        if (ratioOld > ratioNew) {
+            newR.size.width = newWidth                         // width of mapped rect
+            newR.size.height = newR.size.width / ratioOld      // height of mapped rect
+            newR.origin.x = 0                                  // x-coord of mapped rect
+            newR.origin.y = (newHeight - newR.size.height) / 2 // y-coord of centered mapped rect
+        }
+        else {
+            newR.size.height = newHeight
+            newR.size.width = newR.size.height * ratioOld
+            newR.origin.y = 0
+            newR.origin.x = (newWidth - newR.size.width) / 2
+        }
+        return resize(newR.width, h: newR.height)
+    }
+
+    func resize(w: CGFloat, h: CGFloat) -> NSImage {
+        let destSize = NSMakeSize(w, h)
+        let newImage = NSImage(size: destSize)
+        newImage.lockFocus()
+        self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height), fromRect: NSMakeRect(0, 0, self.size.width, self.size.height), operation: NSCompositingOperation.CompositeSourceOver, fraction: CGFloat(1))
+        newImage.unlockFocus()
+        newImage.size = destSize
+        return NSImage(data: newImage.TIFFRepresentation!)!
+    }
+}
+
 
 private extension Dictionary
 {
