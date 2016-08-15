@@ -240,26 +240,18 @@ class App
         return outputString
     }
 
-    private func copyFiles(files: Array<String>, type: LangType) -> Void {
-        // our copy function is special
-        
-        for file in files {
-            let filePath = sourceAssetFolder! + "/" + file
-            let destFile = outputAssetFolder! + "/" + file
-            let destPath = NSString(string: destFile).stringByDeletingLastPathComponent
-            createFolder(destPath)
-            if (copyFile(filePath, dest: destFile) == false) {
-                exit(-1)
-            }
-        }
-    }
-    
     // http://petrnohejl.github.io/Android-Cheatsheet-For-Graphic-Designers/
     
-    private func scaleAndCopyImages(files: Array<String>, type: LangType) -> Void {
+    private func scaleAndCopyImages(files: Array<String>, type: LangType, useRoot: Bool) -> Void {
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
-            let destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
+            var destFile:String
+            if (useRoot) {
+                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+            }
+            else {
+                destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
+            }
             let destPath = (destFile as NSString).stringByDeletingLastPathComponent
             createFolder(destPath)
 
@@ -271,12 +263,12 @@ class App
                 let image3 = NSImage.loadFrom(filePath) // @3
                 let image2 = image3.scale(66.67)        // @2
                 let image = image3.scale(33.34)         // @1
-                var file = destPath + "/" + fileName + "@3.png"
+                var file = destPath + "/" + fileName + "@3x.png"
                 if (image3.saveTo(file) == false) {
                     exit(-1)
                 }
                 print("Image scale and copy \(filePath) -> \(file)")
-                file = destPath + "/" + fileName + "@2.png"
+                file = destPath + "/" + fileName + "@2x.png"
                 if (image2.saveTo(file) == false) {
                     exit(-1)
                 }
@@ -360,22 +352,26 @@ class App
         }
         for (key, value) in data {
             if (key == keyCopied) {
-//                copyFiles(value as! Array, type: type)
+                copyFiles(value as! Array, type: type, useRoot: false)
             }
             else if (key == keyFonts) {
-                copyFiles(value as! Array, type: type)
+                copyFiles(value as! Array, type: type, useRoot: true)
             }
             else if (key == keyImages) {
-                copyFiles(value as! Array, type: type)
+                copyFiles(value as! Array, type: type, useRoot: true)
             }
             else if (key == keyImagesScaled) {
-                scaleAndCopyImages(value as! Array, type: type)
+                scaleAndCopyImages(value as! Array, type: type, useRoot: true)
             }
             else if (key == keyImagesIos) {
-                
+                if (type == .Swift) {
+                    copyFiles(value as! Array, type: type, useRoot: true)
+                }
             }
             else if (key == keyImagesAndroid) {
-                
+                if (type == .Java) {
+                    copyFiles(value as! Array, type: type, useRoot: true)
+                }
             }
             else if (key == keyImagesTinted) {
 //                let constants = value as! Dictionary<String, AnyObject>
@@ -440,6 +436,26 @@ class App
         return ok
     }
 
+    private func copyFiles(files: Array<String>, type: LangType, useRoot: Bool) -> Void {
+        // our copy function is special
+        
+        for file in files {
+            let filePath = sourceAssetFolder! + "/" + file
+            var destFile:String
+            if (useRoot) {
+                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+            }
+            else {
+                destFile = outputAssetFolder! + "/" + file
+            }
+            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
+            createFolder(destPath)
+            if (copyFile(filePath, dest: destFile) == false) {
+                exit(-1)
+            }
+        }
+    }
+    
     private func copyFile(src: String, dest: String) -> Bool {
         deleteFile(dest)
         var ok = true
