@@ -9,7 +9,8 @@ all:
 clean:
 	@xcodebuild clean &>/dev/null
 	@rm -rdf build
-	@rm -rdf temp
+	@rm -rdf temp_ios
+	@rm -rdf temp_android
 	@rm -f $(TARGET)
 	@rm -f Constants.swift
 	@rm -f Constants.java
@@ -20,8 +21,8 @@ distro: clean
 	@echo done!
 
 run: distro
-	@rm -f Constants.swift
-	@rm -f Constants.java
-	@./$(TARGET) -i example.json -swift -o Constants.swift -a assets -ao temp
-	@./$(TARGET) -i example.json -java -o Constants.java -a assets -ao temp
+	@rm -rdf temp_ios
+	@rm -rdf temp_android
+	@./$(TARGET) -i example.json -swift -o temp_ios/Constants.swift -a assets -ao temp_ios
+	@./$(TARGET) -i example.json -java -o temp_android/Constants.java -a assets -ao temp_android
 
