@@ -721,7 +721,7 @@ private extension Dictionary
     static func fromJSON(data:NSData) -> Dictionary {
         var dict:Dictionary!
         do {
-            dict = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions()) as? Dictionary
+            dict = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments) as? Dictionary
         }
         catch {
             print(error)
