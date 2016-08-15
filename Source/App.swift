@@ -39,12 +39,12 @@ class App
 
     func usage() -> Void {
         print("Usage:")
-        print("     -i  [file.json]")
-        print("     -o  [source.java|swift")
-        print("     -a  asset source folder")
-        print("     -oa asset copied folder")
-        print("     -java")
-        print("     -swift")
+        print("     -i      file.json")
+        print("     -o      source.java|swift")
+        print("     -java   write java source")
+        print("     -swift  write swift source")
+        print("     -a      asset source folder (read)")
+        print("     -oa     asset root folder (write), typically iOS Resource, or Android res")
     }
 
     private enum LangType {
@@ -241,8 +241,7 @@ class App
     }
 
     private func copyFiles(files: Array<String>, type: LangType) -> Void {
-        // our copy function is special,
-        
+        // our copy function is special
         
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
@@ -255,6 +254,8 @@ class App
         }
     }
     
+    // http://petrnohejl.github.io/Android-Cheatsheet-For-Graphic-Designers/
+    
     private func scaleAndCopyImages(files: Array<String>, type: LangType) -> Void {
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
@@ -265,23 +266,66 @@ class App
             var fileName = (file as NSString).lastPathComponent
             fileName = (fileName as NSString).stringByDeletingPathExtension
             
-            let image = NSImage.loadFrom(filePath)
-            let image2 = image.scale(75)
-            let image3 = image.scale(50)
-            let image4 = image.scale(25)
-            if (image.savePNGTo(destPath + "/" + fileName + "_A.png") == false) {
+            if (type == .Swift) {
+                // Ok, we're going to create the @3, @2, and normal size from the given assumed largest image
+                let image3 = NSImage.loadFrom(filePath)  // @3
+                let image2 = image3.scale(66.67)         // @2
+                let image = image3.scale(33.34)         // @1
+                var file = destPath + "/" + fileName + "@3.png"
+                if (image3.saveTo(file) == false) {
+                    exit(-1)
+                }
+                print("Image scale and copy \(filePath) -> \(file)")
+                file = destPath + "/" + fileName + "@2.png"
+                if (image2.saveTo(file) == false) {
+                    exit(-1)
+                }
+                print("Image scale and copy \(filePath) -> \(file)")
+                file = destPath + "/" + fileName + ".png"
+                if (image.saveTo(destPath + "/" + fileName + ".png") == false) {
+                    exit(-1)
+                }
+                print("Image scale and copy \(filePath) -> \(file)")
+            }
+            else if (type == .Java) {
+                let mdpi = destPath + "/drawable-mdpi/"
+                let hdpi = destPath + "/drawable-hdpi/"
+                let xhdpi = destPath + "/drawable-xhdpi/"
+                let xxhdpi = destPath + "/drawable-xxhdpi/"
+                createFolder(mdpi)
+                createFolder(hdpi)
+                createFolder(xhdpi)
+                createFolder(xxhdpi)
+                fileName = fileName + ".png"
+                let image4 = NSImage.loadFrom(filePath)  // 3x
+                let image3 = image4.scale(66.67)         // 2x
+                let image2 = image4.scale(50)            // 1.5x
+                let image = image4.scale(33.34)         // 1x
+                var file = xxhdpi + fileName
+                if (image4.saveTo(file) == false) {
+                    exit(-1)
+                }
+                print("Image scale and copy \(filePath) -> \(file)")
+                file = xhdpi + fileName
+                if (image3.saveTo(xhdpi + fileName) == false) {
+                    exit(-1)
+                }
+                print("Image scale and copy \(filePath) -> \(file)")
+                file = hdpi + fileName
+                if (image2.saveTo(hdpi + fileName) == false) {
+                    exit(-1)
+                }
+                print("Image scale and copy \(filePath) -> \(file)")
+                file = mdpi + fileName
+                if (image.saveTo(mdpi + fileName) == false) {
+                    exit(-1)
+                }
+                print("Image scale and copy \(filePath) -> \(file)")
+            }
+            else {
+                print("Error: wrong type")
                 exit(-1)
             }
-            if (image2.savePNGTo(destPath + "/" + fileName + "_B.png") == false) {
-                exit(-1)
-            }
-            if (image3.savePNGTo(destPath + "/" + fileName + "_C.png") == false) {
-                exit(-1)
-            }
-            if (image4.savePNGTo(destPath + "/" + fileName + "_D.png") == false) {
-                exit(-1)
-            }
-            print("Image scale and copy \(filePath) -> \(destPath)")
         }
     }
     
@@ -474,16 +518,37 @@ class App
 
 private extension NSImage
 {
+    /**
+     *  Given a file path, load and return an NSImage
+     */
     static func loadFrom(file: String) -> NSImage! {
         let newImage = NSImage(contentsOfFile: file)
         return newImage
     }
 
-    func savePNGTo(file: String) -> Bool {
+    /**
+     *  Given a file, image.png, image@2.png, image@3.png, return the scaling factor
+     *  1, 2, 1.5
+     */
+    static func getScaleFrom(file :String) -> Double {
+        var scale = 1.0
+        var fileName = (file as NSString).lastPathComponent
+        fileName = (fileName as NSString).stringByDeletingPathExtension
+        if (fileName.hasSuffix("@2")) {
+            scale = 2.0
+        }
+        else if (fileName.hasSuffix("@3")) {
+            scale = 3.0
+        }
+        return scale
+    }
+
+    func saveTo(file: String) -> Bool {
         let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
                                       pixelsWide: Int(self.size.width),
                                       pixelsHigh: Int(self.size.height),
-                                      bitsPerSample: 8, samplesPerPixel: 4,
+                                      bitsPerSample: 8,
+                                      samplesPerPixel: 4,
                                       hasAlpha: true,
                                       isPlanar: false,
                                       colorSpaceName: NSDeviceRGBColorSpace,
@@ -494,7 +559,11 @@ private extension NSImage
         NSGraphicsContext.saveGraphicsState()
         
         NSGraphicsContext.setCurrentContext(NSGraphicsContext(bitmapImageRep: bitmap))
-        self.drawAtPoint(CGPoint.zero, fromRect: NSRect.zero, operation: NSCompositingOperation.CompositeSourceOver, fraction: 1.0)
+        self.drawAtPoint(CGPoint.zero,
+                         fromRect: NSRect.zero,
+                         operation: NSCompositingOperation.CompositeSourceOver,
+                         fraction: 1.0)
+
         NSGraphicsContext.restoreGraphicsState()
         
         var ok = false
@@ -513,8 +582,8 @@ private extension NSImage
         var newR = CGRectMake(0, 0, self.size.width, self.size.height)
         let Width = CGRectGetWidth(newR)
         let Height = CGRectGetHeight(newR)
-        let newWidth = (Width * percent) / 100
-        let newHeight = (Height * percent) / 100
+        let newWidth = (Width * percent) / 100.0
+        let newHeight = (Height * percent) / 100.0
         
         let ratioOld = Width / Height
         let ratioNew = newWidth / newHeight
@@ -531,14 +600,17 @@ private extension NSImage
             newR.origin.y = 0
             newR.origin.x = (newWidth - newR.size.width) / 2
         }
-        return resize(newR.width, h: newR.height)
+        return resize(newR.width, height: newR.height)
     }
 
-    func resize(w: CGFloat, h: CGFloat) -> NSImage {
-        let destSize = NSMakeSize(w, h)
+    func resize(width: CGFloat, height: CGFloat) -> NSImage {
+        let destSize = NSMakeSize(width, height)
         let newImage = NSImage(size: destSize)
         newImage.lockFocus()
-        self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height), fromRect: NSMakeRect(0, 0, self.size.width, self.size.height), operation: NSCompositingOperation.CompositeSourceOver, fraction: CGFloat(1))
+        self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
+                        fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
+                        operation: NSCompositingOperation.CompositeSourceOver,
+                        fraction: 1.0)
         newImage.unlockFocus()
         newImage.size = destSize
         return NSImage(data: newImage.TIFFRepresentation!)!
