@@ -23,6 +23,6 @@ distro: clean
 run: distro
 	@rm -rdf temp_ios
 	@rm -rdf temp_android
-	@./$(TARGET) -i example.json -swift -o temp_ios/Constants.swift -a assets -ao temp_ios
+	@./$(TARGET) -i example.json -swift -o temp_ios/Constants.swift -a assets -ao temp_ios/Resources
 	@./$(TARGET) -i example.json -java -o temp_android/Constants.java -a assets -ao temp_android
 
