@@ -595,8 +595,13 @@ class App
             let location = NSString(string: inputFile!).stringByExpandingTildeInPath
             let fileContent = NSData(contentsOfFile: location)
             if (fileContent != nil) {
-                let result:Dictionary<String, AnyObject> = Dictionary.fromJSON(fileContent!)
-                consume(result, type: type, outputFile: outputFile!)
+                if let result = fromJSON(fileContent!) {
+                    consume(result, type: type, outputFile: outputFile!)
+                }
+                else {
+                    print("Error: Can't parse \(location) as JSON")
+                    exit(-1)
+                }
             }
             else {
                 print("Error: file \(inputFile) not found")
@@ -715,19 +720,16 @@ private extension NSImage
     }
 }
 
-
-private extension Dictionary
-{
-    static func fromJSON(data:NSData) -> Dictionary {
-        var dict:Dictionary!
-        do {
-            dict = try NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.AllowFragments) as? Dictionary
-        }
-        catch {
-            print(error)
-        }
-        return dict
+private func fromJSON(data:NSData) -> [String: AnyObject]? {
+    var dict:[String: AnyObject]?
+    do {
+        dict = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? [String: AnyObject]
     }
+    catch {
+        print(error)
+        dict = nil
+    }
+    return dict
 }
 
 private extension Double
