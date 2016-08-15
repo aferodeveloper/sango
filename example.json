@@ -29,14 +29,10 @@
 		"large/ASR-1.png"
 	],
 	"imagesIos": [
-		"account_avatar2.png",
-		"account_avatar2@2x.png",
-		"account_avatar2@3x.png"
+		"account_avatar2.png"
 	],
 	"imagesAndroid": [
-		"account_avatar3.png",
-		"account_avatar3@2x.png",
-		"account_avatar3@3x.png"
+		"account_avatar1.png"
 	],
 	"imagesTinted": {
 		"UI_SECONDARY_COLOR_TINTED": [
