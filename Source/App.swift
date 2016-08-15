@@ -570,6 +570,10 @@ class App
         }
 
         var outputFile = getOption(args, option: "-o")
+        if (outputFile == nil) {
+            print("Error: missing output file")
+            exit(-1)
+        }
         outputFile = NSString(string: outputFile!).stringByExpandingTildeInPath
 
         sourceAssetFolder = getOption(args, option: "-a")
