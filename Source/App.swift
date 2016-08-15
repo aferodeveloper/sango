@@ -268,8 +268,8 @@ class App
             
             if (type == .Swift) {
                 // Ok, we're going to create the @3, @2, and normal size from the given assumed largest image
-                let image3 = NSImage.loadFrom(filePath)  // @3
-                let image2 = image3.scale(66.67)         // @2
+                let image3 = NSImage.loadFrom(filePath) // @3
+                let image2 = image3.scale(66.67)        // @2
                 let image = image3.scale(33.34)         // @1
                 var file = destPath + "/" + fileName + "@3.png"
                 if (image3.saveTo(file) == false) {
@@ -292,14 +292,11 @@ class App
                 let hdpi = destPath + "/drawable-hdpi/"
                 let xhdpi = destPath + "/drawable-xhdpi/"
                 let xxhdpi = destPath + "/drawable-xxhdpi/"
-                createFolder(mdpi)
-                createFolder(hdpi)
-                createFolder(xhdpi)
-                createFolder(xxhdpi)
+                createFolders([mdpi, hdpi, xhdpi, xxhdpi])
                 fileName = fileName + ".png"
-                let image4 = NSImage.loadFrom(filePath)  // 3x
-                let image3 = image4.scale(66.67)         // 2x
-                let image2 = image4.scale(50)            // 1.5x
+                let image4 = NSImage.loadFrom(filePath) // 3x
+                let image3 = image4.scale(66.67)        // 2x
+                let image2 = image4.scale(50)           // 1.5x
                 let image = image4.scale(33.34)         // 1x
                 var file = xxhdpi + fileName
                 if (image4.saveTo(file) == false) {
@@ -416,6 +413,18 @@ class App
                 print("Error: writing to \(outputFile)")
             }
         }
+    }
+
+    func createFolders(folders: Array<String>) -> Bool {
+        for file in folders {
+            do {
+                try NSFileManager.defaultManager().createDirectoryAtPath(file, withIntermediateDirectories: true, attributes: nil)
+            }
+            catch {
+                print("Error: creating folder \(file)")
+            }
+        }
+        return true
     }
 
     func createFolder(src: String) -> Bool {

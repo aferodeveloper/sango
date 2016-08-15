@@ -68,19 +68,27 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-swift"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-o Constants.swift"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-java"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-o Constants.java"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-ao temp"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-a assets"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-o test.swift"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-swift"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
