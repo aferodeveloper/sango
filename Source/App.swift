@@ -44,7 +44,7 @@ class App
         print("     -java   write java source")
         print("     -swift  write swift source")
         print("     -a      asset source folder (read)")
-        print("     -oa     asset root folder (write), typically iOS Resource, or Android res")
+        print("     -oa     asset root folder (write), typically iOS Resource, or Android app/src/main")
     }
 
     private enum LangType {
@@ -280,10 +280,10 @@ class App
                 print("Image scale and copy \(filePath) -> \(file)")
             }
             else if (type == .Java) {
-                let mdpi = destPath + "/drawable-mdpi/"
-                let hdpi = destPath + "/drawable-hdpi/"
-                let xhdpi = destPath + "/drawable-xhdpi/"
-                let xxhdpi = destPath + "/drawable-xxhdpi/"
+                let mdpi = destPath + "/res/drawable-mdpi/"
+                let hdpi = destPath + "/res/drawable-hdpi/"
+                let xhdpi = destPath + "/res/drawable-xhdpi/"
+                let xxhdpi = destPath + "/res/drawable-xxhdpi/"
                 createFolders([mdpi, hdpi, xhdpi, xxhdpi])
                 fileName = fileName + ".png"
                 let image4 = NSImage.loadFrom(filePath) // 3x
@@ -310,6 +310,69 @@ class App
                     exit(-1)
                 }
                 print("Image scale and copy \(filePath) -> \(file)")
+            }
+            else {
+                print("Error: wrong type")
+                exit(-1)
+            }
+        }
+    }
+    
+    private func copyImages(files: Array<String>, type: LangType, useRoot: Bool) -> Void {
+        for file in files {
+            let filePath = sourceAssetFolder! + "/" + file
+            var destFile:String
+            if (useRoot) {
+                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+            }
+            else {
+                destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
+            }
+            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
+            createFolder(destPath)
+            
+            var fileName = (file as NSString).lastPathComponent
+            fileName = (fileName as NSString).stringByDeletingPathExtension
+            
+            if (type == .Swift) {
+                copyFile(filePath, dest: destFile)
+            }
+            else if (type == .Java) {
+                let defaultLoc = destPath + "/res/drawable/"
+                createFolder(defaultLoc)
+                fileName = fileName + ".png"
+                copyFile(filePath, dest: defaultLoc + fileName)
+            }
+            else {
+                print("Error: wrong type")
+                exit(-1)
+            }
+        }
+    }
+    
+    private func copyFonts(files: Array<String>, type: LangType, useRoot: Bool) -> Void {
+        for file in files {
+            let filePath = sourceAssetFolder! + "/" + file
+            var destFile:String
+            if (useRoot) {
+                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+            }
+            else {
+                destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
+            }
+            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
+            createFolder(destPath)
+            
+            var fileName = (file as NSString).lastPathComponent
+            
+            if (type == .Swift) {
+                copyFile(filePath, dest: destFile)
+            }
+            else if (type == .Java) {
+                let defaultLoc = destPath + "/assets/fonts/"
+                createFolder(defaultLoc)
+                fileName = defaultLoc + fileName
+                copyFile(filePath, dest: fileName)
             }
             else {
                 print("Error: wrong type")
@@ -355,22 +418,22 @@ class App
                 copyFiles(value as! Array, type: type, useRoot: false)
             }
             else if (key == keyFonts) {
-                copyFiles(value as! Array, type: type, useRoot: true)
+                copyFonts(value as! Array, type: type, useRoot: true)
             }
             else if (key == keyImages) {
-                copyFiles(value as! Array, type: type, useRoot: true)
+                copyImages(value as! Array, type: type, useRoot: true)
             }
             else if (key == keyImagesScaled) {
                 scaleAndCopyImages(value as! Array, type: type, useRoot: true)
             }
             else if (key == keyImagesIos) {
                 if (type == .Swift) {
-                    copyFiles(value as! Array, type: type, useRoot: true)
+                    copyImages(value as! Array, type: type, useRoot: true)
                 }
             }
             else if (key == keyImagesAndroid) {
                 if (type == .Java) {
-                    copyFiles(value as! Array, type: type, useRoot: true)
+                    copyImages(value as! Array, type: type, useRoot: true)
                 }
             }
             else if (key == keyImagesTinted) {
