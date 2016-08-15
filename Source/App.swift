@@ -318,6 +318,12 @@ class App
         }
     }
     
+    // this table to used to place images marked with either @2, @3 into their respective android equals
+    private let iOStoAndroid = [
+        1: "mdpi",
+        2: "xhdpi",
+        3: "xxhdpi"
+    ]
     private func copyImages(files: Array<String>, type: LangType, useRoot: Bool) -> Void {
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
@@ -333,14 +339,16 @@ class App
             
             var fileName = (file as NSString).lastPathComponent
             fileName = (fileName as NSString).stringByDeletingPathExtension
-            
+
             if (type == .Swift) {
                 copyFile(filePath, dest: destFile)
             }
             else if (type == .Java) {
-                let defaultLoc = destPath + "/res/drawable/"
+                let result = NSImage.getScaleFrom(fileName)
+                let drawable = iOStoAndroid[result.scale]!
+                let defaultLoc = destPath + "/res/drawable-" + drawable + "/"
                 createFolder(defaultLoc)
-                fileName = fileName + ".png"
+                fileName = result.file + ".png"
                 copyFile(filePath, dest: defaultLoc + fileName)
             }
             else {
@@ -616,19 +624,21 @@ private extension NSImage
 
     /**
      *  Given a file, image.png, image@2.png, image@3.png, return the scaling factor
-     *  1, 2, 1.5
+     *  1, 2, 3
      */
-    static func getScaleFrom(file :String) -> Double {
-        var scale = 1.0
+    static func getScaleFrom(file :String) -> (scale: Int, file: String) {
+        var scale = 1
         var fileName = (file as NSString).lastPathComponent
         fileName = (fileName as NSString).stringByDeletingPathExtension
-        if (fileName.hasSuffix("@2")) {
-            scale = 2.0
+        if (fileName.hasSuffix("@2x")) {
+            scale = 2
+            fileName = fileName.stringByReplacingOccurrencesOfString("@2x", withString: "")
         }
-        else if (fileName.hasSuffix("@3")) {
-            scale = 3.0
+        else if (fileName.hasSuffix("@3x")) {
+            scale = 3
+            fileName = fileName.stringByReplacingOccurrencesOfString("@3x", withString: "")
         }
-        return scale
+        return (scale: scale, file: fileName)
     }
 
     func saveTo(file: String) -> Bool {
