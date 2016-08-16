@@ -3,6 +3,7 @@ TARGET = sango
 all:
 	@echo "Targets:"
 	@echo "   distro"
+	@echo "   install"
 	@echo "   run"
 	@echo "   clean"
 
@@ -20,6 +21,9 @@ distro: clean
 	@xcodebuild
 	@cp ./build/Release/Sango $(TARGET)
 	@echo done!
+
+install: distro
+	@sudo cp $(TARGET) /usr/local/bin/$(TARGET)
 
 run: distro
 	@./$(TARGET) -i example.json -swift -o temp_ios/Constants.swift -a assets -ao temp_ios/Resources
