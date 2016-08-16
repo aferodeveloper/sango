@@ -1,5 +1,13 @@
 TARGET = sango
 
+DATE := $(shell date "+%Y%m%d_%H%M%S")
+DEST_PATH := $(shell pwd)
+
+REVISION :=$(shell git log --pretty=format:'' | wc -l | sed 's/\ //g')
+
+REVERT := git checkout
+GIT_SHA1 := $(shell git log -1 --pretty=format:'%h')
+
 all:
 	@echo "Targets:"
 	@echo "   distro"

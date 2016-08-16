@@ -9,7 +9,7 @@
 // https://www.raywenderlich.com/128039/command-line-programs-os-x-tutorial
 
 import Foundation
-
+import CoreFoundation
 
 func findOption(args:[String], option:String) -> Bool {
     var found = false
