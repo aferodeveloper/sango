@@ -258,7 +258,9 @@ class App
 
             var fileName = (file as NSString).lastPathComponent
             fileName = (fileName as NSString).stringByDeletingPathExtension
-            
+            fileName = fileName.stringByReplacingOccurrencesOfString("@2x", withString: "")
+            fileName = fileName.stringByReplacingOccurrencesOfString("@3x", withString: "")
+
             if (type == .Swift) {
                 // Ok, we're going to create the @3, @2, and normal size from the given assumed largest image
                 let image3 = NSImage.loadFrom(filePath) // @3
