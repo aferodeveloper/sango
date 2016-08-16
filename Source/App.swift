@@ -39,6 +39,7 @@ class App
 
     func usage() -> Void {
         print("Usage:")
+        print("     -c      basename - creates a json template for using sango")
         print("     -i      file.json")
         print("     -o      source.java|swift")
         print("     -java   write java source")
@@ -553,10 +554,43 @@ class App
         
         return ok
     }
+
+    private let baseTemplate = [keySchemaVersion :SchemaVersion,
+                                keyFonts: [],
+                                keyImages: [],
+                                keyImagesScaled: [],
+                                keyImagesIos: [],
+                                keyImagesAndroid: [],
+                                keyCopied: []
+                                ]
+
+    private func createTemplate(base: String) -> Void {
+        var temp = baseTemplate as! Dictionary<String,AnyObject>
+        temp[keyJava] = ["package" : "one.two", "base": base]
+        temp[keySwift] = ["base": base]
+        temp["Example"] = ["EXAMPLE_CONSTANT": 1]
+        let jsonString = toJSON(temp)
+        let outputFile = base + ".json"
+        if (jsonString != nil) {
+            do {
+                try jsonString!.writeToFile(outputFile, atomically: true, encoding: NSUTF8StringEncoding)
+                print("JSON template created at \"\(outputFile)\"")
+            }
+            catch {
+                print("Error: writing to \(outputFile)")
+            }
+        }
+    }
     
     func start(args: [String]) -> Void {
         if (findOption(args, option: "-h") || args.count == 0) {
             usage()
+            exit(0)
+        }
+
+        let baseName = getOption(args, option: "-c")
+        if (baseName != nil) {
+            createTemplate(baseName!)
             exit(0)
         }
 
@@ -721,6 +755,18 @@ private extension NSImage
         newImage.unlockFocus()
         newImage.size = destSize
         return NSImage(data: newImage.TIFFRepresentation!)!
+    }
+}
+
+private func toJSON(dictionary:Dictionary<String, AnyObject>) -> String? {
+    do {
+        let data: NSData
+        data = try NSJSONSerialization.dataWithJSONObject(dictionary, options: .PrettyPrinted)
+        let jsonString = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
+        return jsonString
+    }
+    catch {
+        return nil
     }
 }
 
