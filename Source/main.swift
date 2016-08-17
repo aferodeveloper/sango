@@ -63,7 +63,7 @@ func getOptions(args:[String], option:String) -> [String]? {
 }
 
 // MARK: main
-print("Sango - © 2016 Afero, Inc")
+print("Sango © 2016 Afero, Inc")
 
 private var args = Process.arguments
 args.removeFirst()

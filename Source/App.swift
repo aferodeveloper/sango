@@ -610,6 +610,7 @@ class App
             let result = fromJSONFile(configFile!)
             if (result != nil) {
                 inputFile = result!["input"] as? String
+                inputFiles = result!["inputs"] as? [String]
                 sourceAssetFolder = result!["input_assets"] as? String
                 outputClassFile = result!["out_source"] as? String
                 outputAssetFolder = result!["out_assets"] as? String
@@ -672,6 +673,8 @@ class App
         var result:[String:AnyObject]? = nil
         if (inputFiles == nil) {
             inputFiles = getOptions(args, option: "-inputs")
+        }
+        if (inputFiles != nil) {
             for file in inputFiles! {
                 let d = fromJSONFile(file)
                 if (d != nil) {
@@ -684,9 +687,9 @@ class App
                 }
             }
         }
+
         if (inputFile == nil) {
             inputFile = getOption(args, option: "-input")
-            
         }
         if (inputFile != nil) {
             result = fromJSONFile(inputFile!)
