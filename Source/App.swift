@@ -24,9 +24,10 @@ private let keyImagesIos = "imagesIos"
 private let keyImagesAndroid = "imagesAndroid"
 private let keyImagesTinted = "imagesTinted"
 private let keyCopied = "copied"
+private let keyAppIcon = "appIcon"
 private let keyJava = "java"
 private let keySwift = "swift"
-private let firstPassIgnoredKeys = [keyCopied, keyFonts, keySchemaVersion, keyImages,
+private let firstPassIgnoredKeys = [keyCopied, keyAppIcon, keyFonts, keySchemaVersion, keyImages,
                                     keyImagesScaled, keyImagesIos, keyImagesAndroid,
                                     keyImagesTinted, keyJava, keySwift]
 
@@ -378,6 +379,52 @@ class App
         }
     }
     
+    private let iOSAppIconSizes = [
+        "Icon-72.png": 72,
+        "Icon-72@2x.png": 144,
+        "Icon-Small-50@2x.png": 100,
+        "Icon-Small-50.png": 50,
+        "Icon-Small.png": 29,
+        "Icon-Small@2x.png": 58,
+        "Icon-Small@3x.png": 87,
+        "Icon.png": 57,
+        "Icon@2x.png": 114,
+        "Icon-120.png": 120,
+        "Icon-80.png": 80,
+        "Icon-40.png": 40,
+        "Icon-40@3x.png": 120,
+        "Icon-60.png": 60,
+        "Icon-76.png": 76,
+        "Icon-76@2.png": 152,
+        "Icon-60@3x.png": 180,
+        "Icon-76@2x.png": 152,
+        "Icon-80@2x.png": 160,
+        "Icon167.png": 167
+    ]
+
+    private func copyAppIcon(file: String, type: LangType) -> Void {
+        let filePath = sourceAssetFolder! + "/" + file
+        let iconImage = NSImage.loadFrom(filePath)
+        if (iconImage == nil) {
+            print("Error: missing file \(iconImage)")
+            exit(-1)
+        }
+        if (type == .Swift) {
+            for (key, value) in iOSAppIconSizes {
+                let width = CGFloat(value)
+                let height = CGFloat(value)
+                let newImage = iconImage.resize(width, height: height)
+            }
+        }
+        else if (type == .Java) {
+            
+        }
+        else {
+            print("Error: wrong type")
+            exit(-1)
+        }
+    }
+    
     private func copyFonts(files: Array<String>, type: LangType, useRoot: Bool) -> Void {
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
@@ -444,6 +491,9 @@ class App
         for (key, value) in data {
             if (key == keyCopied) {
                 copyFiles(value as! Array, type: type, useRoot: false)
+            }
+            else if (key == keyAppIcon) {
+                copyAppIcon(value as! String, type: type)
             }
             else if (key == keyFonts) {
                 copyFonts(value as! Array, type: type, useRoot: true)
@@ -580,7 +630,8 @@ class App
                                 keyImagesScaled: [],
                                 keyImagesIos: [],
                                 keyImagesAndroid: [],
-                                keyCopied: []
+                                keyCopied: [],
+                                keyAppIcon: []
                                 ]
 
     private func createTemplate(base: String) -> Void {
@@ -806,14 +857,31 @@ private extension NSImage
 
     func resize(width: CGFloat, height: CGFloat) -> NSImage {
         let destSize = NSMakeSize(width, height)
-        let newImage = NSImage(size: destSize)
-        newImage.lockFocus()
+        let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
+                                      pixelsWide: Int(destSize.width),
+                                      pixelsHigh: Int(destSize.height),
+                                      bitsPerSample: 8,
+                                      samplesPerPixel: 4,
+                                      hasAlpha: true,
+                                      isPlanar: false,
+                                      colorSpaceName: NSDeviceRGBColorSpace,
+                                      bytesPerRow: 0,
+                                      bitsPerPixel: 0)!
+        bitmap.size = destSize
+        
+        NSGraphicsContext.saveGraphicsState()
+        
+        let context = NSGraphicsContext(bitmapImageRep: bitmap)
+        context?.imageInterpolation = NSImageInterpolation.High
+        NSGraphicsContext.setCurrentContext(context)
         self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
                         fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
                         operation: NSCompositingOperation.CompositeSourceOver,
                         fraction: 1.0)
-        newImage.unlockFocus()
-        newImage.size = destSize
+        
+        NSGraphicsContext.restoreGraphicsState()
+        let newImage = NSImage(size: destSize)
+        newImage.addRepresentation(bitmap)
         return NSImage(data: newImage.TIFFRepresentation!)!
     }
 }
