@@ -25,9 +25,12 @@ private let keyImagesAndroid = "imagesAndroid"
 private let keyImagesTinted = "imagesTinted"
 private let keyCopied = "copied"
 private let keyAppIcon = "appIcon"
+private let keyIOSAppIcon = "iOSAppIcon"
+private let keyAndroidAppIcon = "androidAppIcon"
 private let keyJava = "java"
 private let keySwift = "swift"
-private let firstPassIgnoredKeys = [keyCopied, keyAppIcon, keyFonts, keySchemaVersion, keyImages,
+private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
+                                    keyFonts, keySchemaVersion, keyImages,
                                     keyImagesScaled, keyImagesIos, keyImagesAndroid,
                                     keyImagesTinted, keyJava, keySwift]
 
@@ -394,26 +397,29 @@ class App
     }
     
     private let iOSAppIconSizes = [
-        "Icon-72.png": 72,
-        "Icon-72@2x.png": 144,
-        "Icon-Small-50@2x.png": 100,
-        "Icon-Small-50.png": 50,
         "Icon-Small.png": 29,
         "Icon-Small@2x.png": 58,
         "Icon-Small@3x.png": 87,
+        "Icon-Small-40.png": 40,
+        "Icon-Small-40@2x.png": 80,
+        "Icon-Small-40@3x.png": 120,
+        "Icon-Small-50.png": 50,
+        "Icon-Small-50@2x.png": 100,
         "Icon.png": 57,
         "Icon@2x.png": 114,
-        "Icon-120.png": 120,
-        "Icon-80.png": 80,
         "Icon-40.png": 40,
         "Icon-40@3x.png": 120,
         "Icon-60.png": 60,
-        "Icon-76.png": 76,
-        "Icon-76@2.png": 152,
+        "Icon-60@2x.png": 120,
         "Icon-60@3x.png": 180,
+        "Icon-72.png": 72,
+        "Icon-72@2x.png": 144,
+        "Icon-76.png": 76,
         "Icon-76@2x.png": 152,
+        "Icon-80.png": 80,
         "Icon-80@2x.png": 160,
-        "Icon167.png": 167
+        "Icon-120.png": 120,
+        "Icon-167.png": 167
     ]
     // ic_launcher.png
     private let AndroidDefaultIconName = "ic_launcher.png"
@@ -426,6 +432,7 @@ class App
     ]
 
     // http://iconhandbook.co.uk/reference/chart/android/
+    // https://developer.apple.com/library/ios/qa/qa1686/_index.html
     private func copyAppIcon(file: String, type: LangType) -> Void {
         let filePath = sourceAssetFolder! + "/" + file
         let iconImage = NSImage.loadFrom(filePath)
@@ -532,6 +539,16 @@ class App
             }
             else if (key == keyAppIcon) {
                 copyAppIcon(value as! String, type: type)
+            }
+            else if (key == keyAndroidAppIcon) {
+                if (type == .Java) {
+                    copyAppIcon(value as! String, type: type)
+                }
+            }
+            else if (key == keyIOSAppIcon) {
+                if (type == .Swift) {
+                    copyAppIcon(value as! String, type: type)
+                }
             }
             else if (key == keyFonts) {
                 copyFonts(value as! Array, type: type, useRoot: true)
