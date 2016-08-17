@@ -686,7 +686,9 @@ class App
                                 keyImagesIos: [],
                                 keyImagesAndroid: [],
                                 keyCopied: [],
-                                keyAppIcon: []
+                                keyAppIcon: "",
+                                keyIOSAppIcon: "",
+                                keyAndroidAppIcon: ""
                                 ]
 
     private func createTemplate(base: String) -> Void {
