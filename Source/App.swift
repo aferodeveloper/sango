@@ -253,7 +253,7 @@ class App
 
     // http://petrnohejl.github.io/Android-Cheatsheet-For-Graphic-Designers/
     
-    private func scaleAndCopyImages(files: Array<String>, type: LangType, useRoot: Bool) -> Void {
+    private func scaleAndCopyImages(files: [String], type: LangType, useRoot: Bool) -> Void {
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
@@ -345,37 +345,51 @@ class App
         2: "xhdpi",
         3: "xxhdpi"
     ]
-    private func copyImages(files: Array<String>, type: LangType, useRoot: Bool) -> Void {
-        for file in files {
-            let filePath = sourceAssetFolder! + "/" + file
-            var destFile:String
-            if (useRoot) {
-                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
-            }
-            else {
-                destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
-            }
-            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
-            createFolder(destPath)
-            
-            var fileName = (file as NSString).lastPathComponent
-            fileName = (fileName as NSString).stringByDeletingPathExtension
 
-            if (type == .Swift) {
-                copyFile(filePath, dest: destFile)
-            }
-            else if (type == .Java) {
-                let result = NSImage.getScaleFrom(fileName)
-                let drawable = iOStoAndroid[result.scale]!
-                let defaultLoc = destPath + "/res/drawable-" + drawable + "/"
-                createFolder(defaultLoc)
-                fileName = result.file + ".png"
-                copyFile(filePath, dest: defaultLoc + fileName)
-            }
-            else {
-                print("Error: wrong type")
-                exit(-1)
-            }
+    
+    private func imageResourcePath(file: String, type: LangType, useRoot: Bool) -> (sourceFile: String,
+                                                                                    destFile: String,
+                                                                                    destPath: String)
+    {
+        let filePath = sourceAssetFolder! + "/" + file
+        var destFile:String
+        if (useRoot) {
+            destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+        }
+        else {
+            destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
+        }
+        var destPath = (destFile as NSString).stringByDeletingLastPathComponent
+        
+        var fileName = (file as NSString).lastPathComponent
+        fileName = (fileName as NSString).stringByDeletingPathExtension
+        
+        if (type == .Swift) {
+            // do nothing
+        }
+        else if (type == .Java) {
+            let result = NSImage.getScaleFrom(fileName)
+            let drawable = iOStoAndroid[result.scale]!
+            destPath = destPath + "/res/drawable-" + drawable + "/"
+            destFile = destPath + result.file + ".png"
+        }
+        else {
+            print("Error: Wrong type")
+            exit(-1)
+        }
+        return (sourceFile: filePath, destFile: destFile, destPath: destPath)
+    }
+    
+    private func copyImage(file: String, type: LangType, useRoot: Bool) -> Void
+    {
+        let roots = imageResourcePath(file, type: type, useRoot: useRoot)
+        createFolder(roots.destPath)
+        copyFile(roots.sourceFile, dest: roots.destFile)
+    }
+
+    private func copyImages(files: [String], type: LangType, useRoot: Bool) -> Void {
+        for file in files {
+            copyImage(file, type: type, useRoot: useRoot)
         }
     }
     
@@ -401,7 +415,17 @@ class App
         "Icon-80@2x.png": 160,
         "Icon167.png": 167
     ]
+    // ic_launcher.png
+    private let AndroidDefaultIconName = "ic_launcher.png"
+    private let AndroidIconSizes = [
+        "mdpi": 48,
+        "hdpi": 72,
+        "xhdpi": 96,
+        "xxhdpi": 144,
+        "xxxhdpi": 192
+    ]
 
+    // http://iconhandbook.co.uk/reference/chart/android/
     private func copyAppIcon(file: String, type: LangType) -> Void {
         let filePath = sourceAssetFolder! + "/" + file
         let iconImage = NSImage.loadFrom(filePath)
@@ -410,14 +434,28 @@ class App
             exit(-1)
         }
         if (type == .Swift) {
+            let destPath = outputAssetFolder! + "/icons"
+            createFolder(destPath)
             for (key, value) in iOSAppIconSizes {
                 let width = CGFloat(value)
                 let height = CGFloat(value)
                 let newImage = iconImage.resize(width, height: height)
+                let destFile = destPath + "/" + key
+                newImage.saveTo(destFile)
+                print("Image scale icon and copy \(filePath) -> \(destFile)")
             }
         }
         else if (type == .Java) {
-            
+            for (key, value) in AndroidIconSizes {
+                let width = CGFloat(value)
+                let height = CGFloat(value)
+                let newImage = iconImage.resize(width, height: height)
+                let destPath = outputAssetFolder! + "/res/drawable-" + key
+                createFolder(destPath)
+                let destFile = destPath + "/" + AndroidDefaultIconName
+                newImage.saveTo(destFile)
+                print("Image scale icon and copy \(filePath) -> \(destFile)")
+            }
         }
         else {
             print("Error: wrong type")
@@ -425,7 +463,7 @@ class App
         }
     }
     
-    private func copyFonts(files: Array<String>, type: LangType, useRoot: Bool) -> Void {
+    private func copyFonts(files: [String], type: LangType, useRoot: Bool) -> Void {
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
@@ -552,7 +590,7 @@ class App
         }
     }
 
-    func createFolders(folders: Array<String>) -> Bool {
+    func createFolders(folders: [String]) -> Bool {
         for file in folders {
             do {
                 try NSFileManager.defaultManager().createDirectoryAtPath(file, withIntermediateDirectories: true, attributes: nil)
@@ -577,7 +615,7 @@ class App
         return ok
     }
 
-    private func copyFiles(files: Array<String>, type: LangType, useRoot: Bool) -> Void {
+    private func copyFiles(files: [String], type: LangType, useRoot: Bool) -> Void {
         // our copy function is special
         
         for file in files {

@@ -11,6 +11,26 @@
 import Foundation
 import CoreFoundation
 
+
+func shell(arguments: [String]) -> String
+{
+    let task = NSTask()
+    task.launchPath = "/bin/bash"
+    var args = ["-c"]
+    args.appendContentsOf(arguments)
+    task.arguments = args
+    
+    let pipe = NSPipe()
+    task.standardOutput = pipe
+    task.launch()
+    
+    let data = pipe.fileHandleForReading.readDataToEndOfFile()
+    let output: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
+    
+    return output
+}
+
+
 func findOption(args:[String], option:String) -> Bool {
     var found = false
     for argument in args {
@@ -65,10 +85,19 @@ func getOptions(args:[String], option:String) -> [String]? {
 // MARK: main
 print("Sango © 2016 Afero, Inc")
 
+let test = shell(["which git"])
+if (test.isEmpty == false) {
+    print("git installed")
+}
+else {
+    print("git not installed")
+}
+
 private var args = Process.arguments
 args.removeFirst()
-
 App().start(args)
+
+// eof
 
 
 
