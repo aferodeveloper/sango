@@ -273,6 +273,10 @@ class App
             if (type == .Swift) {
                 // Ok, we're going to create the @3, @2, and normal size from the given assumed largest image
                 let image3 = NSImage.loadFrom(filePath) // @3
+                if (image3 == nil) {
+                    print("Error: missing file \(filePath)")
+                    exit(-1)
+                }
                 let image2 = image3.scale(66.67)        // @2
                 let image = image3.scale(33.34)         // @1
                 var file = destPath + "/" + fileName + "@3x.png"
@@ -292,16 +296,20 @@ class App
                 print("Image scale and copy \(filePath) -> \(file)")
             }
             else if (type == .Java) {
+                let image4 = NSImage.loadFrom(filePath) // 3x
+                if (image4 == nil) {
+                    print("Error: missing file \(filePath)")
+                    exit(-1)
+                }
+                let image3 = image4.scale(66.67)        // 2x
+                let image2 = image4.scale(50)           // 1.5x
+                let image = image4.scale(33.34)         // 1x
                 let mdpi = destPath + "/res/drawable-mdpi/"
                 let hdpi = destPath + "/res/drawable-hdpi/"
                 let xhdpi = destPath + "/res/drawable-xhdpi/"
                 let xxhdpi = destPath + "/res/drawable-xxhdpi/"
                 createFolders([mdpi, hdpi, xhdpi, xxhdpi])
                 fileName = fileName + ".png"
-                let image4 = NSImage.loadFrom(filePath) // 3x
-                let image3 = image4.scale(66.67)        // 2x
-                let image2 = image4.scale(50)           // 1.5x
-                let image = image4.scale(33.34)         // 1x
                 var file = xxhdpi + fileName
                 if (image4.saveTo(file) == false) {
                     exit(-1)

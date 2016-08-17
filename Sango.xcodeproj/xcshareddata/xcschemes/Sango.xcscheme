@@ -93,6 +93,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-config brand1_config.json"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-config brand2_config.json"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
