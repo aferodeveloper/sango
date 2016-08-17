@@ -18,14 +18,11 @@
 		"Afero/AferoLogo58/AferoLogo58@3x.png",
 		"Afero/bg_texture/bg_texture.png",
 		"Afero/bg_texture/bg_texture@2x.png",
-		"Afero/bg_texture/bg_texture@3x.png",
-		"Afero/splash_logo/splash_logo.png",
-		"Afero/splash_logo/splash_logo@2x.png",
-		"Afero/splash_logo/splash_logo@3x.png"
+		"Afero/bg_texture/bg_texture@3x.png"
 	],
 	"imagesScaled": [
+		"assets/Kenmore/splash_logo/splash_logo.png"
 		"vector_avatar.pdf",
-		"large/splash_logo.png",
 		"large/ASR-1.png",
 		"large/brokenwashingmachine@3x.png"
 	],
