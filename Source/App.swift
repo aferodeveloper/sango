@@ -30,6 +30,12 @@ private let firstPassIgnoredKeys = [keyCopied, keyFonts, keySchemaVersion, keyIm
                                     keyImagesScaled, keyImagesIos, keyImagesAndroid,
                                     keyImagesTinted, keyJava, keySwift]
 
+private enum LangType {
+    case Unset
+    case Java
+    case Swift
+}
+
 class App
 {
     private var package:String = ""
@@ -37,20 +43,23 @@ class App
     private var sourceAssetFolder:String? = nil
     private var outputAssetFolder:String? = nil
 
+    private var inputFile:String? = nil
+    private var inputFiles:[String]? = nil
+    private var outputClassFile:String? = nil
+
+    private var compileType:LangType = .Unset
+
     func usage() -> Void {
         print("Usage:")
-        print("     -c      basename - creates a json template for using sango")
-        print("     -i      file.json")
-        print("     -o      source.java|swift")
-        print("     -java   write java source")
-        print("     -swift  write swift source")
-        print("     -a      asset source folder (read)")
-        print("     -oa     asset root folder (write), typically iOS Resource, or Android app/src/main")
-    }
-
-    private enum LangType {
-        case Java
-        case Swift
+        print("     -template       basename - creates a json template for using sango")
+        print("     -config         use config file for options, instead of command line")
+        print("     -input          file.json")
+        print("     -inputs         file1.json file2.json")
+        print("     -input_assets   asset source folder (read)")
+        print("     -out_source     source.java|swift")
+        print("     -java           write java source")
+        print("     -swift          write swift source")
+        print("     -out_assets     asset root folder (write), typically iOS Resource, or Android app/src/main")
     }
 
     private func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
@@ -590,29 +599,57 @@ class App
             exit(0)
         }
 
-        let baseName = getOption(args, option: "-c")
+        let baseName = getOption(args, option: "-template")
         if (baseName != nil) {
             createTemplate(baseName!)
             exit(0)
         }
 
-        var type:LangType = .Swift
-        if (findOption(args, option: "-java")) {
-            type = .Java
+        let configFile = getOption(args, option: "-config")
+        if (configFile != nil) {
+            let result = fromJSONFile(configFile!)
+            if (result != nil) {
+                inputFile = result!["input"] as? String
+                sourceAssetFolder = result!["input_assets"] as? String
+                outputClassFile = result!["out_source"] as? String
+                outputAssetFolder = result!["out_assets"] as? String
+                let type = result!["type"] as? String
+                if (type == "java") {
+                    compileType = .Java
+                }
+                else if (type == "swift") {
+                    compileType = .Swift
+                }
+            }
         }
-        else if (findOption(args, option: "-swift") == false) {
-            print("Error: need either -swift or -java")
-            exit(-1)
+        
+        if (compileType == .Unset) {
+            if (findOption(args, option: "-java")) {
+                compileType = .Java
+            }
+            else if (findOption(args, option: "-swift")) {
+                compileType = .Swift
+            }
+            else {
+                print("Error: need either -swift or -java")
+                exit(-1)
+            }
         }
 
-        var outputFile = getOption(args, option: "-o")
-        if (outputFile == nil) {
+        if (outputClassFile == nil) {
+            outputClassFile = getOption(args, option: "-out_source")
+        }
+        if (outputClassFile != nil) {
+            outputClassFile = NSString(string: outputClassFile!).stringByExpandingTildeInPath
+        }
+        else {
             print("Error: missing output file")
             exit(-1)
         }
-        outputFile = NSString(string: outputFile!).stringByExpandingTildeInPath
 
-        sourceAssetFolder = getOption(args, option: "-a")
+        if (sourceAssetFolder == nil) {
+            sourceAssetFolder = getOption(args, option: "-input_assets")
+        }
         if (sourceAssetFolder != nil) {
             sourceAssetFolder = NSString(string: sourceAssetFolder!).stringByExpandingTildeInPath
         }
@@ -621,7 +658,9 @@ class App
             exit(-1)
         }
         
-        outputAssetFolder = getOption(args, option: "-ao")
+        if (outputAssetFolder == nil) {
+            outputAssetFolder = getOption(args, option: "-out_assets")
+        }
         if (outputAssetFolder != nil) {
             outputAssetFolder = NSString(string: outputAssetFolder!).stringByExpandingTildeInPath
         }
@@ -630,23 +669,31 @@ class App
             exit(-1)
         }
 
-        let inputFile = getOption(args, option: "-i")
+        var result:[String:AnyObject]? = nil
+        if (inputFiles == nil) {
+            inputFiles = getOptions(args, option: "-inputs")
+            for file in inputFiles! {
+                let d = fromJSONFile(file)
+                if (d != nil) {
+                    if (result == nil) {
+                        result = d
+                    }
+                    else {
+                        result = result! + d!
+                    }
+                }
+            }
+        }
+        if (inputFile == nil) {
+            inputFile = getOption(args, option: "-input")
+            
+        }
         if (inputFile != nil) {
-            let location = NSString(string: inputFile!).stringByExpandingTildeInPath
-            let fileContent = NSData(contentsOfFile: location)
-            if (fileContent != nil) {
-                if let result = fromJSON(fileContent!) {
-                    consume(result, type: type, outputFile: outputFile!)
-                }
-                else {
-                    print("Error: Can't parse \(location) as JSON")
-                    exit(-1)
-                }
-            }
-            else {
-                print("Error: file \(inputFile) not found")
-                exit(-1)
-            }
+            result = fromJSONFile(inputFile!)
+        }
+        
+        if (result != nil) {
+            consume(result!, type: compileType, outputFile: outputClassFile!)
         }
         else {
             print("Error: missing input file")
@@ -702,7 +749,7 @@ private extension NSImage
         NSGraphicsContext.saveGraphicsState()
         
         NSGraphicsContext.setCurrentContext(NSGraphicsContext(bitmapImageRep: bitmap))
-        self.drawAtPoint(CGPoint.zero,
+        self.drawAtPoint(NSPoint.zero,
                          fromRect: NSRect.zero,
                          operation: NSCompositingOperation.CompositeSourceOver,
                          fraction: 1.0)
@@ -772,6 +819,23 @@ private func toJSON(dictionary:Dictionary<String, AnyObject>) -> String? {
     }
 }
 
+private func fromJSONFile(file:String) -> [String:AnyObject]? {
+    var result:[String: AnyObject]?
+
+    let location = NSString(string: file).stringByExpandingTildeInPath
+    let fileContent = NSData(contentsOfFile: location)
+    if (fileContent != nil) {
+        result = fromJSON(fileContent!)
+        if (result == nil) {
+            print("Error: Can't parse \(location) as JSON")
+        }
+    }
+    else {
+        print("Error: can't find file \(location)")
+    }
+    return result
+}
+
 private func fromJSON(data:NSData) -> [String: AnyObject]? {
     var dict:[String: AnyObject]?
     do {
@@ -782,6 +846,19 @@ private func fromJSON(data:NSData) -> [String: AnyObject]? {
         dict = nil
     }
     return dict
+}
+
+func + <K,V>(left: Dictionary<K,V>, right: Dictionary<K,V>)
+    -> Dictionary<K,V>
+{
+    var map = Dictionary<K,V>()
+    for (k, v) in left {
+        map[k] = v
+    }
+    for (k, v) in right {
+        map[k] = v
+    }
+    return map
 }
 
 private extension Double

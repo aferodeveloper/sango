@@ -1,5 +1,4 @@
 {
-	"schemaVersion": 1,
 	"fonts": [
 		"GT-Walsheim-Black-Oblique.ttf",
 		"GT-Walsheim-Black.ttf"
@@ -49,26 +48,5 @@
 	"copied": [
 		"file_data1",
 		"file_data2"
-	],
-	"java": {
-		"package": "afero.ui.testandroid",
-		"base": "Constants"
-	},
-	"swift": {
-		"base": "Constants"
-	},
-	"Colors": {
-		"UI_BASE_COLOR": "67,163,199,1",
-		"UI_SECONDARY_COLOR": "#431298",
-		"UI_SECONDARY_COLOR_LOW": "#80431298",
-		"DEFAULT_UI_FONT": "GT-Walsheim-Black.ttf",
-		"DEFAULT_AVATAR": "account_avatar1",
-		"PREF_ACCOUNT_NAME": "pref_account_display_name",
-		"PREF_SERVICE": "pref_service_name",
-		"DEFAULT_DISPLAY_UI_STYLE": 1
-	},
-	"Service": {
-		"BASE_URL_PROD_USW2": "api.afero.io",
-		"BASE_URL_STAGE": "api.dev.afero.io"
-	}
+	]
 }

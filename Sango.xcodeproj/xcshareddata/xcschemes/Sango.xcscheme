@@ -64,35 +64,35 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-c blank"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-i example.json"
+            argument = "-input example.json"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-swift"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-o Constants.swift"
-            isEnabled = "NO">
+            argument = "-out_source Constants.swift"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-java"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-o Constants.java"
-            isEnabled = "NO">
+            argument = "-out_source Constants.java"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-ao temp"
-            isEnabled = "NO">
+            argument = "-out_assets temp"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-a assets"
+            argument = "-input_assets assets"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-config example1.json"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

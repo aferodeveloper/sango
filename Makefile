@@ -34,6 +34,14 @@ install: distro
 	@sudo cp $(TARGET) /usr/local/bin/$(TARGET)
 
 run: distro
-	@./$(TARGET) -i example/example.json -swift -o temp_ios/Constants.swift -a example/assets -ao temp_ios/Resources
-	@./$(TARGET) -i example/example.json -java -o temp_android/Constants.java -a example/assets -ao temp_android
+	@./$(TARGET) -input example/source.json \
+				-swift \
+				-out_source temp_ios/Constants.swift \
+				-input_assets example/assets \
+				-out_assets temp_ios/Resources
+	@./$(TARGET) -input example/source.json \
+				-java \
+				-out_source temp_android/Constants.java \
+				-input_assets example/assets \
+				-out_assets temp_android
 

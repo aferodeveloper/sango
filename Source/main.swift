@@ -14,7 +14,7 @@ import CoreFoundation
 func findOption(args:[String], option:String) -> Bool {
     var found = false
     for argument in args {
-        if argument == option {
+        if (argument == option) {
             found = true
         }
     }
@@ -30,6 +30,30 @@ func getOption(args:[String], option:String) -> String? {
                 indx = indx! + 1
                 if indx < args.count {
                     found = args[indx!]
+                }
+            }
+            break
+        }
+    }
+    return found
+}
+
+func getOptions(args:[String], option:String) -> [String]? {
+    var found:[String]? = nil
+    for argument in args {
+        if (argument == option) {
+            var indx = args.indexOf(argument)
+            if (indx != nil) {
+                indx = indx! + 1
+                found = []
+                for dex in indx!...args.count {
+                    let str = args[dex]
+                    if (str.hasPrefix("-") == false) {
+                        found?.append(str)
+                    }
+                    else {
+                        break
+                    }
                 }
             }
             break

@@ -25,7 +25,6 @@
 
 /* Begin PBXFileReference section */
 		AA6C0D771D5A9AB000ECA808 /* Sango */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sango; sourceTree = BUILT_PRODUCTS_DIR; };
-		AAAEBD9E1D63AF100008B039 /* example.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = example.json; sourceTree = "<group>"; };
 		AAB57D9C1D5B883800FA37CA /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = App.swift; path = Source/App.swift; sourceTree = "<group>"; };
 		AAB57D9D1D5B883800FA37CA /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = Source/main.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -46,7 +45,6 @@
 			children = (
 				AAB57D9C1D5B883800FA37CA /* App.swift */,
 				AAB57D9D1D5B883800FA37CA /* main.swift */,
-				AAAEBD9E1D63AF100008B039 /* example.json */,
 				AA6C0D781D5A9AB000ECA808 /* Products */,
 			);
 			sourceTree = "<group>";
