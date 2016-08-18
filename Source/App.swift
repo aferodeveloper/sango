@@ -503,9 +503,8 @@ class App
         }
     }
     
-    private func consume(data: Dictionary <String, AnyObject>, type: LangType, outputFile: String) -> Void {
-        deleteFile(outputFile)
-
+    private func consume(data: Dictionary <String, AnyObject>, type: LangType, outputFile: String) -> Void
+    {
         // process first pass keys
         for (key, value) in data {
             if (key == keySchemaVersion) {
