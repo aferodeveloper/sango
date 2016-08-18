@@ -576,7 +576,7 @@ class App
             }
         }
         if (genString.isEmpty == false) {
-            var outputStr = "/* machine generated, by Afero.io sango */\n\n"
+            var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
             if (type == .Swift) {
                 outputStr.appendContentsOf("import UIKit\n")
             }
