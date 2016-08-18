@@ -55,15 +55,16 @@ class App
 
     func usage() -> Void {
         print("Usage:")
-        print("     -template       basename - creates a json template for using sango")
-        print("     -config         use config file for options, instead of command line")
-        print("     -input          file.json")
-        print("     -inputs         file1.json file2.json")
-        print("     -input_assets   asset source folder (read)")
-        print("     -out_source     source.java|swift")
-        print("     -java           write java source")
-        print("     -swift          write swift source")
-        print("     -out_assets     asset root folder (write), typically iOS Resource, or Android app/src/main")
+        print("  -asset_template [basename]          creates a json template, specificly for the assets")
+        print("  -config_template [file.json]        creates a json template, specificly for the app")
+        print("  -config [file.json]                 use config file for options, instead of command line")
+        print("  -input [file.json]                  asset json file")
+        print("  -inputs [file1.json file2.json ...] merges asset files and process")
+        print("  -input_assets [folder]              asset source folder (read)")
+        print("  -out_source [source.java|swift]     path to result of language")
+        print("  -java                               write java source")
+        print("  -swift                              write swift source")
+        print("  -out_assets [folder]                asset root folder (write), typically iOS Resource, or Android app/src/main")
     }
 
     private func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
@@ -419,7 +420,8 @@ class App
         "Icon-80.png": 80,
         "Icon-80@2x.png": 160,
         "Icon-120.png": 120,
-        "Icon-167.png": 167
+        "Icon-167.png": 167,
+        "Icon-83.5@2x.png": 167
     ]
     // ic_launcher.png
     private let AndroidDefaultIconName = "ic_launcher.png"
@@ -679,20 +681,20 @@ class App
         return ok
     }
 
-    private let baseTemplate = [keySchemaVersion :SchemaVersion,
-                                keyFonts: [],
-                                keyImages: [],
-                                keyImagesScaled: [],
-                                keyImagesIos: [],
-                                keyImagesAndroid: [],
-                                keyCopied: [],
-                                keyAppIcon: "",
-                                keyIOSAppIcon: "",
-                                keyAndroidAppIcon: ""
+    private let baseAssetTemplate = [keySchemaVersion :SchemaVersion,
+                                    keyFonts: [],
+                                    keyImages: [],
+                                    keyImagesScaled: [],
+                                    keyImagesIos: [],
+                                    keyImagesAndroid: [],
+                                    keyCopied: [],
+                                    keyAppIcon: "",
+                                    keyIOSAppIcon: "",
+                                    keyAndroidAppIcon: ""
                                 ]
 
-    private func createTemplate(base: String) -> Void {
-        var temp = baseTemplate as! Dictionary<String,AnyObject>
+    private func createAssetTemplate(base: String) -> Void {
+        var temp = baseAssetTemplate as! Dictionary<String,AnyObject>
         temp[keyJava] = ["package" : "one.two", "base": base]
         temp[keySwift] = ["base": base]
         temp["Example"] = ["EXAMPLE_CONSTANT": 1]
@@ -709,18 +711,42 @@ class App
         }
     }
     
+    private let baseConfigTemplate = ["inputs": ["example/base.json","example/brand_1.json"],
+                                     "input_assets": "../path/to/depot",
+                                     "out_source": "path/to/app/source",
+                                     "out_assets": "path/to/app/resources",
+                                     "type": "swift or java"
+    ]
+    private func createConfigTemplate(file: String) -> Void {
+        let jsonString = toJSON(baseConfigTemplate)
+        if (jsonString != nil) {
+            do {
+                try jsonString!.writeToFile(file, atomically: true, encoding: NSUTF8StringEncoding)
+                print("JSON template created at \"\(file)\"")
+            }
+            catch {
+                print("Error: writing to \(file)")
+            }
+        }
+    }
+    
     func start(args: [String]) -> Void {
         if (findOption(args, option: "-h") || args.count == 0) {
             usage()
             exit(0)
         }
 
-        let baseName = getOption(args, option: "-template")
+        let baseName = getOption(args, option: "-asset_template")
         if (baseName != nil) {
-            createTemplate(baseName!)
+            createAssetTemplate(baseName!)
             exit(0)
         }
 
+        let configTemplateFile = getOption(args, option: "-config_template")
+        if (configTemplateFile != nil) {
+            createConfigTemplate(configTemplateFile!)
+            exit(0)
+        }
         let configFile = getOption(args, option: "-config")
         if (configFile != nil) {
             let result = fromJSONFile(configFile!)
@@ -948,7 +974,7 @@ private func toJSON(dictionary:Dictionary<String, AnyObject>) -> String? {
         let data: NSData
         data = try NSJSONSerialization.dataWithJSONObject(dictionary, options: .PrettyPrinted)
         let jsonString = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
-        return jsonString
+        return jsonString.stringByReplacingOccurrencesOfString("\\/", withString: "/")
     }
     catch {
         return nil
