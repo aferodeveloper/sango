@@ -170,8 +170,36 @@ public extension String
         return camelCase
     }
     
+    /**
+     * File-based resource names must contain only lowercase a-z, 0-9, or underscore
+     */
+    public func isAndroidCompatible() -> Bool {
+        let set:NSMutableCharacterSet = NSMutableCharacterSet()
+        set.formUnionWithCharacterSet(NSCharacterSet.lowercaseLetterCharacterSet())
+        set.formUnionWithCharacterSet(NSCharacterSet.decimalDigitCharacterSet())
+        set.addCharactersInString("_")
+        let inverted = set.invertedSet
+        if let _ = self.rangeOfCharacterFromSet(inverted, options: .CaseInsensitiveSearch) {
+            return false
+        }
+        return true
+    }
+
     public func isNumber() -> Bool {
         let numberCharacters = NSCharacterSet.decimalDigitCharacterSet().invertedSet
         return !self.isEmpty && self.rangeOfCharacterFromSet(numberCharacters) == nil
     }
 }
+
+func test() -> Void {
+    let a = "123".isAndroidCompatible()
+    let b = "ANB".isAndroidCompatible()
+    let c = "asd_234".isAndroidCompatible()
+    let d = ",,:asd".isAndroidCompatible()
+    let e = "&%#asd".isAndroidCompatible()
+    let f = "fe_12_😀".isAndroidCompatible()
+    
+    print(a, b, c, d, e, f)
+}
+
+
