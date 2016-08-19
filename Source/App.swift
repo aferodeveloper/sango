@@ -76,6 +76,12 @@ class App
         }
     }
     
+    // Save image, tinted
+    func saveImage(image: NSImage, file: String) -> Bool {
+        let tint = NSColor.greenColor().colorWithAlphaComponent(0.5)
+        let tintedImage = image.tint(tint)
+        return tintedImage.saveTo(file)
+    }
     
     private func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
         var outputString = "\n"
@@ -295,17 +301,17 @@ class App
                 let image2 = image3.scale(66.67)        // @2
                 let image = image3.scale(33.34)         // @1
                 var file = destPath + "/" + fileName + "@3x.png"
-                if (image3.saveTo(file) == false) {
+                if (saveImage(image3, file: file) == false) {
                     exit(-1)
                 }
                 debug("Image scale and copy \(filePath) -> \(file)")
                 file = destPath + "/" + fileName + "@2x.png"
-                if (image2.saveTo(file) == false) {
+                if (saveImage(image2, file: file) == false) {
                     exit(-1)
                 }
                 debug("Image scale and copy \(filePath) -> \(file)")
                 file = destPath + "/" + fileName + ".png"
-                if (image.saveTo(destPath + "/" + fileName + ".png") == false) {
+                if (saveImage(image, file: file) == false) {
                     exit(-1)
                 }
                 debug("Image scale and copy \(filePath) -> \(file)")
@@ -326,22 +332,22 @@ class App
                 createFolders([mdpi, hdpi, xhdpi, xxhdpi])
                 fileName = fileName + ".png"
                 var file = xxhdpi + fileName
-                if (image4.saveTo(file) == false) {
+                if (saveImage(image4, file: file) == false) {
                     exit(-1)
                 }
                 debug("Image scale and copy \(filePath) -> \(file)")
                 file = xhdpi + fileName
-                if (image3.saveTo(xhdpi + fileName) == false) {
+                if (saveImage(image3, file: file) == false) {
                     exit(-1)
                 }
                 debug("Image scale and copy \(filePath) -> \(file)")
                 file = hdpi + fileName
-                if (image2.saveTo(hdpi + fileName) == false) {
+                if (saveImage(image2, file: file) == false) {
                     exit(-1)
                 }
                 debug("Image scale and copy \(filePath) -> \(file)")
                 file = mdpi + fileName
-                if (image.saveTo(mdpi + fileName) == false) {
+                if (saveImage(image, file: file) == false) {
                     exit(-1)
                 }
                 debug("Image scale and copy \(filePath) -> \(file)")
@@ -460,7 +466,7 @@ class App
                 let height = CGFloat(value)
                 let newImage = iconImage.resize(width, height: height)
                 let destFile = destPath + "/" + key
-                newImage.saveTo(destFile)
+                saveImage(newImage, file: destFile)
                 debug("Image scale icon and copy \(filePath) -> \(destFile)")
             }
         }
@@ -472,7 +478,7 @@ class App
                 let destPath = outputAssetFolder! + "/res/drawable-" + key
                 createFolder(destPath)
                 let destFile = destPath + "/" + AndroidDefaultIconName
-                newImage.saveTo(destFile)
+                saveImage(newImage, file: destFile)
                 debug("Image scale icon and copy \(filePath) -> \(destFile)")
             }
         }
@@ -746,6 +752,17 @@ class App
         }
 
         verbose = findOption(args, option: "-verbose")
+        verbose = true
+        debug("Sango © 2016 Afero, Inc")
+        
+        let test = shell(["which git"])
+        if (test.isEmpty == false) {
+            debug("git installed")
+        }
+        else {
+            debug("git not installed")
+        }
+
         let baseName = getOption(args, option: "-asset_template")
         if (baseName != nil) {
             createAssetTemplate(baseName!)

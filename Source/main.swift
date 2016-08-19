@@ -83,15 +83,6 @@ func getOptions(args:[String], option:String) -> [String]? {
 }
 
 // MARK: main
-print("Sango © 2016 Afero, Inc")
-
-let test = shell(["which git"])
-if (test.isEmpty == false) {
-    print("git installed")
-}
-else {
-    print("git not installed")
-}
 
 private var args = Process.arguments
 args.removeFirst()
