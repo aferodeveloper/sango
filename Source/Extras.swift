@@ -14,7 +14,7 @@ public extension NSImage
     /**
      *  Given a file path, load and return an NSImage
      */
-    static func loadFrom(file: String) -> NSImage! {
+    public static func loadFrom(file: String) -> NSImage! {
         let newImage = NSImage(contentsOfFile: file)
         return newImage
     }
@@ -23,7 +23,7 @@ public extension NSImage
      *  Given a file, image.png, image@2.png, image@3.png, return the scaling factor
      *  1, 2, 3
      */
-    static func getScaleFrom(file :String) -> (scale: Int, file: String) {
+    public static func getScaleFrom(file :String) -> (scale: Int, file: String) {
         var scale = 1
         var fileName = (file as NSString).lastPathComponent
         fileName = (fileName as NSString).stringByDeletingPathExtension
@@ -38,7 +38,7 @@ public extension NSImage
         return (scale: scale, file: fileName)
     }
     
-    func saveTo(file: String) -> Bool {
+    public func saveTo(file: String) -> Bool {
         let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
                                       pixelsWide: Int(self.size.width),
                                       pixelsHigh: Int(self.size.height),
@@ -73,7 +73,7 @@ public extension NSImage
         return ok
     }
     
-    func scale(percent: CGFloat) -> NSImage {
+    public func scale(percent: CGFloat) -> NSImage {
         var newR = CGRectMake(0, 0, self.size.width, self.size.height)
         let Width = CGRectGetWidth(newR)
         let Height = CGRectGetHeight(newR)
@@ -98,7 +98,18 @@ public extension NSImage
         return resize(newR.width, height: newR.height)
     }
     
-    func resize(width: CGFloat, height: CGFloat) -> NSImage {
+    public func tint(color: NSColor) -> NSImage {
+        let image = NSImage(data: self.TIFFRepresentation!)
+        image?.lockFocus()
+        
+        let rect = NSMakeRect(0, 0, self.size.width, self.size.height)
+        color.setFill()
+        NSBezierPath.fillRect(rect)
+        image?.unlockFocus()
+        return image!
+    }
+
+    public func resize(width: CGFloat, height: CGFloat) -> NSImage {
         let destSize = NSMakeSize(width, height)
         let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
                                       pixelsWide: Int(destSize.width),
@@ -144,13 +155,13 @@ public func + <K,V>(left: Dictionary<K,V>, right: Dictionary<K,V>)
 
 public extension Double
 {
-    var roundTo3f: Double {return Double(round(1000 * self) / 1000) }
-    var roundTo2f: Double {return Double(round(100 * self) / 100) }
+    public var roundTo3f: Double {return Double(round(1000 * self) / 1000) }
+    public var roundTo2f: Double {return Double(round(100 * self) / 100) }
 }
 
 public extension String
 {
-    func snakeCaseToCamelCase() -> String {
+    public func snakeCaseToCamelCase() -> String {
         let items = self.componentsSeparatedByString("_")
         var camelCase = ""
         items.enumerate().forEach {
@@ -159,7 +170,7 @@ public extension String
         return camelCase
     }
     
-    func isNumber() -> Bool {
+    public func isNumber() -> Bool {
         let numberCharacters = NSCharacterSet.decimalDigitCharacterSet().invertedSet
         return !self.isEmpty && self.rangeOfCharacterFromSet(numberCharacters) == nil
     }
