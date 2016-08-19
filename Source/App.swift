@@ -53,20 +53,30 @@ class App
 
     private var compileType:LangType = .Unset
 
+    private var verbose = false
+
     func usage() -> Void {
         print("Usage:")
-        print("  -asset_template [basename]          creates a json template, specificly for the assets")
-        print("  -config_template [file.json]        creates a json template, specificly for the app")
-        print("  -config [file.json]                 use config file for options, instead of command line")
-        print("  -input [file.json]                  asset json file")
-        print("  -inputs [file1.json file2.json ...] merges asset files and process")
-        print("  -input_assets [folder]              asset source folder (read)")
-        print("  -out_source [source.java|swift]     path to result of language")
-        print("  -java                               write java source")
-        print("  -swift                              write swift source")
-        print("  -out_assets [folder]                asset root folder (write), typically iOS Resource, or Android app/src/main")
+        print(" -asset_template [basename]          creates a json template, specificly for the assets")
+        print(" -config_template [file.json]        creates a json template, specificly for the app")
+        print(" -config [file.json]                 use config file for options, instead of command line")
+        print(" -input [file.json]                  asset json file")
+        print(" -inputs [file1.json file2.json ...] merges asset files and process")
+        print(" -input_assets [folder]              asset source folder (read)")
+        print(" -out_source [source.java|swift]     path to result of language")
+        print(" -java                               write java source")
+        print(" -swift                              write swift source")
+        print(" -out_assets [folder]                asset root folder (write), typically iOS Resource, or Android app/src/main")
+        print(" -verbose                            be verbose in details")
     }
 
+    func debug(text: String) -> Void {
+        if (verbose) {
+            print(text)
+        }
+    }
+    
+    
     private func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
         var outputString = "\n"
         if (type == .Swift) {
@@ -288,17 +298,17 @@ class App
                 if (image3.saveTo(file) == false) {
                     exit(-1)
                 }
-                print("Image scale and copy \(filePath) -> \(file)")
+                debug("Image scale and copy \(filePath) -> \(file)")
                 file = destPath + "/" + fileName + "@2x.png"
                 if (image2.saveTo(file) == false) {
                     exit(-1)
                 }
-                print("Image scale and copy \(filePath) -> \(file)")
+                debug("Image scale and copy \(filePath) -> \(file)")
                 file = destPath + "/" + fileName + ".png"
                 if (image.saveTo(destPath + "/" + fileName + ".png") == false) {
                     exit(-1)
                 }
-                print("Image scale and copy \(filePath) -> \(file)")
+                debug("Image scale and copy \(filePath) -> \(file)")
             }
             else if (type == .Java) {
                 let image4 = NSImage.loadFrom(filePath) // 3x
@@ -319,22 +329,22 @@ class App
                 if (image4.saveTo(file) == false) {
                     exit(-1)
                 }
-                print("Image scale and copy \(filePath) -> \(file)")
+                debug("Image scale and copy \(filePath) -> \(file)")
                 file = xhdpi + fileName
                 if (image3.saveTo(xhdpi + fileName) == false) {
                     exit(-1)
                 }
-                print("Image scale and copy \(filePath) -> \(file)")
+                debug("Image scale and copy \(filePath) -> \(file)")
                 file = hdpi + fileName
                 if (image2.saveTo(hdpi + fileName) == false) {
                     exit(-1)
                 }
-                print("Image scale and copy \(filePath) -> \(file)")
+                debug("Image scale and copy \(filePath) -> \(file)")
                 file = mdpi + fileName
                 if (image.saveTo(mdpi + fileName) == false) {
                     exit(-1)
                 }
-                print("Image scale and copy \(filePath) -> \(file)")
+                debug("Image scale and copy \(filePath) -> \(file)")
             }
             else {
                 print("Error: wrong type")
@@ -451,7 +461,7 @@ class App
                 let newImage = iconImage.resize(width, height: height)
                 let destFile = destPath + "/" + key
                 newImage.saveTo(destFile)
-                print("Image scale icon and copy \(filePath) -> \(destFile)")
+                debug("Image scale icon and copy \(filePath) -> \(destFile)")
             }
         }
         else if (type == .Java) {
@@ -463,7 +473,7 @@ class App
                 createFolder(destPath)
                 let destFile = destPath + "/" + AndroidDefaultIconName
                 newImage.saveTo(destFile)
-                print("Image scale icon and copy \(filePath) -> \(destFile)")
+                debug("Image scale icon and copy \(filePath) -> \(destFile)")
             }
         }
         else {
@@ -572,7 +582,7 @@ class App
             }
             else if (key == keyImagesTinted) {
 //                let constants = value as! Dictionary<String, AnyObject>
-//                print("image tinted \(constants)")
+//                debug("image tinted \(constants)")
             }
         }
         if (genString.isEmpty == false) {
@@ -658,7 +668,7 @@ class App
         var ok = true
         do {
             try NSFileManager.defaultManager().copyItemAtPath(src, toPath: dest)
-            print("Copy \(src) -> \(dest)")
+            debug("Copy \(src) -> \(dest)")
         }
         catch {
             print("Error: copying file \(src) to \(dest)")
@@ -702,7 +712,7 @@ class App
         if (jsonString != nil) {
             do {
                 try jsonString!.writeToFile(outputFile, atomically: true, encoding: NSUTF8StringEncoding)
-                print("JSON template created at \"\(outputFile)\"")
+                debug("JSON template created at \"\(outputFile)\"")
             }
             catch {
                 print("Error: writing to \(outputFile)")
@@ -721,7 +731,7 @@ class App
         if (jsonString != nil) {
             do {
                 try jsonString!.writeToFile(file, atomically: true, encoding: NSUTF8StringEncoding)
-                print("JSON template created at \"\(file)\"")
+                debug("JSON template created at \"\(file)\"")
             }
             catch {
                 print("Error: writing to \(file)")
@@ -735,6 +745,7 @@ class App
             exit(0)
         }
 
+        verbose = findOption(args, option: "-verbose")
         let baseName = getOption(args, option: "-asset_template")
         if (baseName != nil) {
             createAssetTemplate(baseName!)
