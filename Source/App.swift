@@ -54,6 +54,7 @@ class App
     private var compileType:LangType = .Unset
 
     private var verbose = false
+    private var testTint = false
 
     func usage() -> Void {
         print("Usage:")
@@ -78,9 +79,14 @@ class App
     
     // Save image, tinted
     func saveImage(image: NSImage, file: String) -> Bool {
-        let tint = NSColor.greenColor().colorWithAlphaComponent(0.5)
-        let tintedImage = image.tint(tint)
-        return tintedImage.saveTo(file)
+        if (testTint) {
+            let tint = NSColor.greenColor().colorWithAlphaComponent(0.5)
+            let tintedImage = image.tint(tint)
+            return tintedImage.saveTo(file)
+        }
+        else {
+            return image.saveTo(file)
+        }
     }
     
     private func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
@@ -488,6 +494,37 @@ class App
         }
     }
     
+    private func copyAssets(files: [String], type: LangType, useRoot: Bool) -> Void {
+        for file in files {
+            let filePath = sourceAssetFolder! + "/" + file
+            var destFile:String
+            if (useRoot) {
+                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+            }
+            else {
+                destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
+            }
+            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
+            createFolder(destPath)
+            
+            var fileName = (file as NSString).lastPathComponent
+            
+            if (type == .Swift) {
+                copyFile(filePath, dest: destFile)
+            }
+            else if (type == .Java) {
+                let defaultLoc = destPath + "/assets/"
+                createFolder(defaultLoc)
+                fileName = defaultLoc + fileName
+                copyFile(filePath, dest: fileName)
+            }
+            else {
+                print("Error: wrong type")
+                exit(-1)
+            }
+        }
+    }
+
     private func copyFonts(files: [String], type: LangType, useRoot: Bool) -> Void {
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
@@ -552,7 +589,7 @@ class App
         }
         for (key, value) in data {
             if (key == keyCopied) {
-                copyFiles(value as! Array, type: type, useRoot: false)
+                copyAssets(value as! Array, type: type, useRoot: false)
             }
             else if (key == keyAppIcon) {
                 copyAppIcon(value as! String, type: type)
@@ -649,31 +686,34 @@ class App
         return ok
     }
 
-    private func copyFiles(files: [String], type: LangType, useRoot: Bool) -> Void {
-        // our copy function is special
-        
-        for file in files {
-            let filePath = sourceAssetFolder! + "/" + file
-            var destFile:String
-            if (useRoot) {
-                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
-            }
-            else {
-                destFile = outputAssetFolder! + "/" + file
-            }
-            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
-            createFolder(destPath)
-            if (copyFile(filePath, dest: destFile) == false) {
-                exit(-1)
-            }
-        }
-    }
+//    private func copyFiles(files: [String], type: LangType, useRoot: Bool) -> Void {
+//        for file in files {
+//            let filePath = sourceAssetFolder! + "/" + file
+//            var destFile:String
+//            if (useRoot) {
+//                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+//            }
+//            else {
+//                destFile = outputAssetFolder! + "/" + file
+//            }
+//            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
+//            createFolder(destPath)
+//            if (copyFile(filePath, dest: destFile) == false) {
+//                exit(-1)
+//            }
+//        }
+//    }
     
-    private func copyFile(src: String, dest: String) -> Bool {
+    private func copyFile(src: String, dest: String, restrict: Bool = false) -> Bool {
+        var destFile = dest
+//        if (restrict) {
+//            let fileName = (destFile as NSString).lastPathComponent
+//            if (
+//        }
         deleteFile(dest)
         var ok = true
         do {
-            try NSFileManager.defaultManager().copyItemAtPath(src, toPath: dest)
+            try NSFileManager.defaultManager().copyItemAtPath(src, toPath: destFile)
             debug("Copy \(src) -> \(dest)")
         }
         catch {
@@ -752,7 +792,6 @@ class App
         }
 
         verbose = findOption(args, option: "-verbose")
-        verbose = true
         debug("Sango © 2016 Afero, Inc")
         
         let test = shell(["which git"])
@@ -768,6 +807,8 @@ class App
             createAssetTemplate(baseName!)
             exit(0)
         }
+
+        testTint = findOption(args, option: "-tint")
 
         let configTemplateFile = getOption(args, option: "-config_template")
         if (configTemplateFile != nil) {
