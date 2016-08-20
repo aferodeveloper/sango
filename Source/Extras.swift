@@ -15,8 +15,26 @@ public extension NSImage
      *  Given a file path, load and return an NSImage
      */
     public static func loadFrom(file: String) -> NSImage! {
-        let newImage = NSImage(contentsOfFile: file)
-        return newImage
+        // Loading directly with NSImage, doesn't take in account of scale
+        let imageReps = NSBitmapImageRep.imageRepsWithContentsOfFile(file)
+        if (imageReps != nil) {
+            var width = 0
+            var height = 0
+            
+            for rep in imageReps! {
+                if (rep.pixelsWide > width) {
+                    width = rep.pixelsWide
+                }
+                if (rep.pixelsHigh > height) {
+                    height = rep.pixelsHigh
+                }
+            }
+            let newImage = NSImage(size: NSMakeSize(CGFloat(width), CGFloat(height)))
+            newImage.setName((file as NSString).lastPathComponent)
+            newImage.addRepresentations(imageReps!)
+            return newImage
+        }
+        return nil
     }
     
     /**
@@ -99,14 +117,36 @@ public extension NSImage
     }
     
     public func tint(color: NSColor) -> NSImage {
-        let image = NSImage(data: self.TIFFRepresentation!)
-        image?.lockFocus()
-        
+        let destSize = self.size
         let rect = NSMakeRect(0, 0, self.size.width, self.size.height)
+        let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
+                                      pixelsWide: Int(destSize.width),
+                                      pixelsHigh: Int(destSize.height),
+                                      bitsPerSample: 8,
+                                      samplesPerPixel: 4,
+                                      hasAlpha: true,
+                                      isPlanar: false,
+                                      colorSpaceName: NSDeviceRGBColorSpace,
+                                      bytesPerRow: 0,
+                                      bitsPerPixel: 0)!
+        bitmap.size = destSize
+        
+        NSGraphicsContext.saveGraphicsState()
+        
+        let context = NSGraphicsContext(bitmapImageRep: bitmap)
+        context?.imageInterpolation = NSImageInterpolation.High
+        NSGraphicsContext.setCurrentContext(context)
+        self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
+                        fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
+                        operation: NSCompositingOperation.CompositeSourceOver,
+                        fraction: 1.0)
         color.setFill()
         NSBezierPath.fillRect(rect)
-        image?.unlockFocus()
-        return image!
+
+        NSGraphicsContext.restoreGraphicsState()
+        let newImage = NSImage(size: destSize)
+        newImage.addRepresentation(bitmap)
+        return NSImage(data: newImage.TIFFRepresentation!)!
     }
 
     public func resize(width: CGFloat, height: CGFloat) -> NSImage {
