@@ -32,6 +32,8 @@
 		"large/brokenwashingmachine@3x.png",
 		"kenmore_pay_logo_horizontal@3x.png"
 	],
+	"globalTint": "#80B3A34A",
+
 	"imagesIos": [
 		"account_avatar2.png"
 	],

@@ -23,6 +23,7 @@ private let keyImagesScaled = "imagesScaled"
 private let keyImagesIos = "imagesIos"
 private let keyImagesAndroid = "imagesAndroid"
 private let keyImagesTinted = "imagesTinted"
+private let keyGlobalTint = "globalTint"
 private let keyCopied = "copied"
 private let keyAppIcon = "appIcon"
 private let keyIOSAppIcon = "iOSAppIcon"
@@ -32,7 +33,7 @@ private let keySwift = "swift"
 private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
                                     keyFonts, keySchemaVersion, keyImages,
                                     keyImagesScaled, keyImagesIos, keyImagesAndroid,
-                                    keyImagesTinted, keyJava, keySwift]
+                                    keyImagesTinted, keyJava, keySwift, keyGlobalTint]
 
 private enum LangType {
     case Unset
@@ -398,7 +399,18 @@ class App
     {
         let roots = imageResourcePath(file, type: type, useRoot: useRoot)
         createFolder(roots.destPath)
-        copyFile(roots.sourceFile, dest: roots.destFile)
+        if (globalTint == nil) {
+            copyFile(roots.sourceFile, dest: roots.destFile)
+        }
+        else {
+            let image = NSImage.loadFrom(roots.sourceFile)
+            if (image != nil) {
+                saveImage(image, file: roots.destFile)
+            }
+            else {
+                print("Error: Can't find source image \(roots.sourceFile)")
+            }
+        }
     }
 
     private func copyImages(files: [String], type: LangType, useRoot: Bool) -> Void {
@@ -563,6 +575,10 @@ class App
             else if (key == keySwift) {
                 let options = value as! Dictionary<String, AnyObject>
                 baseClass = options["base"] as! String
+            }
+            else if (key == keyGlobalTint) {
+                let color = parseColor(value as! String)
+                globalTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
             }
         }
         
