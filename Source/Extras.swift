@@ -140,8 +140,8 @@ public extension NSImage
                         fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
                         operation: NSCompositingOperation.CompositeSourceOver,
                         fraction: 1.0)
-        color.setFill()
-        NSBezierPath.fillRect(rect)
+        color.set()
+        NSRectFillUsingOperation(rect, .CompositeSourceAtop)
 
         NSGraphicsContext.restoreGraphicsState()
         let newImage = NSImage(size: destSize)
