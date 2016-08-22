@@ -54,7 +54,7 @@ class App
     private var compileType:LangType = .Unset
 
     private var verbose = false
-    private var testTint = false
+    private var globalTint:NSColor? = nil
 
     func usage() -> Void {
         print("Usage:")
@@ -79,9 +79,8 @@ class App
     
     // Save image, tinted
     func saveImage(image: NSImage, file: String) -> Bool {
-        if (testTint) {
-            let tint = NSColor.greenColor().colorWithAlphaComponent(0.5)
-            let tintedImage = image.tint(tint)
+        if (globalTint != nil) {
+            let tintedImage = image.tint(globalTint!)
             return tintedImage.saveTo(file)
         }
         else {
@@ -114,6 +113,67 @@ class App
         return outputString
     }
 
+    private func parseColor(color: String) -> (r:Double, g:Double, b:Double, a:Double, s:Int, rgb:UInt32)? {
+        var red:Double = 0
+        var green:Double = 0
+        var blue:Double = 0
+        var alpha:Double = 1
+        var rgbValue:UInt32 = 0
+        var isColor = false
+        var size = 0
+
+        let parts = color.componentsSeparatedByString(",")
+        if (parts.count == 3 || parts.count == 4) {
+            // color
+            red = Double(parts[0])! / 255.0
+            green = Double(parts[1])! / 255.0
+            blue = Double(parts[2])! / 255.0
+            alpha = 1
+            size = 3
+            if (parts.count == 4) {
+                alpha = Double(parts[3])! / 255.0
+                size = 4
+            }
+            isColor = true
+            let r = UInt32(red * 255.0)
+            let g = UInt32(green * 255.0)
+            let b = UInt32(blue * 255.0)
+            let a = UInt32(alpha * 255.0)
+            rgbValue = (a << 24) | (r << 16) | (g << 8) | b
+        }
+        else if (color.hasPrefix("#")) {
+            var hexStr = color.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
+            hexStr = hexStr.substringFromIndex(hexStr.startIndex.advancedBy(1))
+            
+            NSScanner(string: hexStr).scanHexInt(&rgbValue)
+            red = 1
+            green = 1
+            blue = 1
+            alpha = 1
+            
+            if (hexStr.characters.count < 6) {
+                print("Error: not enough characters for hex color definition. Needs 6.")
+                exit(-1)
+            }
+            
+            if (hexStr.characters.count >= 6) {
+                red = Double((rgbValue & 0x00FF0000) >> 16) / 255.0
+                green = Double((rgbValue & 0x0000FF00) >> 8) / 255.0
+                blue = Double(rgbValue & 0x000000FF) / 255.0
+                size = 3
+            }
+            if (hexStr.characters.count == 8) {
+                alpha = Double((rgbValue & 0xFF000000) >> 24) / 255.0
+                size = 4
+            }
+            isColor = true
+        }
+        if (isColor) {
+            return (r: red, g: green, b: blue, a: alpha, s: size, rgb:rgbValue)
+        }
+        return nil
+    }
+    
     private func writeConstants(name: String, constants: Dictionary<String, AnyObject>, type: LangType) -> String {
         var outputString = "\n"
         if (type == .Swift) {
@@ -130,48 +190,13 @@ class App
                     if (strValue.isNumber() == true) {
                         useQuotes = false
                     }
-                    
-                    let parts = strValue.componentsSeparatedByString(",")
-                    if (parts.count == 3 || parts.count == 4) {
-                        // color
-                        let red:Double = Double(parts[0])! / 255.0
-                        let green:Double = Double(parts[1])! / 255.0
-                        let blue:Double = Double(parts[2])! / 255.0
-                        var alpha:Double = 1
-                        if (parts.count == 4) {
-                            alpha = Double(parts[3])! / 255.0
+                    else {
+                        let color = parseColor(strValue)
+                        if (color != nil) {
+                            let line = "UIColor(red: \(color!.r.roundTo3f), green: \(color!.g.roundTo3f), blue: \(color!.b.roundTo3f), alpha: \(color!.a.roundTo3f))"
+                            outputString.appendContentsOf(line + "\t// ")
+                            useQuotes = false
                         }
-                        let line = "UIColor(red: \(red.roundTo3f), green: \(green.roundTo3f), blue: \(blue.roundTo3f), alpha: \(alpha.roundTo3f))"
-                        outputString.appendContentsOf(line + "\t// ")
-                        useQuotes = false
-                    }
-                    else if (strValue.hasPrefix("#")) {
-                        var hexStr = strValue.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
-                        hexStr = hexStr.substringFromIndex(hexStr.startIndex.advancedBy(1))
-                        
-                        var rgbValue:UInt32 = 0
-                        NSScanner(string: hexStr).scanHexInt(&rgbValue)
-                        var red:Double = 1
-                        var green:Double = 1
-                        var blue:Double = 1
-                        var alpha:Double = 1
-
-                        if (hexStr.characters.count < 6) {
-                            print("Error: not enough characters for hex color definition. Needs 6.")
-                            exit(-1)
-                        }
-
-                        if (hexStr.characters.count >= 6) {
-                            red = Double((rgbValue & 0x00FF0000) >> 16) / 255.0
-                            green = Double((rgbValue & 0x0000FF00) >> 8) / 255.0
-                            blue = Double(rgbValue & 0x000000FF) / 255.0
-                        }
-                        if (hexStr.characters.count == 8) {
-                            alpha = Double((rgbValue & 0xFF000000) >> 24) / 255.0
-                        }
-                        let line = "UIColor(red: \(red.roundTo3f), green: \(green.roundTo3f), blue: \(blue.roundTo3f), alpha: \(alpha.roundTo3f))"
-                        outputString.appendContentsOf(line + "\t// ")
-                        useQuotes = false
                     }
                 }
                 if (useQuotes) {
@@ -203,57 +228,20 @@ class App
                     }
                     else {
                         type = "String"
+
+                        let color = parseColor(strValue)
+                        if (color != nil) {
+                            type = "int"
+                            if (color?.s == 4) {
+                                parmSize = "L"
+                                type = "long"
+                            }
+                            let line = String(color!.rgb)
+                            strValue = String(line + parmSize + ";\t// \(value)")
+                            useQuotes = false
+                            endQuote = ""
+                        }
                     }
-                }
-                let parts = strValue.componentsSeparatedByString(",")
-                if (parts.count == 3 || parts.count == 4) {
-                    // color
-                    let red:Int = Int(parts[0])!
-                    let green:Int = Int(parts[1])!
-                    let blue:Int = Int(parts[2])!
-                    var alpha:Int = 1
-                    type = "int"
-                    if (parts.count == 4) {
-                        alpha = Int(parts[3])!
-                        parmSize = "L"
-                        type = "long"
-                    }
-                    let line = String((alpha << 24) | (red << 16) | (green << 8) | blue)
-                    strValue = String(line + parmSize + ";\t// \(value)")
-                    useQuotes = false
-                    endQuote = ""
-                }
-                else if (strValue.hasPrefix("#")) {
-                    var hexStr = strValue.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
-                    hexStr = hexStr.substringFromIndex(hexStr.startIndex.advancedBy(1))
-                    
-                    var rgbValue:UInt32 = 0
-                    NSScanner(string: hexStr).scanHexInt(&rgbValue)
-                    var red:Int = 1
-                    var green:Int = 1
-                    var blue:Int = 1
-                    var alpha:Int = 1
-                    
-                    if (hexStr.characters.count < 6) {
-                        print("Error: not enough characters for hex color definition. Needs 6.")
-                        exit(-1)
-                    }
-                    
-                    type = "int"
-                    if (hexStr.characters.count >= 6) {
-                        red = Int((rgbValue & 0x00FF0000) >> 16)
-                        green = Int((rgbValue & 0x0000FF00) >> 8)
-                        blue = Int(rgbValue & 0x000000FF)
-                    }
-                    if (hexStr.characters.count == 8) {
-                        alpha = Int((rgbValue & 0xFF000000) >> 24)
-                        type = "long"
-                        parmSize = "L"
-                    }
-                    let line = String((alpha << 24) | (red << 16) | (green << 8) | blue)
-                    strValue = String(line + parmSize + ";\t// \(value)")
-                    useQuotes = false
-                    endQuote = ""
                 }
 
                 let line = "\tpublic static final " + type + " " + key + " = "
@@ -623,10 +611,6 @@ class App
                     copyImages(value as! Array, type: type, useRoot: true)
                 }
             }
-            else if (key == keyImagesTinted) {
-//                let constants = value as! Dictionary<String, AnyObject>
-//                debug("image tinted \(constants)")
-            }
         }
         if (genString.isEmpty == false) {
             var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
@@ -807,8 +791,6 @@ class App
             createAssetTemplate(baseName!)
             exit(0)
         }
-
-        testTint = findOption(args, option: "-tint")
 
         let configTemplateFile = getOption(args, option: "-config_template")
         if (configTemplateFile != nil) {
