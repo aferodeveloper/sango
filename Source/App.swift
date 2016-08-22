@@ -794,8 +794,7 @@ class App
         verbose = findOption(args, option: "-verbose")
         debug("Sango © 2016 Afero, Inc")
         
-        let test = shell(["which git"])
-        if (test.isEmpty == false) {
+        if gitInstalled() {
             debug("git installed")
         }
         else {
@@ -813,6 +812,16 @@ class App
             createConfigTemplate(configTemplateFile!)
             exit(0)
         }
+
+        let gitCheckout = getOptions(args, option: "-git-checkout-tag")
+        if (gitCheckout != nil) {
+            let pwd = NSString(string: gitCheckout![0]).stringByStandardizingPath
+            let tag = NSString(string: gitCheckout![1]).stringByStandardizingPath
+            gitCheckoutAtTag(pwd, tag: tag)
+            print(gitCheckout)
+            exit(0)
+        }
+        
         let configFile = getOption(args, option: "-config")
         if (configFile != nil) {
             let result = fromJSONFile(configFile!)

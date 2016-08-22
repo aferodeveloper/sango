@@ -16,9 +16,14 @@ func shell(arguments: [String]) -> String
 {
     let task = NSTask()
     task.launchPath = "/bin/bash"
-    var args = ["-c"]
-    args.appendContentsOf(arguments)
-    task.arguments = args
+    var arg = ""
+    for (index, value) in arguments.enumerate() {
+        arg = arg.stringByAppendingString(value)
+        if (index < (arguments.count - 1)) {
+            arg = arg.stringByAppendingString(" && ")
+        }
+    }
+    task.arguments = ["-c", arg]
     
     let pipe = NSPipe()
     task.standardOutput = pipe
@@ -30,6 +35,20 @@ func shell(arguments: [String]) -> String
     return output
 }
 
+func gitInstalled() -> Bool {
+    let test = shell(["which git"])
+    if (test.isEmpty == false) {
+        return true
+    }
+    return false
+}
+
+
+func gitCheckoutAtTag(path: String, tag: String) -> Bool {
+    let output = shell(["cd \(path)", "git checkout tags/\(tag)"])
+    print(output)
+    return true
+}
 
 func findOption(args:[String], option:String) -> Bool {
     var found = false
@@ -66,7 +85,7 @@ func getOptions(args:[String], option:String) -> [String]? {
             if (indx != nil) {
                 indx = indx! + 1
                 found = []
-                for dex in indx!...args.count {
+                for dex in indx!...(args.count - 1) {
                     let str = args[dex]
                     if (str.hasPrefix("-") == false) {
                         found?.append(str)
