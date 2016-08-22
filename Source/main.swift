@@ -12,7 +12,7 @@ import Foundation
 import CoreFoundation
 
 
-func shell(arguments: [String]) -> String
+private func shell(arguments: [String]) -> String
 {
     let task = NSTask()
     task.launchPath = "/bin/bash"
@@ -45,7 +45,28 @@ func gitInstalled() -> Bool {
 
 
 func gitCheckoutAtTag(path: String, tag: String) -> Bool {
-    let output = shell(["cd \(path)", "git checkout tags/\(tag)"])
+    let output = shell(["cd \(path)",
+        "git checkout tags/\(tag)"])
+    print(output)
+    return true
+}
+
+func gitDropChanges(path: String) -> Bool {
+    _ = shell(["cd \(path)",
+        "git stash -u", "git stash drop"])
+    return true
+}
+
+func gitCurrentBranch(path: String) -> String {
+    let output = shell(["cd \(path)",
+        "git rev-parse --abbrev-ref HEAD"])
+    return output
+}
+
+func gitSetBranch(path: String, branch: String) -> Bool {
+    gitDropChanges(path)
+    let output = shell(["cd \(path)",
+        "git checkout /\(branch)"])
     print(output)
     return true
 }
