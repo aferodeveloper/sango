@@ -35,16 +35,6 @@
 	"imagesAndroid": [
 		"account_avatar1.png"
 	],
-	"imagesTinted": {
-		"UI_SECONDARY_COLOR_TINTED": [
-			"account_avatar1",
-			"account_avatar2"
-		],
-		"UI_SECONDARY_COLOR_LOW_TINTED": [
-			"account_avatar3",
-			"account_avatar4"
-		]
-	},
 	"copied": [
 		"file_data1",
 		"file_data2"
