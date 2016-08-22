@@ -74,7 +74,7 @@ public extension NSImage
         NSGraphicsContext.setCurrentContext(NSGraphicsContext(bitmapImageRep: bitmap))
         self.drawAtPoint(NSPoint.zero,
                          fromRect: NSRect.zero,
-                         operation: NSCompositingOperation.CompositeSourceOver,
+                         operation: .CompositeSourceOver,
                          fraction: 1.0)
         
         NSGraphicsContext.restoreGraphicsState()
@@ -138,8 +138,11 @@ public extension NSImage
         NSGraphicsContext.setCurrentContext(context)
         self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
                         fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
-                        operation: NSCompositingOperation.CompositeSourceOver,
+                        operation: .CompositeSourceOver,
                         fraction: 1.0)
+        
+        // tint with Source Atop operation, via 
+        // http://www.w3.org/TR/2014/CR-compositing-1-20140220/#porterduffcompositingoperators
         color.set()
         NSRectFillUsingOperation(rect, .CompositeSourceAtop)
 
@@ -170,7 +173,7 @@ public extension NSImage
         NSGraphicsContext.setCurrentContext(context)
         self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
                         fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
-                        operation: NSCompositingOperation.CompositeSourceOver,
+                        operation: .CompositeSourceOver,
                         fraction: 1.0)
         
         NSGraphicsContext.restoreGraphicsState()
