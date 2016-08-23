@@ -422,6 +422,7 @@ class App
             }
             else {
                 print("Error: Can't find source image \(roots.sourceFile)")
+                exit(-1)
             }
         }
     }
@@ -650,6 +651,7 @@ class App
             }
             catch {
                 print("Error: writing to \(langOutputFile)")
+                exit(-1)
             }
         }
     }
@@ -661,6 +663,7 @@ class App
             }
             catch {
                 print("Error: creating folder \(file)")
+                exit(-1)
             }
         }
         return true
@@ -900,6 +903,7 @@ class App
             if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
                 if (gitCheckoutAtTag(sourceAssetFolder!, tag: assetTag!) == false) {
                     print("Error: Can't set asset repo to \(assetTag) tag")
+                    exit(-1)
                 }
             }
             

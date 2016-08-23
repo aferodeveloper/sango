@@ -29,10 +29,10 @@ private func shell(arguments: [String]) -> (output: String, status: Int32)
     let pipe = NSPipe()
     task.standardOutput = pipe
     task.launch()
+    task.waitUntilExit()
     
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
     let output: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
-    task.waitUntilExit()
 
     return (output: output, status: task.terminationStatus)
 }
