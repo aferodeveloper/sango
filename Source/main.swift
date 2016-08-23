@@ -12,7 +12,7 @@ import Foundation
 import CoreFoundation
 
 
-private func shell(arguments: [String]) -> String
+private func shell(arguments: [String]) -> (output: String, status: Int32)
 {
     let task = NSTask()
     task.launchPath = "/bin/bash"
@@ -32,46 +32,49 @@ private func shell(arguments: [String]) -> String
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
     let output: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
     
-    return output
+    return (output: output, status: task.terminationStatus)
 }
 
-func gitInstalled() -> Bool {
-    let test = shell(["which git"])
-    if (test.isEmpty == false) {
-        return true
-    }
-    return false
+func gitInstalled() -> Bool
+{
+    let output = shell(["which git"])
+    return (output.status == 0)
 }
 
 
-func gitCheckoutAtTag(path: String, tag: String) -> Bool {
+func gitCheckoutAtTag(path: String, tag: String) -> Bool
+{
     let output = shell(["cd \(path)",
         "git checkout tags/\(tag)"])
     print(output)
-    return true
+    return (output.status == 0)
 }
 
-func gitDropChanges(path: String) -> Bool {
-    _ = shell(["cd \(path)",
+func gitDropChanges(path: String) -> Bool
+{
+    let output = shell(["cd \(path)",
         "git stash -u", "git stash drop"])
-    return true
+    return (output.status == 0)
 }
 
-func gitCurrentBranch(path: String) -> String {
+func gitCurrentBranch(path: String) -> String
+{
     let output = shell(["cd \(path)",
         "git rev-parse --abbrev-ref HEAD"])
-    return output
+    return output.output
 }
 
-func gitSetBranch(path: String, branch: String) -> Bool {
+func gitSetBranch(path: String, branch: String) -> Bool
+{
     gitDropChanges(path)
     let output = shell(["cd \(path)",
         "git checkout /\(branch)"])
     print(output)
-    return true
+    return (output.status == 0)
 }
 
-func findOption(args:[String], option:String) -> Bool {
+func findOption(args:[String], option:String) -> Bool
+{
     var found = false
     for argument in args {
         if (argument == option) {
@@ -81,7 +84,8 @@ func findOption(args:[String], option:String) -> Bool {
     return found
 }
 
-func getOption(args:[String], option:String) -> String? {
+func getOption(args:[String], option:String) -> String?
+{
     var found:String? = nil
     for argument in args {
         if argument == option {
@@ -98,7 +102,8 @@ func getOption(args:[String], option:String) -> String? {
     return found
 }
 
-func getOptions(args:[String], option:String) -> [String]? {
+func getOptions(args:[String], option:String) -> [String]?
+{
     var found:[String]? = nil
     for argument in args {
         if (argument == option) {

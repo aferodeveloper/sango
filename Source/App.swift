@@ -59,12 +59,15 @@ class App
     private var inputFile:String? = nil
     private var inputFiles:[String]? = nil
     private var outputClassFile:String? = nil
+    private var assetTag:String? = nil
 
     private var compileType:LangType = .Unset
 
     private var verbose = false
     private var globalTint:NSColor? = nil
     private let copyrightNotice = "Sango © 2016 Afero, Inc"
+
+    private var gitEnabled = false
 
     func usage() -> Void {
         print(copyrightNotice)
@@ -784,7 +787,8 @@ class App
         verbose = findOption(args, option: "-verbose")
         debug(copyrightNotice)
         
-        if gitInstalled() {
+        gitEnabled = gitInstalled()
+        if gitEnabled {
             debug("git installed")
         }
         else {
@@ -802,15 +806,6 @@ class App
             createConfigTemplate(configTemplateFile!)
             exit(0)
         }
-
-        let gitCheckout = getOptions(args, option: "-git-checkout-tag")
-        if (gitCheckout != nil) {
-            let pwd = NSString(string: gitCheckout![0]).stringByStandardizingPath
-            let tag = NSString(string: gitCheckout![1]).stringByStandardizingPath
-            gitCheckoutAtTag(pwd, tag: tag)
-            print(gitCheckout)
-            exit(0)
-        }
         
         let configFile = getOption(args, option: "-config")
         if (configFile != nil) {
@@ -821,6 +816,7 @@ class App
                 sourceAssetFolder = result!["input_assets"] as? String
                 outputClassFile = result!["out_source"] as? String
                 outputAssetFolder = result!["out_assets"] as? String
+                assetTag = result!["tag"] as? String
                 let type = result!["type"] as? String
                 if (type == "java") {
                     compileType = .Java
@@ -842,6 +838,10 @@ class App
                 print("Error: need either -swift or -java")
                 exit(-1)
             }
+        }
+
+        if (assetTag == nil) {
+            assetTag = getOption(args, option: "-tag")
         }
 
         if (outputClassFile == nil) {
@@ -897,7 +897,18 @@ class App
         }
         
         if (result.isEmpty == false) {
+            if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
+                if (gitCheckoutAtTag(sourceAssetFolder!, tag: assetTag!) == false) {
+                    print("Error: Can't set asset repo to \(assetTag) tag")
+                }
+            }
+            
+            // process
             consume(result, type: compileType, langOutputFile: outputClassFile!)
+
+            if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
+                gitDropChanges(sourceAssetFolder!)
+            }
         }
         else {
             print("Error: missing input file")
