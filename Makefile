@@ -33,6 +33,15 @@ distro: clean
 install: distro
 	@sudo cp $(TARGET) /usr/local/bin/$(TARGET)
 
+test1: _clean_temps
+	@./$(TARGET) -config brand1_config.json -verbose
+
+test2: _clean_temps
+	@./$(TARGET) -config brand2_config.json -verbose
+
+test3: _clean_temps
+	@./$(TARGET) -config brand1_android.json -verbose
+
 run: distro
 	@./$(TARGET) -input example/source.json \
 				-swift \
