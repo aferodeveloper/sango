@@ -7,6 +7,13 @@
 	"swift": {
 		"base": "Constants"
 	},
+	"fonts": [
+		"GT-Walsheim-Black-Oblique.ttf",
+		"GT-Walsheim-Black.ttf"
+	],
+	"images": [
+		"Afero/ASR-1/ASR-1.png"
+	],
 	"Colors": {
 		"UI_BASE_COLOR": "67,163,199,1",
 		"UI_SECONDARY_COLOR": "#431298",

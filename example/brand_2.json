@@ -1,10 +1,5 @@
 {
-	"fonts": [
-		"GT-Walsheim-Black-Oblique.ttf",
-		"GT-Walsheim-Black.ttf"
-	],
 	"images": [
-		"Afero/ASR-1/ASR-1.png",
 		"Afero/ASR-1/ASR-1@2x.png",
 		"Afero/ASR-1/ASR-1@3x.png",
 		"Afero/AferoHexFull/AferoHexFull.png",
