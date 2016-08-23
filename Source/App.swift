@@ -556,8 +556,10 @@ class App
         }
     }
     
-    private func consume(data: Dictionary <String, AnyObject>, type: LangType, outputFile: String) -> Void
+    private func consume(data: Dictionary <String, AnyObject>, type: LangType, langOutputFile: String) -> Void
     {
+        createFolderForFile(langOutputFile)
+
         // process first pass keys
         for (key, value) in data {
             if (key == keySchemaVersion) {
@@ -653,10 +655,10 @@ class App
             }
             outputStr.appendContentsOf(genString + "\n")
             do {
-                try outputStr.writeToFile(outputFile, atomically: true, encoding: NSUTF8StringEncoding)
+                try outputStr.writeToFile(langOutputFile, atomically: true, encoding: NSUTF8StringEncoding)
             }
             catch {
-                print("Error: writing to \(outputFile)")
+                print("Error: writing to \(langOutputFile)")
             }
         }
     }
@@ -671,6 +673,11 @@ class App
             }
         }
         return true
+    }
+
+    func createFolderForFile(srcFile: String) -> Bool {
+        let destPath = (srcFile as NSString).stringByDeletingLastPathComponent
+        return createFolder(destPath)
     }
 
     func createFolder(src: String) -> Bool {
@@ -887,21 +894,16 @@ class App
             exit(-1)
         }
 
-        var result:[String:AnyObject]? = nil
+        var result:[String:AnyObject] = [:]
         if (inputFiles == nil) {
             inputFiles = getOptions(args, option: "-inputs")
         }
         if (inputFiles != nil) {
             for file in inputFiles! {
-                let d = fromJSONFile(file)
-                if (d != nil) {
-                    if (result == nil) {
-                        result = d
-                    }
-                    else {
-                        result = result! + d!
-                    }
+                if let d = fromJSONFile(file) {
+                    result = result + d
                 }
+                print(result)
             }
         }
 
@@ -909,11 +911,11 @@ class App
             inputFile = getOption(args, option: "-input")
         }
         if (inputFile != nil) {
-            result = fromJSONFile(inputFile!)
+            result = fromJSONFile(inputFile!) ?? [:]
         }
         
-        if (result != nil) {
-            consume(result!, type: compileType, outputFile: outputClassFile!)
+        if (result.isEmpty == false) {
+            consume(result, type: compileType, langOutputFile: outputClassFile!)
         }
         else {
             print("Error: missing input file")
