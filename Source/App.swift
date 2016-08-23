@@ -819,7 +819,7 @@ class App
                 sourceAssetFolder = result!["input_assets"] as? String
                 outputClassFile = result!["out_source"] as? String
                 outputAssetFolder = result!["out_assets"] as? String
-                assetTag = result!["tag"] as? String
+                assetTag = result!["input_assets_tag"] as? String
                 let type = result!["type"] as? String
                 if (type == "java") {
                     compileType = .Java

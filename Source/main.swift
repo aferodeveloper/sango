@@ -45,7 +45,8 @@ func gitInstalled() -> Bool
 
 func gitInstalledPath() -> String {
     let output = shell(["which git"])
-    return output.output
+    
+    return output.output.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
 }
 
 func gitCheckoutAtTag(path: String, tag: String) -> Bool
