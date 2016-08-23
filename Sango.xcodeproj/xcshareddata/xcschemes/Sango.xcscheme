@@ -69,7 +69,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-config brand1_android.json"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-swift"
@@ -97,7 +97,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-config brand1_config.json"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-config brand2_config.json"

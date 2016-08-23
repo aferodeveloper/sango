@@ -28,10 +28,11 @@ private let keyCopied = "copied"
 private let keyAppIcon = "appIcon"
 private let keyIOSAppIcon = "iOSAppIcon"
 private let keyAndroidAppIcon = "androidAppIcon"
+private let keyAndroidLayout = "androidLayout"
 private let keyJava = "java"
 private let keySwift = "swift"
 private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
-                                    keyFonts, keySchemaVersion, keyImages,
+                                    keyFonts, keySchemaVersion, keyImages, keyAndroidLayout,
                                     keyImagesScaled, keyImagesIos, keyImagesAndroid,
                                     keyImagesTinted, keyJava, keySwift, keyGlobalTint]
 
@@ -39,6 +40,13 @@ private enum LangType {
     case Unset
     case Java
     case Swift
+}
+
+private enum AssetType {
+    case Font
+    case Layout
+    case Image
+    case Raw
 }
 
 class App
@@ -494,7 +502,12 @@ class App
         }
     }
     
-    private func copyAssets(files: [String], type: LangType, useRoot: Bool) -> Void {
+    private func copyAssets(files: [String], type: LangType, assetType: AssetType, useRoot: Bool) -> Void {
+        let androidAssetLocations = [
+            AssetType.Font:"/assets/fonts/",
+            AssetType.Raw:"/assets/",
+            AssetType.Layout:"/res/layouts/"
+        ]
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
@@ -507,47 +520,15 @@ class App
             let destPath = (destFile as NSString).stringByDeletingLastPathComponent
             createFolder(destPath)
             
-            var fileName = (file as NSString).lastPathComponent
+            let fileName = (file as NSString).lastPathComponent
             
             if (type == .Swift) {
                 copyFile(filePath, dest: destFile)
             }
             else if (type == .Java) {
-                let defaultLoc = destPath + "/assets/"
+                let defaultLoc = destPath + androidAssetLocations[assetType]!
                 createFolder(defaultLoc)
-                fileName = defaultLoc + fileName
-                copyFile(filePath, dest: fileName)
-            }
-            else {
-                print("Error: wrong type")
-                exit(-1)
-            }
-        }
-    }
-
-    private func copyFonts(files: [String], type: LangType, useRoot: Bool) -> Void {
-        for file in files {
-            let filePath = sourceAssetFolder! + "/" + file
-            var destFile:String
-            if (useRoot) {
-                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
-            }
-            else {
-                destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
-            }
-            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
-            createFolder(destPath)
-            
-            var fileName = (file as NSString).lastPathComponent
-            
-            if (type == .Swift) {
-                copyFile(filePath, dest: destFile)
-            }
-            else if (type == .Java) {
-                let defaultLoc = destPath + "/assets/fonts/"
-                createFolder(defaultLoc)
-                fileName = defaultLoc + fileName
-                copyFile(filePath, dest: fileName)
+                copyFile(filePath, dest: defaultLoc + fileName)
             }
             else {
                 print("Error: wrong type")
@@ -595,7 +576,7 @@ class App
         }
         for (key, value) in data {
             if (key == keyCopied) {
-                copyAssets(value as! Array, type: type, useRoot: false)
+                copyAssets(value as! Array, type: type, assetType: .Raw, useRoot: false)
             }
             else if (key == keyAppIcon) {
                 copyAppIcon(value as! String, type: type)
@@ -611,7 +592,7 @@ class App
                 }
             }
             else if (key == keyFonts) {
-                copyFonts(value as! Array, type: type, useRoot: true)
+                copyAssets(value as! Array, type: type, assetType: .Font, useRoot: true)
             }
             else if (key == keyImages) {
                 copyImages(value as! Array, type: type, useRoot: true)
@@ -627,6 +608,11 @@ class App
             else if (key == keyImagesAndroid) {
                 if (type == .Java) {
                     copyImages(value as! Array, type: type, useRoot: true)
+                }
+            }
+            else if (key == keyAndroidLayout) {
+                if (type == .Java) {
+                    copyAssets(value as! Array, type: type, assetType: .Layout, useRoot: true)
                 }
             }
         }
@@ -663,7 +649,7 @@ class App
         }
     }
 
-    func createFolders(folders: [String]) -> Bool {
+    private func createFolders(folders: [String]) -> Bool {
         for file in folders {
             do {
                 try NSFileManager.defaultManager().createDirectoryAtPath(file, withIntermediateDirectories: true, attributes: nil)
@@ -675,12 +661,12 @@ class App
         return true
     }
 
-    func createFolderForFile(srcFile: String) -> Bool {
+    private func createFolderForFile(srcFile: String) -> Bool {
         let destPath = (srcFile as NSString).stringByDeletingLastPathComponent
         return createFolder(destPath)
     }
 
-    func createFolder(src: String) -> Bool {
+    private func createFolder(src: String) -> Bool {
         var ok = true
         do {
             try NSFileManager.defaultManager().createDirectoryAtPath(src, withIntermediateDirectories: true, attributes: nil)
@@ -712,15 +698,10 @@ class App
 //    }
     
     private func copyFile(src: String, dest: String, restrict: Bool = false) -> Bool {
-        var destFile = dest
-//        if (restrict) {
-//            let fileName = (destFile as NSString).lastPathComponent
-//            if (
-//        }
         deleteFile(dest)
         var ok = true
         do {
-            try NSFileManager.defaultManager().copyItemAtPath(src, toPath: destFile)
+            try NSFileManager.defaultManager().copyItemAtPath(src, toPath: dest)
             debug("Copy \(src) -> \(dest)")
         }
         catch {
