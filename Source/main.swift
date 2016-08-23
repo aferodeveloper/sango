@@ -11,6 +11,7 @@
 import Foundation
 import CoreFoundation
 
+private var gitPath = "/usr/bin/git"
 
 private func shell(arguments: [String]) -> (output: String, status: Int32)
 {
@@ -31,7 +32,8 @@ private func shell(arguments: [String]) -> (output: String, status: Int32)
     
     let data = pipe.fileHandleForReading.readDataToEndOfFile()
     let output: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
-    
+    task.waitUntilExit()
+
     return (output: output, status: task.terminationStatus)
 }
 
@@ -41,11 +43,15 @@ func gitInstalled() -> Bool
     return (output.status == 0)
 }
 
+func gitInstalledPath() -> String {
+    let output = shell(["which git"])
+    return output.output
+}
 
 func gitCheckoutAtTag(path: String, tag: String) -> Bool
 {
     let output = shell(["cd \(path)",
-        "git checkout tags/\(tag)"])
+        "\(gitPath) checkout tags/\(tag)"])
     print(output)
     return (output.status == 0)
 }
@@ -53,14 +59,14 @@ func gitCheckoutAtTag(path: String, tag: String) -> Bool
 func gitDropChanges(path: String) -> Bool
 {
     let output = shell(["cd \(path)",
-        "git stash -u", "git stash drop"])
+        "\(gitPath) stash -u", "\(gitPath) stash drop"])
     return (output.status == 0)
 }
 
 func gitCurrentBranch(path: String) -> String
 {
     let output = shell(["cd \(path)",
-        "git rev-parse --abbrev-ref HEAD"])
+        "\(gitPath) rev-parse --abbrev-ref HEAD"])
     return output.output
 }
 
@@ -68,7 +74,7 @@ func gitSetBranch(path: String, branch: String) -> Bool
 {
     gitDropChanges(path)
     let output = shell(["cd \(path)",
-        "git checkout /\(branch)"])
+        "\(gitPath) checkout /\(branch)"])
     print(output)
     return (output.status == 0)
 }
@@ -129,9 +135,18 @@ func getOptions(args:[String], option:String) -> [String]?
 
 // MARK: main
 
+private let env = NSProcessInfo.processInfo().environment
+
+if gitInstalled() {
+    gitPath = gitInstalledPath()
+}
+
 private var args = Process.arguments
 args.removeFirst()
+
 App().start(args)
+exit(0)
+
 
 // eof
 
