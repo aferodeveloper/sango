@@ -64,8 +64,10 @@ class App
 
     private var verbose = false
     private var globalTint:NSColor? = nil
+    private let copyrightNotice = "Sango © 2016 Afero, Inc"
 
     func usage() -> Void {
+        print(copyrightNotice)
         print("Usage:")
         print(" -asset_template [basename]          creates a json template, specificly for the assets")
         print(" -config_template [file.json]        creates a json template, specificly for the app")
@@ -100,7 +102,7 @@ class App
     private func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
         var outputString = "\n"
         if (type == .Swift) {
-            // public static let UI_SECONDARY_COLOR_TINTED = ["account_avatar1", "account_avatar2"]
+            // public static let UiSecondaryColorTinted = ["account_avatar1", "account_avatar2"]
             for (key, value) in stringArray {
                 outputString.appendContentsOf("\tpublic static let \(key) = [\"")
                 let strValue = String(value)
@@ -780,7 +782,7 @@ class App
         }
 
         verbose = findOption(args, option: "-verbose")
-        debug("Sango © 2016 Afero, Inc")
+        debug(copyrightNotice)
         
         if gitInstalled() {
             debug("git installed")
@@ -884,7 +886,6 @@ class App
                 if let d = fromJSONFile(file) {
                     result = result + d
                 }
-                print(result)
             }
         }
 
