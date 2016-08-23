@@ -3,6 +3,5 @@
 	"input_assets": "example/assets",
 	"out_source": "temp_ios/Constants.swift",
 	"out_assets": "temp_ios/Resources",
-	"type": "swift",
-	"input_assets_tag":"1"
+	"type": "swift"
 }

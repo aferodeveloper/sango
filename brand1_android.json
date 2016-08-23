@@ -3,6 +3,5 @@
 	"input_assets": "example/assets",
 	"out_source": "temp_android/main/java/Constants.java",
 	"out_assets": "temp_android/main",
-	"type": "java",
-	"input_assets_tag":"1"
+	"type": "java"
 }
