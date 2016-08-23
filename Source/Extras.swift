@@ -186,12 +186,21 @@ public extension NSImage
 public func + <K,V>(left: Dictionary<K,V>, right: Dictionary<K,V>)
     -> Dictionary<K,V>
 {
-    var map = Dictionary<K,V>()
-    for (k, v) in left {
-        map[k] = v
-    }
+    var map = left
     for (k, v) in right {
-        map[k] = v
+        if let _v = v as? [AnyObject] {
+            if let la = map[k] as? [AnyObject] {
+                if let c = [_v, la].flatMap({$0}) as? V {
+                    map[k] = c
+                }
+            }
+            else {
+                map[k] = v
+            }
+        }
+        else {
+            map[k] = v
+        }
     }
     return map
 }
