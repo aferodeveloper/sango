@@ -900,7 +900,9 @@ class App
         }
         
         if (result.isEmpty == false) {
+            var currentBranch:String? = nil
             if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
+                currentBranch = gitCurrentBranch(sourceAssetFolder!)
                 if (gitCheckoutAtTag(sourceAssetFolder!, tag: assetTag!) == false) {
                     print("Error: Can't set asset repo to \(assetTag) tag")
                     exit(-1)
@@ -911,7 +913,9 @@ class App
             consume(result, type: compileType, langOutputFile: outputClassFile!)
 
             if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
-                gitDropChanges(sourceAssetFolder!)
+                if (currentBranch != nil) {
+                    gitSetBranch(sourceAssetFolder!, branch: currentBranch!)
+                }
             }
         }
         else {

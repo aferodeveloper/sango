@@ -68,7 +68,7 @@ func gitCurrentBranch(path: String) -> String
 {
     let output = shell(["cd \(path)",
         "\(gitPath) rev-parse --abbrev-ref HEAD"])
-    return output.output
+    return output.output.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
 }
 
 func gitSetBranch(path: String, branch: String) -> Bool
