@@ -25,7 +25,8 @@ private func shell(arguments: [String]) -> (output: String, status: Int32)
         }
     }
     task.arguments = ["-c", arg]
-    
+    print("$ \(arg)")
+
     let pipe = NSPipe()
     task.standardOutput = pipe
     task.launch()
@@ -53,7 +54,7 @@ func gitCheckoutAtTag(path: String, tag: String) -> Bool
 {
     let output = shell(["cd \(path)",
         "\(gitPath) checkout tags/\(tag)"])
-    print(output)
+    print(output.output)
     return (output.status == 0)
 }
 
@@ -75,8 +76,8 @@ func gitSetBranch(path: String, branch: String) -> Bool
 {
     gitDropChanges(path)
     let output = shell(["cd \(path)",
-        "\(gitPath) checkout /\(branch)"])
-    print(output)
+        "\(gitPath) checkout \(branch)"])
+    print(output.output)
     return (output.status == 0)
 }
 
