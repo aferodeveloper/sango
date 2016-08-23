@@ -31,7 +31,7 @@
 	"imagesIos": [
 		"account_avatar2.png"
 	],
-	"androidLayout": [
+	"layoutAndroid": [
 		"android/activity_object_detail.xml"
 	],
 	"imagesAndroid": [
