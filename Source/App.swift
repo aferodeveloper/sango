@@ -839,7 +839,14 @@ class App
         }
 
         if (assetTag == nil) {
-            assetTag = getOption(args, option: "-tag")
+            assetTag = getOption(args, option: "-input_assets_tag")
+        }
+
+        if (assetTag != nil) {
+            // check for latest tag
+            if (assetTag == "~") {
+                assetTag = nil
+            }
         }
 
         if (outputClassFile == nil) {
