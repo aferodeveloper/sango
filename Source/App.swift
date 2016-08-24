@@ -63,7 +63,6 @@ class App
 
     private var compileType:LangType = .Unset
 
-    private var verbose = false
     private var globalTint:NSColor? = nil
     private let copyrightNotice = "Sango © 2016 Afero, Inc"
 
@@ -83,12 +82,6 @@ class App
         print(" -swift                              write swift source")
         print(" -out_assets [folder]                asset root folder (write), typically iOS Resource, or Android app/src/main")
         print(" -verbose                            be verbose in details")
-    }
-
-    func debug(text: String) -> Void {
-        if (verbose) {
-            print(text)
-        }
     }
     
     // Save image, tinted
@@ -312,17 +305,17 @@ class App
                 if (saveImage(image3, file: file) == false) {
                     exit(-1)
                 }
-                debug("Image scale and copy \(filePath) -> \(file)")
+                Utils.debug("Image scale and copy \(filePath) -> \(file)")
                 file = destPath + "/" + fileName + "@2x.png"
                 if (saveImage(image2, file: file) == false) {
                     exit(-1)
                 }
-                debug("Image scale and copy \(filePath) -> \(file)")
+                Utils.debug("Image scale and copy \(filePath) -> \(file)")
                 file = destPath + "/" + fileName + ".png"
                 if (saveImage(image, file: file) == false) {
                     exit(-1)
                 }
-                debug("Image scale and copy \(filePath) -> \(file)")
+                Utils.debug("Image scale and copy \(filePath) -> \(file)")
             }
             else if (type == .Java) {
                 let image4 = NSImage.loadFrom(filePath) // 3x
@@ -343,22 +336,22 @@ class App
                 if (saveImage(image4, file: file) == false) {
                     exit(-1)
                 }
-                debug("Image scale and copy \(filePath) -> \(file)")
+                Utils.debug("Image scale and copy \(filePath) -> \(file)")
                 file = xhdpi + fileName
                 if (saveImage(image3, file: file) == false) {
                     exit(-1)
                 }
-                debug("Image scale and copy \(filePath) -> \(file)")
+                Utils.debug("Image scale and copy \(filePath) -> \(file)")
                 file = hdpi + fileName
                 if (saveImage(image2, file: file) == false) {
                     exit(-1)
                 }
-                debug("Image scale and copy \(filePath) -> \(file)")
+                Utils.debug("Image scale and copy \(filePath) -> \(file)")
                 file = mdpi + fileName
                 if (saveImage(image, file: file) == false) {
                     exit(-1)
                 }
-                debug("Image scale and copy \(filePath) -> \(file)")
+                Utils.debug("Image scale and copy \(filePath) -> \(file)")
             }
             else {
                 print("Error: wrong type")
@@ -487,7 +480,7 @@ class App
                 let newImage = iconImage.resize(width, height: height)
                 let destFile = destPath + "/" + key
                 saveImage(newImage, file: destFile)
-                debug("Image scale icon and copy \(filePath) -> \(destFile)")
+                Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
             }
         }
         else if (type == .Java) {
@@ -499,7 +492,7 @@ class App
                 createFolder(destPath)
                 let destFile = destPath + "/" + AndroidDefaultIconName
                 saveImage(newImage, file: destFile)
-                debug("Image scale icon and copy \(filePath) -> \(destFile)")
+                Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
             }
         }
         else {
@@ -710,7 +703,7 @@ class App
         var ok = true
         do {
             try NSFileManager.defaultManager().copyItemAtPath(src, toPath: dest)
-            debug("Copy \(src) -> \(dest)")
+            Utils.debug("Copy \(src) -> \(dest)")
         }
         catch {
             print("Error: copying file \(src) to \(dest)")
@@ -749,12 +742,12 @@ class App
         temp[keyJava] = ["package" : "one.two", "base": base]
         temp[keySwift] = ["base": base]
         temp["Example"] = ["EXAMPLE_CONSTANT": 1]
-        let jsonString = toJSON(temp)
+        let jsonString = Utils.toJSON(temp)
         let outputFile = base + ".json"
         if (jsonString != nil) {
             do {
                 try jsonString!.writeToFile(outputFile, atomically: true, encoding: NSUTF8StringEncoding)
-                debug("JSON template created at \"\(outputFile)\"")
+                Utils.debug("JSON template created at \"\(outputFile)\"")
             }
             catch {
                 print("Error: writing to \(outputFile)")
@@ -769,11 +762,11 @@ class App
                                      "type": "swift or java"
     ]
     private func createConfigTemplate(file: String) -> Void {
-        let jsonString = toJSON(baseConfigTemplate)
+        let jsonString = Utils.toJSON(baseConfigTemplate)
         if (jsonString != nil) {
             do {
                 try jsonString!.writeToFile(file, atomically: true, encoding: NSUTF8StringEncoding)
-                debug("JSON template created at \"\(file)\"")
+                Utils.debug("JSON template created at \"\(file)\"")
             }
             catch {
                 print("Error: writing to \(file)")
@@ -787,15 +780,14 @@ class App
             exit(0)
         }
 
-        verbose = findOption(args, option: "-verbose")
-        debug(copyrightNotice)
+        Utils.debug(copyrightNotice)
         
-        gitEnabled = gitInstalled()
+        gitEnabled = Shell.gitInstalled()
         if gitEnabled {
-            debug("git installed")
+            Utils.debug("git installed")
         }
         else {
-            debug("git not installed")
+            Utils.debug("git not installed")
         }
 
         let baseName = getOption(args, option: "-asset_template")
@@ -812,7 +804,7 @@ class App
         
         let configFile = getOption(args, option: "-config")
         if (configFile != nil) {
-            let result = fromJSONFile(configFile!)
+            let result = Utils.fromJSONFile(configFile!)
             if (result != nil) {
                 inputFile = result!["input"] as? String
                 inputFiles = result!["inputs"] as? [String]
@@ -886,7 +878,7 @@ class App
         }
         if (inputFiles != nil) {
             for file in inputFiles! {
-                if let d = fromJSONFile(file) {
+                if let d = Utils.fromJSONFile(file) {
                     result = result + d
                 }
             }
@@ -896,14 +888,14 @@ class App
             inputFile = getOption(args, option: "-input")
         }
         if (inputFile != nil) {
-            result = fromJSONFile(inputFile!) ?? [:]
+            result = Utils.fromJSONFile(inputFile!) ?? [:]
         }
         
         if (result.isEmpty == false) {
             var currentBranch:String? = nil
             if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
-                currentBranch = gitCurrentBranch(sourceAssetFolder!)
-                if (gitCheckoutAtTag(sourceAssetFolder!, tag: assetTag!) == false) {
+                currentBranch = Shell.gitCurrentBranch(sourceAssetFolder!)
+                if (Shell.gitCheckoutAtTag(sourceAssetFolder!, tag: assetTag!) == false) {
                     print("Error: Can't set asset repo to \(assetTag) tag")
                     exit(-1)
                 }
@@ -914,7 +906,7 @@ class App
 
             if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
                 if (currentBranch != nil) {
-                    gitSetBranch(sourceAssetFolder!, branch: currentBranch!)
+                    Shell.gitSetBranch(sourceAssetFolder!, branch: currentBranch!)
                 }
             }
         }
@@ -925,44 +917,3 @@ class App
     }
 }
 
-// MARK: - Extras
-private func toJSON(dictionary:Dictionary<String, AnyObject>) -> String? {
-    do {
-        let data: NSData
-        data = try NSJSONSerialization.dataWithJSONObject(dictionary, options: .PrettyPrinted)
-        let jsonString = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
-        return jsonString.stringByReplacingOccurrencesOfString("\\/", withString: "/")
-    }
-    catch {
-        return nil
-    }
-}
-
-private func fromJSONFile(file:String) -> [String:AnyObject]? {
-    var result:[String: AnyObject]?
-
-    let location = NSString(string: file).stringByExpandingTildeInPath
-    let fileContent = NSData(contentsOfFile: location)
-    if (fileContent != nil) {
-        result = fromJSON(fileContent!)
-        if (result == nil) {
-            print("Error: Can't parse \(location) as JSON")
-        }
-    }
-    else {
-        print("Error: can't find file \(location)")
-    }
-    return result
-}
-
-private func fromJSON(data:NSData) -> [String: AnyObject]? {
-    var dict:[String: AnyObject]?
-    do {
-        dict = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? [String: AnyObject]
-    }
-    catch {
-        print(error)
-        dict = nil
-    }
-    return dict
-}

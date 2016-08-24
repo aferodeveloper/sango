@@ -10,6 +10,8 @@
 		AAB57D9E1D5B883800FA37CA /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB57D9C1D5B883800FA37CA /* App.swift */; };
 		AAB57D9F1D5B883800FA37CA /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB57D9D1D5B883800FA37CA /* main.swift */; };
 		AACE09741D6627CE003CF4F1 /* Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACE09731D6627CE003CF4F1 /* Extras.swift */; };
+		AAE52D651D6E032A002BDE3D /* Shell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE52D641D6E032A002BDE3D /* Shell.swift */; };
+		AAE52D671D6E0568002BDE3D /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAE52D661D6E0568002BDE3D /* Utils.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +31,8 @@
 		AAB57D9C1D5B883800FA37CA /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = App.swift; path = Source/App.swift; sourceTree = "<group>"; };
 		AAB57D9D1D5B883800FA37CA /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = Source/main.swift; sourceTree = "<group>"; };
 		AACE09731D6627CE003CF4F1 /* Extras.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extras.swift; path = Source/Extras.swift; sourceTree = "<group>"; };
+		AAE52D641D6E032A002BDE3D /* Shell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Shell.swift; path = Source/Shell.swift; sourceTree = "<group>"; };
+		AAE52D661D6E0568002BDE3D /* Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Utils.swift; path = Source/Utils.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,6 +51,8 @@
 			children = (
 				AAB57D9C1D5B883800FA37CA /* App.swift */,
 				AACE09731D6627CE003CF4F1 /* Extras.swift */,
+				AAE52D641D6E032A002BDE3D /* Shell.swift */,
+				AAE52D661D6E0568002BDE3D /* Utils.swift */,
 				AAB57D9D1D5B883800FA37CA /* main.swift */,
 				AA6C0D781D5A9AB000ECA808 /* Products */,
 			);
@@ -117,8 +123,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AAE52D671D6E0568002BDE3D /* Utils.swift in Sources */,
 				AAB57D9F1D5B883800FA37CA /* main.swift in Sources */,
 				AACE09741D6627CE003CF4F1 /* Extras.swift in Sources */,
+				AAE52D651D6E032A002BDE3D /* Shell.swift in Sources */,
 				AAB57D9E1D5B883800FA37CA /* App.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
