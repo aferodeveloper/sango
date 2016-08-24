@@ -820,6 +820,9 @@ class App
                     compileType = .Swift
                 }
             }
+            else {
+                exit(-1)
+            }
         }
         
         if (compileType == .Unset) {
@@ -872,14 +875,17 @@ class App
             exit(-1)
         }
 
-        var result:[String:AnyObject] = [:]
+        var result:[String:AnyObject]? = nil
         if (inputFiles == nil) {
             inputFiles = getOptions(args, option: "-inputs")
         }
         if (inputFiles != nil) {
             for file in inputFiles! {
                 if let d = Utils.fromJSONFile(file) {
-                    result = result + d
+                    result = result! + d
+                }
+                else {
+                    exit(-1)
                 }
             }
         }
@@ -888,10 +894,13 @@ class App
             inputFile = getOption(args, option: "-input")
         }
         if (inputFile != nil) {
-            result = Utils.fromJSONFile(inputFile!) ?? [:]
+            result = Utils.fromJSONFile(inputFile!)
+            if (result == nil) {
+                exit(-1)
+            }
         }
         
-        if (result.isEmpty == false) {
+        if (result != nil) {
             var currentBranch:String? = nil
             if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
                 currentBranch = Shell.gitCurrentBranch(sourceAssetFolder!)
@@ -902,7 +911,7 @@ class App
             }
             
             // process
-            consume(result, type: compileType, langOutputFile: outputClassFile!)
+            consume(result!, type: compileType, langOutputFile: outputClassFile!)
 
             if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
                 if (currentBranch != nil) {

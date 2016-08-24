@@ -27,12 +27,13 @@ public class Utils
     public static func toJSON(dictionary:Dictionary<String, AnyObject>) -> String?
     {
         do {
-            let data: NSData
-            data = try NSJSONSerialization.dataWithJSONObject(dictionary, options: .PrettyPrinted)
+            let data: NSData = try NSJSONSerialization.dataWithJSONObject(dictionary, options: .PrettyPrinted)
             let jsonString = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
             return jsonString.stringByReplacingOccurrencesOfString("\\/", withString: "/")
         }
-        catch {
+        catch let error as NSError {
+            let message:String = error.userInfo["NSDebugDescription"] as! String
+            print(message)
             return nil
         }
     }
@@ -61,8 +62,9 @@ public class Utils
         do {
             dict = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? [String: AnyObject]
         }
-        catch {
-            print(error)
+        catch let error as NSError {
+            let message:String = error.userInfo["NSDebugDescription"] as! String
+            print(message)
             dict = nil
         }
         return dict

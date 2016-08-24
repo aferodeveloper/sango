@@ -30,7 +30,7 @@ clean: _clean_temps clear_build
 distro: clean set_build
 	@xcodebuild
 	@cp ./build/Release/Sango $(TARGET)
-	$(MAKE) clear_build
+	@$(MAKE) clear_build
 	@echo done!
 
 set_build:
