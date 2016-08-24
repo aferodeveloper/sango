@@ -81,6 +81,7 @@ class App
         print(" -java                               write java source")
         print(" -swift                              write swift source")
         print(" -out_assets [folder]                asset root folder (write), typically iOS Resource, or Android app/src/main")
+        print(" -input_assets_tag [tag]             optional git tag to pull repro at before processing")
         print(" -verbose                            be verbose in details")
     }
     
