@@ -1,6 +1,8 @@
 TARGET = sango
 
 DATE := $(shell date "+%Y%m%d_%H%M%S")
+BUILD_DATE := $(shell date)
+
 DEST_PATH := $(shell pwd)
 
 REVISION :=$(shell git log --pretty=format:'' | wc -l | sed 's/\ //g')
@@ -20,15 +22,23 @@ _clean_temps:
 	@rm -rdf temp_ios
 	@rm -rdf temp_android
 	
-clean: _clean_temps
+clean: _clean_temps clear_build
 	@xcodebuild clean &>/dev/null
 	@rm -rdf build
 	@rm -f $(TARGET)
 
-distro: clean
+distro: clean set_build
 	@xcodebuild
 	@cp ./build/Release/Sango $(TARGET)
+	$(MAKE) clear_build
 	@echo done!
+
+set_build:
+	@echo "public let BUILD_DATE = "\"$(BUILD_DATE)\" > Source/Version.swift
+	@echo "public let BUILD_REVISION = $(REVISION)" >> Source/Version.swift
+
+clear_build:
+	@$(REVERT) Source/Version.swift
 
 install: distro
 	@sudo cp $(TARGET) /usr/local/bin/$(TARGET)

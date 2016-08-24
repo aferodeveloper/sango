@@ -64,7 +64,7 @@ class App
     private var compileType:LangType = .Unset
 
     private var globalTint:NSColor? = nil
-    private let copyrightNotice = "Sango © 2016 Afero, Inc"
+    private let copyrightNotice = "Sango © 2016 Afero, Inc - Build \(BUILD_REVISION) \(BUILD_DATE)"
 
     private var gitEnabled = false
 
