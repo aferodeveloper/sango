@@ -79,6 +79,7 @@ class App
         print(" -asset_template [basename]          creates a json template, specificly for the assets")
         print(" -config_template [file.json]        creates a json template, specificly for the app")
         print(" -config [file.json]                 use config file for options, instead of command line")
+        print(" -validate [asset_file.json, ...]    validates asset JSON file(s), requires -input_assets")
         print(" -input [file.json]                  asset json file")
         print(" -inputs [file1.json file2.json ...] merges asset files and process")
         print(" -input_assets [folder]              asset source folder (read)")
@@ -132,6 +133,18 @@ class App
         else {
             return image.saveTo(file)
         }
+    }
+    
+    func saveString(data:String, file: String) -> Bool
+    {
+        do {
+            try data.writeToFile(file, atomically: true, encoding: NSUTF8StringEncoding)
+        }
+        catch {
+            print("Error: writing to \(file)")
+            exit(-1)
+        }
+        return true
     }
     
     private func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
@@ -575,6 +588,83 @@ class App
         }
     }
     
+    private func validate(files:[String]) -> Void
+    {
+        for file in files {
+            Utils.debug("Validating \(file)")
+            let data = Utils.fromJSONFile(file)
+            if (data != nil) {
+                for (key, value) in data! {
+                    var testFile = false
+                    var testArray = false
+                    if (key == keyCopied) {
+                        testArray = true
+                    }
+                    else if (key == keyAppIcon) {
+                        testFile = true
+                    }
+                    else if (key == keyAndroidAppIcon) {
+                        testFile = true
+                    }
+                    else if (key == keyIOSAppIcon) {
+                        testFile = true
+                    }
+                    else if (key == keyFonts) {
+                        testArray = true
+                    }
+                    else if (key == keyImages) {
+                        testArray = true
+                    }
+                    else if (key == keyImagesScaled) {
+                        testArray = true
+                    }
+                    else if (key == keyImagesScaledIos) {
+                        testArray = true
+                    }
+                    else if (key == keyImagesScaledAndroid) {
+                        testArray = true
+                    }
+                    else if (key == keyImagesIos) {
+                        testArray = true
+                    }
+                    else if (key == keyImagesAndroid) {
+                        testArray = true
+                    }
+                    else if (key == keyAndroidLayout) {
+                        testArray = true
+                    }
+                    
+                    if (testFile) {
+                        let filePath = sourceAssetFolder! + "/" + (value as! String)
+                        if (NSFileManager.defaultManager().fileExistsAtPath(filePath) == false) {
+                            print("Error: missing file \(filePath)")
+                            exit(-1)
+                        }
+                        else {
+                            Utils.debug("Found \(filePath)")
+                        }
+                    }
+                    if (testArray) {
+                        let list = value as! [String]
+                        for file in list {
+                            let filePath = sourceAssetFolder! + "/" + file
+                            if (NSFileManager.defaultManager().fileExistsAtPath(filePath) == false) {
+                                print("Error: missing file \(filePath)")
+                                exit(-1)
+                            }
+                            else {
+                                Utils.debug("Found \(filePath)")
+                            }
+                        }
+                    }
+                }
+            }
+            else {
+                exit(-1)
+            }
+        }
+    }
+    
     private func consume(data: Dictionary <String, AnyObject>, type: LangType, langOutputFile: String) -> Void
     {
         createFolderForFile(langOutputFile)
@@ -689,13 +779,7 @@ class App
                 genString.appendContentsOf("\n}")
             }
             outputStr.appendContentsOf(genString + "\n")
-            do {
-                try outputStr.writeToFile(langOutputFile, atomically: true, encoding: NSUTF8StringEncoding)
-            }
-            catch {
-                print("Error: writing to \(langOutputFile)")
-                exit(-1)
-            }
+            saveString(outputStr, file: langOutputFile)
         }
     }
 
@@ -795,12 +879,8 @@ class App
         let jsonString = Utils.toJSON(temp)
         let outputFile = base + ".json"
         if (jsonString != nil) {
-            do {
-                try jsonString!.writeToFile(outputFile, atomically: true, encoding: NSUTF8StringEncoding)
+            if (saveString(jsonString!, file: outputFile)) {
                 Utils.debug("JSON template created at \"\(outputFile)\"")
-            }
-            catch {
-                print("Error: writing to \(outputFile)")
             }
         }
     }
@@ -814,12 +894,8 @@ class App
     private func createConfigTemplate(file: String) -> Void {
         let jsonString = Utils.toJSON(baseConfigTemplate)
         if (jsonString != nil) {
-            do {
-                try jsonString!.writeToFile(file, atomically: true, encoding: NSUTF8StringEncoding)
+            if (saveString(jsonString!, file: file)) {
                 Utils.debug("JSON template created at \"\(file)\"")
-            }
-            catch {
-                print("Error: writing to \(file)")
             }
         }
     }
@@ -853,6 +929,21 @@ class App
         let configTemplateFile = getOption(args, option: "-config_template")
         if (configTemplateFile != nil) {
             createConfigTemplate(configTemplateFile!)
+            exit(0)
+        }
+        
+        let validateInputs = getOptions(args, option: "-validate")
+        if (validateInputs != nil) {
+            sourceAssetFolder = getOption(args, option: "-input_assets")
+            if (sourceAssetFolder != nil) {
+                sourceAssetFolder = NSString(string: sourceAssetFolder!).stringByExpandingTildeInPath
+
+                validate(validateInputs!)
+            }
+            else {
+                print("Error: missing source asset folder")
+                exit(-1)
+            }
             exit(0)
         }
         
