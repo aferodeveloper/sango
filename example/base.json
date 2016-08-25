@@ -8,11 +8,19 @@
 		"base": "Constants"
 	},
 	"fonts": [
-		"GT-Walsheim-Black-Oblique.ttf",
-		"GT-Walsheim-Black.ttf"
+		"assets/GT-Walsheim-Black-Oblique.ttf",
+		"assets/GT-Walsheim-Black.ttf"
 	],
 	"images": [
-		"Afero/ASR-1/ASR-1.png"
+		"assets/Afero/ASR-1/ASR-1.png"
+	],
+	"imagesScaled": [
+		"assets/vector_avatar.pdf",
+		"assets/large/ASR-1.png",
+		"assets/business_men.ai",
+		"assets/green_guy.eps",
+		"assets/large/brokenwashingmachine@3x.png",
+		"assets/kenmore_pay_logo_horizontal@3x.png"
 	],
 	"Colors": {
 		"UI_BASE_COLOR": "67,163,199,1",
