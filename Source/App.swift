@@ -20,11 +20,15 @@ private let keySchemaVersion = "schemaVersion"
 private let keyFonts = "fonts"
 private let keyImages = "images"
 private let keyImagesScaled = "imagesScaled"
+private let keyImagesScaledIos = "imagesScaledIos"
+private let keyImagesScaledAndroid = "imagesScaledAndroid"
 private let keyImagesIos = "imagesIos"
 private let keyImagesAndroid = "imagesAndroid"
 private let keyImagesTinted = "imagesTinted"
 private let keyGlobalTint = "globalTint"
 private let keyCopied = "copied"
+private let keyCopiedIos = "copiedIos"
+private let keyCopiedAndroid = "copiedAndroid"
 private let keyAppIcon = "appIcon"
 private let keyIOSAppIcon = "appIconIos"
 private let keyAndroidAppIcon = "appIconAndroid"
@@ -32,8 +36,9 @@ private let keyAndroidLayout = "layoutAndroid"
 private let keyJava = "java"
 private let keySwift = "swift"
 private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
-                                    keyFonts, keySchemaVersion, keyImages, keyAndroidLayout,
-                                    keyImagesScaled, keyImagesIos, keyImagesAndroid,
+                                    keyFonts, keySchemaVersion, keyAndroidLayout,
+                                    keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
+                                    keyImages, keyImagesIos, keyImagesAndroid,
                                     keyImagesTinted, keyJava, keySwift, keyGlobalTint]
 
 private enum LangType {
@@ -83,6 +88,39 @@ class App
         print(" -out_assets [folder]                asset root folder (write), typically iOS Resource, or Android app/src/main")
         print(" -input_assets_tag [tag]             optional git tag to pull repro at before processing")
         print(" -verbose                            be verbose in details")
+        print(" -help_keys                          display JSON keys and their use")
+    }
+
+    private func helpKeys() -> Void {
+        let details = [keySchemaVersion: "number. Version, which should be \(SchemaVersion)",
+                       keyFonts: "array. path to font files",
+                       keyImages: "array. path to image files that are common.",
+                       keyImagesIos: "array. path to image files that are iOS only",
+                       keyImagesAndroid: "array. path to image files that are Android only",
+                       keyImagesScaled: "array. path to image files that are common and will be scaled",
+                       keyImagesScaledIos: "array. path to image files that are iOS only and will be scaled",
+                       keyImagesScaledAndroid: "array. path to image files that are Android only and will be scaled",
+                       keyCopied: "array. path to files that are common and are just copied",
+                       keyCopiedIos: "array. path to files that are iOS only and are just copied",
+                       keyCopiedAndroid: "array. path to files that Android only and are just copied",
+                       keyAppIcon: "string. path to app icon that is common and is scaled",
+                       keyIOSAppIcon: "string. path to app icon that is iOS  and is scaled",
+                       keyAndroidAppIcon: "string. path to app icon that is Android only and is scaled",
+                       keyAndroidLayout: "array. path to layout files that is Android only",
+                       keySwift: "dictionary. keys are base:class name",
+                       keyJava: "dictionary. keys are base:class name, package:package name"
+                       ]
+        var keyLength = 0
+        for (key, _) in details {
+            if (key.characters.count > keyLength) {
+                keyLength = key.characters.count
+            }
+        }
+        print("JSON keys and their meaning:")
+        for (key, value) in details {
+            let keyPad = key.stringByPaddingToLength(keyLength + 3, withString: " ", startingAtIndex: 0)
+            print(keyPad + value)
+        }
     }
     
     // Save image, tinted
@@ -600,6 +638,17 @@ class App
             else if (key == keyImagesScaled) {
                 scaleAndCopyImages(value as! Array, type: type, useRoot: true)
             }
+            else if (key == keyImagesScaledIos) {
+                if (type == .Swift) {
+                    scaleAndCopyImages(value as! Array, type: type, useRoot: true)
+                }
+            }
+            else if (key == keyImagesScaledAndroid) {
+                if (type == .Java) {
+                    scaleAndCopyImages(value as! Array, type: type, useRoot: true)
+                }
+            }
+                
             else if (key == keyImagesIos) {
                 if (type == .Swift) {
                     copyImages(value as! Array, type: type, useRoot: true)
@@ -781,6 +830,10 @@ class App
             exit(0)
         }
 
+        if (findOption(args, option: "-help_keys")) {
+            helpKeys()
+            exit(0)
+        }
         Utils.debug(copyrightNotice)
         
         gitEnabled = Shell.gitInstalled()
