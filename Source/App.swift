@@ -888,6 +888,7 @@ class App
             inputFiles = getOptions(args, option: "-inputs")
         }
         if (inputFiles != nil) {
+            result = [:]
             for file in inputFiles! {
                 if let d = Utils.fromJSONFile(file) {
                     result = result! + d
