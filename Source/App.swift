@@ -90,6 +90,7 @@ class App
         print(" -input_assets_tag [tag]             optional git tag to pull repro at before processing")
         print(" -verbose                            be verbose in details")
         print(" -help_keys                          display JSON keys and their use")
+        print(" -version                            version")
     }
 
     private func helpKeys() -> Void {
@@ -910,6 +911,11 @@ class App
             helpKeys()
             exit(0)
         }
+        if (findOption(args, option: "-version")) {
+            print(copyrightNotice)
+            exit(0)
+        }
+
         Utils.debug(copyrightNotice)
 
         let baseName = getOption(args, option: "-asset_template")
