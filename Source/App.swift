@@ -911,14 +911,6 @@ class App
             exit(0)
         }
         Utils.debug(copyrightNotice)
-        
-        gitEnabled = Shell.gitInstalled()
-        if gitEnabled {
-            Utils.debug("git installed")
-        }
-        else {
-            Utils.debug("git not installed")
-        }
 
         let baseName = getOption(args, option: "-asset_template")
         if (baseName != nil) {

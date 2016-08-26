@@ -70,8 +70,7 @@ private let env = NSProcessInfo.processInfo().environment
 private var args = Process.arguments
 args.removeFirst()
 
-let verbose = findOption(args, option: "-verbose")
-Utils.setVerbose(verbose)
+Utils.setVerbose(findOption(args, option: "-verbose"))
 
 Shell.setup()
 

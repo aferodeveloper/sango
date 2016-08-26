@@ -12,7 +12,13 @@ import CoreFoundation
 public class Shell
 {
     private static var gitPath = "/usr/bin/git"
-    
+    private enum GitInstalled {
+        case Unset
+        case Installed
+        case Uninstalled
+    }
+    private static var isGitInstalled:GitInstalled = .Unset
+
     private static func _shell(arguments: [String]) -> (output: String, status: Int32)
     {
         let task = NSTask()
@@ -40,14 +46,20 @@ public class Shell
     
     public static func gitInstalled() -> Bool
     {
-        let output = _shell(["which git"])
-        return (output.status == 0)
+        if (isGitInstalled == .Unset) {
+            let output = _shell(["which git"])
+            isGitInstalled = (output.status == 0) ? .Installed : .Uninstalled
+
+            gitPath = output.output.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        }
+        return isGitInstalled == .Installed
     }
     
     public static func gitInstalledPath() -> String {
-        let output = _shell(["which git"])
-        
-        return output.output.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        if gitInstalled() == false {
+            print("Error: git not installed")
+        }
+        return gitPath
     }
     
     public static func gitCheckoutAtTag(path: String, tag: String) -> Bool
@@ -84,7 +96,11 @@ public class Shell
     public static func setup() -> Void
     {
         if gitInstalled() {
-            gitPath = gitInstalledPath()
+            Utils.debug("git installed")
+        }
+        else {
+            Utils.debug("git not installed")
+            
         }
     }
 }
