@@ -329,10 +329,16 @@ class App
     
     private func scaleAndCopyImages(files: [String], type: LangType, useRoot: Bool) -> Void {
         for file in files {
+            if (type == .Java) {
+                if (file.isAndroidCompatible() == false) {
+                    print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                    exit(-1)
+                }
+            }
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
             if (useRoot) {
-                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+                destFile = outputAssetFolder! + "/" + file.lastPathComponent()
             }
             else {
                 destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
@@ -340,7 +346,7 @@ class App
             let destPath = (destFile as NSString).stringByDeletingLastPathComponent
             createFolder(destPath)
 
-            var fileName = (file as NSString).lastPathComponent
+            var fileName = file.lastPathComponent()
             fileName = (fileName as NSString).stringByDeletingPathExtension
             fileName = fileName.stringByReplacingOccurrencesOfString("@2x", withString: "")
             fileName = fileName.stringByReplacingOccurrencesOfString("@3x", withString: "")
@@ -428,14 +434,14 @@ class App
         let filePath = sourceAssetFolder! + "/" + file
         var destFile:String
         if (useRoot) {
-            destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+            destFile = outputAssetFolder! + "/" + file.lastPathComponent()
         }
         else {
             destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
         }
         var destPath = (destFile as NSString).stringByDeletingLastPathComponent
         
-        var fileName = (file as NSString).lastPathComponent
+        var fileName = file.lastPathComponent()
         fileName = (fileName as NSString).stringByDeletingPathExtension
         
         if (type == .Swift) {
@@ -456,6 +462,12 @@ class App
     
     private func copyImage(file: String, type: LangType, useRoot: Bool) -> Void
     {
+        if (type == .Java) {
+            if (file.isAndroidCompatible() == false) {
+                print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                exit(-1)
+            }
+        }
         let roots = imageResourcePath(file, type: type, useRoot: useRoot)
         createFolder(roots.destPath)
         if (globalTint == nil) {
@@ -518,6 +530,12 @@ class App
     // http://iconhandbook.co.uk/reference/chart/android/
     // https://developer.apple.com/library/ios/qa/qa1686/_index.html
     private func copyAppIcon(file: String, type: LangType) -> Void {
+        if (type == .Java) {
+            if (file.isAndroidCompatible() == false) {
+                print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                exit(-1)
+            }
+        }
         let filePath = sourceAssetFolder! + "/" + file
         let iconImage = NSImage.loadFrom(filePath)
         if (iconImage == nil) {
@@ -561,10 +579,16 @@ class App
             AssetType.Layout:"/res/layouts/"
         ]
         for file in files {
+            if (type == .Java) {
+                if (file.isAndroidCompatible() == false) {
+                    print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                    exit(-1)
+                }
+            }
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
             if (useRoot) {
-                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+                destFile = outputAssetFolder! + "/" + file.lastPathComponent()
             }
             else {
                 destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
@@ -572,7 +596,7 @@ class App
             let destPath = (destFile as NSString).stringByDeletingLastPathComponent
             createFolder(destPath)
             
-            let fileName = (file as NSString).lastPathComponent
+            let fileName = file.lastPathComponent()
             
             if (type == .Swift) {
                 copyFile(filePath, dest: destFile)
@@ -589,7 +613,7 @@ class App
         }
     }
     
-    private func validate(files:[String]) -> Void
+    private func validate(files:[String], type: LangType) -> Void
     {
         for file in files {
             Utils.debug("Validating \(file)")
@@ -636,7 +660,14 @@ class App
                     }
                     
                     if (testFile) {
-                        let filePath = sourceAssetFolder! + "/" + (value as! String)
+                        let file = value as! String
+                        if (type == .Java) {
+                            if (file.isAndroidCompatible() == false) {
+                                print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                                exit(-1)
+                            }
+                        }
+                        let filePath = sourceAssetFolder! + "/" + file
                         if (NSFileManager.defaultManager().fileExistsAtPath(filePath) == false) {
                             print("Error: missing file \(filePath)")
                             exit(-1)
@@ -648,6 +679,12 @@ class App
                     if (testArray) {
                         let list = value as! [String]
                         for file in list {
+                            if (type == .Java) {
+                                if (file.isAndroidCompatible() == false) {
+                                    print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                                    exit(-1)
+                                }
+                            }
                             let filePath = sourceAssetFolder! + "/" + file
                             if (NSFileManager.defaultManager().fileExistsAtPath(filePath) == false) {
                                 print("Error: missing file \(filePath)")
@@ -820,7 +857,7 @@ class App
 //            let filePath = sourceAssetFolder! + "/" + file
 //            var destFile:String
 //            if (useRoot) {
-//                destFile = outputAssetFolder! + "/" + (file as NSString).lastPathComponent
+//                destFile = outputAssetFolder! + "/" + file.lastPathComponent()
 //            }
 //            else {
 //                destFile = outputAssetFolder! + "/" + file
@@ -936,7 +973,8 @@ class App
             if (sourceAssetFolder != nil) {
                 sourceAssetFolder = NSString(string: sourceAssetFolder!).stringByExpandingTildeInPath
 
-                validate(validateInputs!)
+                validate(validateInputs!, type: .Swift)
+                validate(validateInputs!, type: .Java)
             }
             else {
                 print("Error: missing source asset folder")

@@ -30,7 +30,7 @@ public extension NSImage
                 }
             }
             let newImage = NSImage(size: NSMakeSize(CGFloat(width), CGFloat(height)))
-            newImage.setName((file as NSString).lastPathComponent)
+            newImage.setName(file.lastPathComponent())
             newImage.addRepresentations(imageReps!)
             return newImage
         }
@@ -43,7 +43,7 @@ public extension NSImage
      */
     public static func getScaleFrom(file :String) -> (scale: Int, file: String) {
         var scale = 1
-        var fileName = (file as NSString).lastPathComponent
+        var fileName = file.lastPathComponent()
         fileName = (fileName as NSString).stringByDeletingPathExtension
         if (fileName.hasSuffix("@2x")) {
             scale = 2
@@ -222,6 +222,16 @@ public extension String
         return camelCase
     }
     
+    public func lastPathComponent() -> String {
+        return (self as NSString).lastPathComponent
+    }
+
+    public func removeScale() -> String {
+        var file = self.stringByReplacingOccurrencesOfString("@2x", withString: "")
+        file = file.stringByReplacingOccurrencesOfString("@3x", withString: "")
+        return file
+    }
+
     /**
      * File-based resource names must contain only lowercase a-z, 0-9, or underscore
      */
@@ -229,9 +239,10 @@ public extension String
         let set:NSMutableCharacterSet = NSMutableCharacterSet()
         set.formUnionWithCharacterSet(NSCharacterSet.lowercaseLetterCharacterSet())
         set.formUnionWithCharacterSet(NSCharacterSet.decimalDigitCharacterSet())
-        set.addCharactersInString("_")
+        set.addCharactersInString("_.")
         let inverted = set.invertedSet
-        if let _ = self.rangeOfCharacterFromSet(inverted, options: .CaseInsensitiveSearch) {
+        let file = self.lastPathComponent().removeScale()
+        if let _ = file.rangeOfCharacterFromSet(inverted, options: .CaseInsensitiveSearch) {
             return false
         }
         return true
