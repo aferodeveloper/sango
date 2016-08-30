@@ -1041,8 +1041,9 @@ class App
             exit(-1)
         }
 
-        if (sourceAssetFolder == nil) {
-            sourceAssetFolder = getOption(args, option: "-input_assets")
+        let overrideSourceAssets = getOption(args, option: "-input_assets")
+        if (overrideSourceAssets != nil) {
+            sourceAssetFolder = overrideSourceAssets
         }
         if (sourceAssetFolder != nil) {
             sourceAssetFolder = NSString(string: sourceAssetFolder!).stringByExpandingTildeInPath
