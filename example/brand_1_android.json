@@ -1,0 +1,36 @@
+{
+	"globalTint": "#80B3A34A",
+	"appIcon": "assets/Afero/AferoHexFull/AferoHexFull.png",
+	"images": [
+		"assets/Afero/ASR-1/ASR-1@2x.png",
+		"assets/Afero/ASR-1/ASR-1@3x.png",
+		"assets/Afero/AferoHexFull/AferoHexFull.png",
+		"assets/Afero/AferoHexFull/AferoHexFull@2x.png",
+		"assets/Afero/AferoHexFull/AferoHexFull@3x.png",
+		"assets/Afero/AferoLogo200/AferoLogo200.png",
+		"assets/Afero/AferoLogo200/AferoLogo200@2x.png",
+		"assets/Afero/AferoLogo200/AferoLogo200@3x.png",
+		"assets/Afero/AferoLogo58/AferoLogo58.png",
+		"assets/Afero/AferoLogo58/AferoLogo58@2x.png",
+		"assets/Afero/AferoLogo58/AferoLogo58@3x.png",
+		"assets/Afero/bg_texture/bg_texture.png",
+		"assets/Afero/bg_texture/bg_texture@2x.png",
+		"assets/Afero/bg_texture/bg_texture@3x.png",
+		"assets/Afero/splash_logo/splash_logo.png",
+		"assets/Afero/splash_logo/splash_logo@2x.png",
+		"assets/Afero/splash_logo/splash_logo@3x.png"
+	],
+	"imagesIos": [
+		"assets/account_avatar2.png"
+	],
+	"layoutAndroid": [
+		"assets/android/activity_object_detail.xml"
+	],
+	"imagesAndroid": [
+		"assets/account_avatar1.png"
+	],
+	"copied": [
+		"assets/file_data1",
+		"assets/file_data2"
+	]
+}
