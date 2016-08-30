@@ -1070,7 +1070,8 @@ class App
         if (inputFiles != nil) {
             result = [:]
             for file in inputFiles! {
-                if let d = Utils.fromJSONFile(file) {
+                let filePath = sourceAssetFolder! + "/" + file
+                if let d = Utils.fromJSONFile(filePath) {
                     result = result! + d
                 }
                 else {
