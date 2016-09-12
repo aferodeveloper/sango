@@ -8,9 +8,9 @@
 		"base": "Constants"
 	},
 	"locale": {
-		"default": "assets/locale/enUS.strings",
-		"deDE": "assets/locale/deDE.strings",
-		"itIT": "assets/locale/itIT.strings"
+		"default": "assets/locale/en.strings",
+		"de": "assets/locale/de.strings",
+		"it": "assets/locale/it.strings"
 	},
 	"fonts": [
 		"assets/GT-Walsheim-Black-Oblique.ttf",
