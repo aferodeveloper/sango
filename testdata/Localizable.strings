@@ -1,0 +1,631 @@
+/* DeviceRule.Schedule time string format */
+"%@ %@ %@" = "%1$@ %2$@ %3$@";
+
+/* DeviceRule.Schedule summary string format */
+"%@ at %@" = "%1$@ an %2$@";
+
+/* Validation error message where is %@ is the placeholder for the field ie. Email */
+"%@ can’t be empty." = "%@ darf nicht leer sein.";
+
+/* Validation error message where %@ is the placeholder for the field */
+"%@ is invalid." = "%@ ist ungültig.";
+
+/* Validation error message where %@ is the placeholder ofr the field and %d is the number of characters */
+"%@ must be %d characters or more." = "%1$@ muss mindestens %2$d Zeichen umfassen.";
+
+/* Groups list default group name */
+"(Unnamed group)" = "(Nicht benannte Gruppe)";
+
+/* day sequence separator */
+", " = ", ";
+
+/* Default temperature value label */
+"-" = "-";
+
+/* Circuit board pin label */
+"4 GPIO Pins" = "4 GPIO-Pins";
+
+/* GroupInspectorViewControler activity button title */
+"ACTIVITY" = "AKTIVITÄT";
+
+/* GroupInspectorViewControler add devices button title */
+"ADD" = "HINZUFÜGEN";
+
+/* No comment provided by engineer. */
+"ASR-1, the Afero Secure Radio" = "ASR-1, Afero Secure Radio";
+
+/* GroupInspectorViewControler programs button title */
+"AUTOMATE" = "AUTOMATISIEREN";
+
+/* Select robo type empty robo title */
+"AUTOMATE YOUR GROUP USING PROGRAMS" = "IHRE GRUPPE ÜBER PROGRAMME AUTOMATISIEREN";
+
+/* SelectRoboType title label */
+"AUTOMATE YOUR GROUP USING ROBEY.
+TRY AN OPTION BELOW" = "IHRE GRUPPE ÜBER ROBEY AUTOMATISIEREN
+TESTEN SIE EINE DER FOLGENDEN OPTIONEN.";
+
+/* AccontMenuViewController About button title
+   Header for build info and terms of servie link */
+"About" = "Info über";
+
+/* About dialog title */
+"About Afero" = "Über Afero";
+
+/* Accept license aggrement */
+"Accept" = "Annehmen";
+
+/* Access Type Menu Timed Access Detail */
+"Access will expire after a date" = "Der Zugriff läuft nach einem bestimmten Datum aus";
+
+/* Title for account email */
+"Account Email" = "E-Mail-Adresse des Kontos";
+
+/* Title for account id */
+"Account Id" = "Konto-ID";
+
+/* Header for changing account name */
+"Account Name" = "Kontoname";
+
+/* Access level owner access summary */
+"Account Owner" = "Kontoinhaber";
+
+/* Account menu account section title
+   Nexus accounts title */
+"Accounts" = "Konten";
+
+/* Device action editor activate button activate title */
+"Activate" = "Aktivieren";
+
+/* Activity feed title
+   Nexus activity title */
+"Activity" = "Aktivität";
+
+/* Button titel for adding device manuallt */
+"Add" = "Hinzufügen";
+
+/* InviteUserViewController title */
+"Add Access" = "Zugriff hinzufügen";
+
+/* Nexus add device title
+   ScanDeviceViewController default title */
+"Add Device" = "Gerät hinzufügen";
+
+/* Title for button to add Nest thermostat */
+"Add Nest® Learning Thermostat™" = "Nest® Learning Thermostat™ hinzufügen";
+
+/* Title for Add Other Device
+   Title for button to add third party device */
+"Add Other Device" = "Anderes Gerät hinzufügen";
+
+/* Sharing settings add another person cell string */
+"Add someone to this account" = "Diesem Konto eine Person hinzufügen";
+
+/* No comment provided by engineer. */
+"Afero Cloud" = "Afero Cloud";
+
+/* Share account view controller allowed users section title */
+"Allowed Users" = "Zugelassene Benutzer";
+
+/* Generic error linging nest */
+"An error occurred trying to link Nest, try again later." = "Beim Verbinden von Nest ist ein Fehler aufgetreten. Versuchen Sie es später erneut.";
+
+/* Automation view controller title */
+"Automation" = "Automatisierung";
+
+/* GroupIconCollectionViewController available icons section header */
+"Available Icons" = "Verfügbare Symbole";
+
+/* No comment provided by engineer. */
+"Awesome! Your Modulo is connected and ready to develop! Go to:" = "Super! Ihr Modulo ist verbunden und bereit für die Entwicklung! Gehen Sie zu:";
+
+/* No comment provided by engineer. */
+"Bluetooth is turned off" = "Bluetooth ist ausgeschaltet";
+
+/* No comment provided by engineer. */
+"Button to Afero Secure Radio" = "Schaltfläche für Afero Secure Radio";
+
+/* GroupInspectorViewcontroller Create new program title */
+"CREATE A NEW PROGRAM" = "NEUES PROGRAMM ERSTELLEN";
+
+/* Device Inspector Create A New Schedule Button Title */
+"CREATE A NEW SCHEDULE" = "NEUEN ZEITPLAN ERSTELLEN";
+
+/* Login create account button title */
+"CREATE AN ACCOUNT" = "EIN KONTO ERSTELLEN";
+
+/* Add device location access denied cancel button title
+   Cancel
+   Cancel adding other device
+   Cancel button title
+   Cancel Nest linking
+   Group editor cancel button title
+   Info menu Cancel itm title
+   Manual add cancel button title
+   Program editor cancel button title */
+"Cancel" = "Abbrechen";
+
+/* Device view error title */
+"Can’t connect." = "Verbindung kann nicht hergestellt werden.";
+
+/* BatteryControl Charging status string */
+"Charging" = "Aufladen";
+
+/* Reset password success message */
+"Check your email for further instructions." = "Weitere Anweisungen erhalten Sie per E-Mail.";
+
+/* No comment provided by engineer. */
+"Confirmation Email from Cloud" = "Bestätigungs-E-Mail von Cloud";
+
+/* Reconnecting to Afero status spinner message */
+"Connecting to Afero" = "Verbindung zu Afero wird hergestellt";
+
+/* AccesLevel Single Device Access Details
+   Access Type Menu Single Device Access Detail */
+"Control a single device in this location" = "Ein einzelnes Gerät an diesem Standort verbinden";
+
+/* AccesLevel Full Access Details
+   Access Type Menu Full Access Detail */
+"Control all devices in this location" = "Alle Geräte an diesem Standort verbinden";
+
+/* AccesLevel Limited Access Detals
+   Access Type Menu Limited Access Detail */
+"Control some devices in this location" = "Einige Geräte an diesem Standort verbinden";
+
+/* Location error title */
+"Couldn’t Find Location" = "Standort konnte nicht gefunden werden";
+
+/* Group inspector new group name */
+"Create New Group" = "Neue Gruppe erstellen";
+
+/* Groups list add new group title */
+"Create a New Group" = "Eine neue Gruppe erstellen";
+
+/* API client reset password credential encoding error message */
+"Credential encoding wasn’t successful." = "Verschlüsselung der Benutzerdaten war nicht erfolgreich.";
+
+/* Device rule day of week daily summary string */
+"Daily" = "Täglich";
+
+/* No comment provided by engineer. */
+"Data Connection" = "Datenverbindung";
+
+/* Device action editor activate button disable title */
+"Deactivate" = "Deaktivieren";
+
+/* Header for debug info */
+"Debug" = "Testen";
+
+/* Delete
+   GroupInspectorViewCotnroller Discard Program Title */
+"Delete" = "Löschen";
+
+/* Delete Robey confirmation alert title format */
+"Delete \"%@\"?" = "\"%@\" löschen?";
+
+/* Delete group confirmation title */
+"Delete %@?" = "%@ löschen?";
+
+/* Delete Robey confirmation default alert title */
+"Delete Program?" = "Programm löschen?";
+
+/* Device inspector settings device id header title
+   Placeholder text for device association id */
+"Device ID" = "Geräte-ID";
+
+/* Name Device Default Status String */
+"Device added" = "Gerät hinzugefügt";
+
+/* Profile control attribute write device offline message */
+"Device is offline." = "Gerät ist offline.";
+
+/* Navigate back to device view */
+"Devices" = "Geräte";
+
+/* Schedules discard accessory text */
+"Discard" = "Verwerfen";
+
+/* Rules editor cancel button title */
+"Discard Schedule" = "Zeitplan verwerfen";
+
+/* Name device done button title */
+"Done" = "Fertig";
+
+/* Groups list add new group subtitle */
+"E.g., 'Living Room', 'Backyard', 'Fans'" = "Z. B. 'Wohnzimmer', 'Hof', 'Ventilatoren'";
+
+/* GroupInspectorViewcontroller Edit Program Title
+   Schedules edit accessory text */
+"Edit" = "Bearbeiten";
+
+/* Rule editor default rule name */
+"Edit Program" = "Programm bearbeiten";
+
+/* Compose email view email field placeholder */
+"Email address" = "E-Mail-Adresse";
+
+/* Remove device complete error string */
+"Error: Unable to remove device." = "Fehler: Gerät konnte nicht entfernt werden.";
+
+/* Validation error message */
+"Field can’t be empty." = "Feld darf nicht leer sein.";
+
+/* Forgot password button title */
+"Forgot Password?" = "Passwort vergessen?";
+
+/* AccesLevel Full Access Summary
+   Access Type Menu Full Access Title */
+"Full Access" = "Vollzugriff";
+
+/* Name Device Default Message String */
+"Give your device a friendly name for easy identification." = "Geben Sie Ihrem Gerät einen eigenen Namen zur leichteren Erkennung.";
+
+/* Button to dismiss information modal */
+"Got It" = "Alles klar";
+
+/* Circuit board pin label */
+"Ground" = "Masse";
+
+/* Group of devices */
+"Group" = "Gruppe";
+
+/* Group icon selector title */
+"Group Name" = "Gruppenname";
+
+/* GroupCollectionViewController title
+   Nexus groups title
+   Schedules view controller title */
+"Groups" = "Gruppen";
+
+/* No comment provided by engineer. */
+"How Afero Works" = "Funktionsweise von Afero";
+
+/* Generic validation error message */
+"Invalid value." = "Ungültiger Wert.";
+
+/* Waiting text while loading nest link screen */
+"Just a moment..." = "Einen Moment…";
+
+/* Select robo type LINK ANOTHER DEVICE cell title */
+"LINK ANOTHER DEVICE" = "ANDERES GERÄT VERKNÜPFEN";
+
+/* Select robey type LINK TO ANOTHER DEVICE title */
+"LINK TO ANOTHER DEVICE" = "MIT EINEM ANDEREN GERÄT VERKNÜPFEN";
+
+/* AccesLevel Limited Access Summary
+   Access Type Menu Limited Access Title */
+"Limited Access" = "Begrenzter Zugriff";
+
+/* Title for linking Nest Thermostat */
+"Link Nest" = "Nest verknüpfen";
+
+/* Scan device view controller message text */
+"Link other devices with Afero" = "Andere Geräte mit Afero verknüpfen";
+
+/* Location access denied title */
+"Location Access Denied" = "Zugriff auf Standort verweigert";
+
+/* Location access denied message */
+"Location access was denied for this device. To allow location access, go to Settings → Afero → Location." = "Diesem Gerät wurde der Zugiff auf den Standort verweigert. Um den Standortzugriff zu gestatten, wählen Sie Einstellungen → Afero → Standort.";
+
+/* No comment provided by engineer. */
+"Make sure your Modulo is plugged into a USB power source." = "Stellen Sie sicher, dass Ihr Modulo an eine USB-Stromquelle angeschlossen ist.";
+
+/* Title for button to add device manually */
+"Manually Add Device" = "Gerät manuell hinzufügen";
+
+/* No comment provided by engineer. */
+"Modulo can't connect to Afero right now. Try again later" = "Modulo kann derzeit keine Verbindung zu Afero herstellen. Versuchen Sie es später erneut.";
+
+/* Validation error message for number of characters in a field */
+"Must be %d characters or more." = "Muss mindestens %d Zeichen umfassen.";
+
+/* Rule editor set name label */
+"Name" = "Name";
+
+/* Name device title */
+"Name Device" = "Gerät benennen";
+
+/* GroupInspectorViewContoller set group name popover placeholder text */
+"Name your group" = "Benennen Sie Ihre Gruppe";
+
+/* Group inspector new group name */
+"New Group" = "Neue Gruppe";
+
+/* GroupInspectorViewController set group name title */
+"New Name:" = "Neuer Name:";
+
+/* Program editor new device group title */
+"New Program" = "Neues Programm";
+
+/* Remove device no button title */
+"No" = "Nein";
+
+/* No comment provided by engineer. */
+"No Internet Connection!" = "Keine Internetverbindung!";
+
+/* AccessLevel unknown access detail */
+"No access type specified." = "Kein Zugriffstyp angegeben.";
+
+/* Activity detail view default title */
+"No additional info." = "Keine weiteren Informationen.";
+
+/* GroupCollectionView zero state title label */
+"No groups yet." = "Noch keine Gruppen.";
+
+/* No comment provided by engineer. */
+"Now, let's test your Modulo’s button." = "Testen Sie die Schaltfläche Ihres Modulo.";
+
+/* About dialog ok button title
+   Connectivity alert ok button title
+   Issue reporter unable to send mail OK button
+   title for button to dissmiss error message */
+"OK" = "OK";
+
+/* Select robey type ON DEMAND title */
+"ON DEMAND" = "AUF ABRUF";
+
+/* go back to sign in */
+"Oh wait, I remember my password!" = "Ich erinnere mich doch an mein Passwort!";
+
+/* Button title to open settings */
+"Open Bluetooth Settings" = "Bluetooth-Einstellungen öffnen";
+
+/* Button title to open settings */
+"Open Internet Settings" = "Interneteinstellungen öffnen";
+
+/* Share account view controller open invitations */
+"Open Invitations" = "Offene Einladungen";
+
+/* AccessLevel Owner Access Details */
+"Owner of the account" = "Inhaber des Kontos";
+
+/* Select robo type ROBO cell title */
+"PROGRAM" = "PROGRAMM";
+
+/* Schedules pause accessory text */
+"Pause" = "Pause";
+
+/* Scan device view controller message text */
+"Please scan your device’s QR code." = "Scannen Sie den QR-Code Ihres Geräts.";
+
+/* Circuit board pin label */
+"Power In" = "Eingangsspannung";
+
+/* No comment provided by engineer. */
+"Power and Connectors" = "Spannung und Steckverbinder";
+
+/* Press circuit board button */
+"Press button on your board." = "Drücken Sie die Taste auf Ihrem Board.";
+
+/* Programs view controller title */
+"Programs" = "Programme";
+
+/* Select robey type RUN AT SUNSET OR SUNRISE title
+   Select robo type RUN AT SUNSET OR SUNRISE cell title */
+"RUN AT SUNSET OR SUNRISE" = "AUSFÜHRUNG BEI SONNENUNTERGANG ODER SONNENAUFGANG";
+
+/* No comment provided by engineer. */
+"Ready!" = "Bereit!";
+
+/* Remove device alert title */
+"Remove Device?" = "Gerät entfernen?";
+
+/* No comment provided by engineer. */
+"Remove outer sleeve from Modulo, then:" = "Entfernen Sie die äußere Hülle des Modulo und gehen Sie dann wie folgt vor:";
+
+/* Reset Password button title */
+"Reset Password" = "Passwort zurücksetzen";
+
+/* Schedules pause accessory text */
+"Resume" = "Fortsetzen";
+
+/* GroupInspectorViewController Run Program Title */
+"Run" = "Ausführung";
+
+/* GroupInspector trigger cell summary template */
+"Runs %@" = "Ausführung: %@";
+
+/* Schedule summary view titleLabel */
+"SCHEDULE" = "ZEITPLAN";
+
+/* Select robey type ON SCHEDULE TIME title
+   Select robo type SCHEDULE TIME cell title */
+"SCHEDULE TIME" = "UHRZEIT IM ZEITPLAN";
+
+/* AccessLevel unknown access summary */
+"SELECT ACCESS TYPE" = "ZUGRIFFSTYP AUSWÄHLEN";
+
+/* Send invitation button title */
+"SEND" = "SENDEN";
+
+/* Login sign in button title */
+"SIGN IN" = "ANMELDEN";
+
+/* AccountMenuViewcontroller Sign out button title */
+"SIGN OUT" = "ABMELDEN";
+
+/* Circuit board pin label */
+"SPI Pins" = "SPI-Pins";
+
+/* Group editor save button title
+   Name device save button title
+   Program editor save button title */
+"Save" = "Speichern";
+
+/* Saving setting */
+"Saving Changes" = "Änderungen speichern";
+
+/* Add device location access denied scan anyway button title */
+"Scan Anyway" = "Trotzdem scannen";
+
+/* Button to go to scan QR code */
+"Scan the QR Code" = "QR-Code scannen";
+
+/* Device Inspector Circular Selector Schedules Group Label
+   Schedules view controller title */
+"Schedules" = "Zeitpläne";
+
+/* Device Palette title for linked group editor */
+"Select a device to link:" = "Gerät zum Verknüpfen auswählen:";
+
+/* Name Device Default Message String */
+"Set your device’s current location." = "Stellen Sie den aktuellen Standort Ihres Geräts ein.";
+
+/* Device Inspector Circular Selector Settings Group Label
+   Nexus settings title
+   Title of settings page */
+"Settings" = "Einstellungen";
+
+/* Nexus sharing title
+   SharingSettingsViewController title */
+"Sharing" = "Teilen";
+
+/* Log into Afero
+   Sign in button title */
+"Sign In" = "Anmelden";
+
+/* Create account sign up button title
+   Create an Afero Account */
+"Sign Up" = "Registrieren";
+
+/* sign out */
+"Sign out" = "Abmelden";
+
+/* Unexpected authentication failure handler alert title */
+"Signed Out" = "Abgemeldet";
+
+/* AccesLevel Single Device Access Summary
+   Access Type Menu Single Device Access Title */
+"Single Device Access" = "Zugriff eines Geräts";
+
+/* Name device done button title */
+"Skip" = "Überspringen";
+
+/* No comment provided by engineer. */
+"Some Extras" = "Einige Extras";
+
+/* No comment provided by engineer. */
+"Sorry!" = "Entschuldigung!";
+
+/* No comment provided by engineer. */
+"Sorry, that didn’t work quite right. Please try again." = "Leider ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
+
+/* Generic login or create account error */
+"Sorry, that didn’t work quite right. Try creating an account again." = "Leider ist ein Fehler aufgetreten. Bitte versuchen Sie erneut, ein Konto zu erstellen.";
+
+/* Generic login error */
+"Sorry, that didn’t work quite right. Try signing in again." = "Leider ist ein Fehler aufgetreten. Bitte versuchen Sie erneut, sich anzumelden.";
+
+/* Error creating account */
+"Sorry, that email address is already being used. Try again with a different email address." = "Die E-Mail-Adresse wird bereits verwendet. Bitte geben Sie eine andere E-Mail-Adresse ein.";
+
+/* Error message */
+"Sorry, there was a problem accepting the Terms of Service." = "Leider ist beim Akzeptieren der Nutzungsbedingungen ein Fehler aufgetreten.";
+
+/* GroupIconCollectionViewController suggested icons section header */
+"Suggested Icons" = "Vorgeschlagene Symbole";
+
+/* Group membership editor view controller title */
+"Tap a device to add or remove it:" = "Tippen Sie auf ein Gerät, um es hinzuzufügen oder zu entfernen:";
+
+/* GroupCollectionView zero state body label */
+"Tap the + button to add a new group." = "Tippen Sie auf die Schaltfläche +, um eine neue Gruppe hinzuzufügen.";
+
+/* Device settings name device button default name */
+"Tap to assign" = "Zum Zuordnen tippen";
+
+/* terms of service label */
+"Terms of Service" = "Nutzungsbedingungen";
+
+/* Circuit board LED */
+"Test LED" = "LED testen";
+
+/* Device view error fallback description */
+"There was a problem connecting to Afero. Check your network connection, then try again." = "Beim Herstellen der Verbindung mit Afero ist ein Fehler aufgetreten. Prüfen Sie Ihre Netzwerkverbindung und versuchen Sie es erneut.";
+
+/* Location error message */
+"There was a problem getting your location: %@." = "Beim Abrufen Ihres Standorts ist ein Fehler aufgetreten: %@.";
+
+/* Error message when trying to accosiate device */
+"This device is already linked to someone else’s account. Remove the device from that account first." = "Dieses Gerät ist bereits mit dem Konto einer anderen Person verknüpft. Entfernen Sie das Gerät zunächst aus dem Konto.";
+
+/* Access Type Menu Timed Access Title */
+"Timed Access" = "Zeitabhängiger Zugriff";
+
+/* legal description */
+"To use the Afero mobile app you must agree to these terms and read the Afero Privacy Policy." = "Um die Afero App nutzen zu können, müssen Sie sich mit diesen Bedingungen einverstanden erklären und die Datenschutzerklärung von Afero lesen.";
+
+/* Activity section header for today. */
+"Today" = "Heute";
+
+/* Automation triggered by cell text */
+"Triggered by %@" = "Ausgelöst von %@";
+
+/* No comment provided by engineer. */
+"Turn Off LED" = "LED ausschalten";
+
+/* No comment provided by engineer. */
+"Turn On LED" = "LED einschalten";
+
+/* Compose email view message placeholder */
+"Type a message" = "Geben Sie eine Nachricht ein";
+
+/* Program editor group name placeholder text */
+"Type a name" = "Geben Sie einen Namen ein.";
+
+/* Circuit board label */
+"UART" = "UART";
+
+/* Error getting access token */
+"Unable to load credentials, try again later." = "Benutzerdaten konnten nicht geladen werden. Versuchen Sie es später erneut.";
+
+/* Account menu unnamed account label text */
+"Unnamed Account" = "Nicht benanntes Konto";
+
+/* Error message */
+"Unrecognized response when trying to associate device." = "Nicht erkannte Antwort beim Zuordnen des Geräts.";
+
+/* Title for version number */
+"Version" = "Version";
+
+/* Unexpected authentication failure handler alert message */
+"We ran into a problem and had to sign you out. Please sign in again." = "Es ist ein Problem aufgetreten, aufgrund dessen Sie abgemeldet werden mussten. Bitte melden Sie sich erneut an.";
+
+/* Device rule day of week weekdays summary string */
+"Weekdays" = "Wochentage";
+
+/* Device rule day of week weekends summary string */
+"Weekends" = "Wochenenden";
+
+/* inital app screen
+   Welcome title */
+"Welcome to Afero!" = "Willkommen bei Afero!";
+
+/* Remove device yes button title */
+"Yes" = "Ja";
+
+/* Activity section header for yesterday. */
+"Yesterday" = "Gestern";
+
+/* No comment provided by engineer. */
+"developer.afero.io" = "developer.afero.io";
+
+/* Name Device Default Placeholder */
+"e.g., Living Room" = "z. B. Wohnzimmer";
+
+/* GroupInspectorViewContoller set group name popover placeholder text */
+"e.g., “Attic”" = "z. B. “Mansarde”";
+
+/* Generic login or create account error */
+"error-generic" = "Fehler-allgemein";
+
+/* Degrees Fahrenheit default unit string */
+"°C" = "°C";
+
+/* Degrees Fahrenheit default unit string */
+"°F" = "°F";
+
+/* Degrees Fahrenheit default unit string */
+"°K" = "°K";
+

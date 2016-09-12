@@ -2,8 +2,8 @@
 	"globalTint": "#80B3A34A",
 	"appIcon": "assets/Afero/AferoHexFull/AferoHexFull.png",
 	"images": [
-		"assets/Afero/ASR-1/ASR-1@2x.png",
-		"assets/Afero/ASR-1/ASR-1@3x.png",
+		"assets/Afero/ASR-1/asr_1@2x.png",
+		"assets/Afero/ASR-1/asr_1@3x.png",
 		"assets/Afero/AferoHexFull/AferoHexFull.png",
 		"assets/Afero/AferoHexFull/AferoHexFull@2x.png",
 		"assets/Afero/AferoHexFull/AferoHexFull@3x.png",

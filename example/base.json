@@ -7,16 +7,20 @@
 	"swift": {
 		"base": "Constants"
 	},
+	"locale": {
+		"default": "assets/locale/enUS.strings",
+		"deDE": "assets/locale/deDE.strings",
+		"itIT": "assets/locale/itIT.strings"
+	},
 	"fonts": [
 		"assets/GT-Walsheim-Black-Oblique.ttf",
 		"assets/GT-Walsheim-Black.ttf"
 	],
 	"images": [
-		"assets/Afero/ASR-1/ASR-1.png"
+		"assets/Afero/ASR-1/asr_1.png"
 	],
 	"imagesScaled": [
 		"assets/vector_avatar.pdf",
-		"assets/large/ASR-1.png",
 		"assets/business_men.ai",
 		"assets/green_guy.eps",
 		"assets/large/brokenwashingmachine@3x.png",

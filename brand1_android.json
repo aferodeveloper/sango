@@ -1,6 +1,6 @@
 {
 	"input_assets": "example",
-	"inputs": ["base.json","brand_1.json"],
+	"inputs": ["base.json","brand_1_android.json"],
 	"out_source": "temp_android/main/java/Constants.java",
 	"out_assets": "temp_android/main",
 	"type": "java"

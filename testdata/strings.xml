@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) 2014-2016 Afero, Inc. All rights reserved.
+  -->
+
+<resources>
+
+    <string name="app_name">Afero</string>
+
+    <string name="primary_account_name">Primary Account</string>
+
+    <string name="no_network_warning">Couldn’t contact Afero.\nPlease check your connection.</string>
+    <string name="device_offline">Device Offline</string>
+
+    <string name="button_title_cancel">Cancel</string>
+    <string name="button_title_cancel_all_caps">CANCEL</string>
+    <string name="button_title_ok">OK</string>
+    <string name="dialog_title_schedule_time">Set Time</string>
+
+    <string name="dialog_title_remove_device">Remove Device?</string>
+    <string name="dialog_message_remove_device">Are you sure you want to remove this device from your account?</string>
+    <string name="dialog_button_remove_device">REMOVE</string>
+
+    <string name="dialog_message_rule_confirm_discard">Delete this automation?</string>
+
+    <string name="dialog_button_discard_rule">DELETE</string>
+
+    <string name="group_device_picker_prompt">Tap a device to add or remove it:</string>
+    <string name="group_device_picker_close">CLOSE</string>
+
+    <string name="automation_title_description">Your automated schedules and rules</string>
+
+
+    <string name="rule_list_empty">Automate your devices by linking them to each other, scheduling based on time, or running on demand.</string>
+
+    <string name="rule_setup_format">Set Up %s</string>
+    <string name="rule_setup_rule">Set Up Automation</string>
+    <string name="rule_create_prompt">Select New Automation Type</string>
+    <string name="rule_create_title">CREATE NEW AUTOMATION</string>
+    <string name="rule_name_hint">Type a memorable name for your automation:</string>
+    <string name="rule_name_default">New Automation</string>
+    <string name="rule_now_select_trigger_device_prompt">Select a trigger for your automation:</string>
+    <string name="rule_select_your_trigger">Select a Trigger</string>
+    <string name="rule_no_actions">No Actions</string>
+    <string name="rule_add_device">SET UP AN ACTION…</string>
+    <string name="rule_device_trigger_picker_prompt">Select a trigger:</string>
+    <string name="rule_device_picker_prompt">Select the device:</string>
+    <string name="rule_setup_device">Set Up Action</string>
+    <string name="rule_remove_action">REMOVE</string>
+    <string name="rule_missing_trigger">Missing Trigger</string>
+    <string name="rule_tap_to_select_trigger">Tap to select trigger</string>
+
+    <string name="rule_operation_none">Ignore</string>
+    <string name="rule_operation_eq">Equals</string>
+    <string name="rule_operation_lt">Less than</string>
+    <string name="rule_operation_gt">More than</string>
+
+    <string name="charge_state_none">Ignore</string>
+    <string name="charge_state_charging">Charging</string>
+    <string name="charge_state_not_charging">Not Charging</string>
+
+    <string name="rule_notify_switch_label">Send notifications when triggered</string>
+    <string name="rule_action_tap_to_setup">Tap to set up</string>
+
+    <string name="rule_item_run">RUN</string>
+    <string name="rule_item_edit">EDIT</string>
+    <string name="rule_item_delete">DELETE</string>
+
+    <string name="rule_button_title_done">DONE</string>
+    <string name="rule_button_title_save">SAVE</string>
+    <string name="rule_button_title_next">NEXT</string>
+
+    <string name="trigger_on_demand">On Demand</string>
+    <string name="trigger_on_demand_hint">Run when you tap play</string>
+    <string name="trigger_on_demand_editor_prompt">When you tap play:</string>
+    <string name="trigger_schedule">Schedule</string>
+    <string name="trigger_schedule_hint">Run at a certain time</string>
+    <string name="trigger_device">Trigger</string>
+    <string name="trigger_device_hint">Run when triggered by another device</string>
+    <string name="trigger_select_conditions">Select conditions that start automation:</string>
+    <string name="rule_select_actions_prompt">Select the actions to automate:</string>
+    <string name="rule_setup_link">Set Up Trigger</string>
+    <string name="rule_setup_schedule">Set Up Schedule</string>
+    <string name="rule_setup_on_demand">Set Up On Demand</string>
+
+    <string name="schedule_time_prompt">Select days and start time:</string>
+
+    <!-- 1: Device name such as "Leak Detector" or "Refrigerator" -->
+    <string name="schedule_triggered_by_format">Trigger: %1$s</string>
+    <string name="schedule_triggered_by_2_line_format">Triggered by\n%1$s</string>
+
+    <!-- 1: Device attribute condition such as "Leak Detected", "On", or "72°" -->
+    <string name="schedule_condition_format">When: %1$s</string>
+
+    <!-- 1: attribute, 2: value. Ex.: "Power is On" or "Status is Leak Detected" -->
+    <string name="schedule_condition_summary_equals_format">%1$s is %2$s</string>
+
+    <!-- 1: attribute, 2: numeric value. Ex.: "Temperature < 75" -->
+    <string name="schedule_condition_summary_less_than_format">%1$s &lt; %2$s</string>
+    <string name="schedule_condition_summary_greater_than_format">%1$s &gt; %2$s</string>
+
+    <!--
+    Schedule time and days of the week. Ex.: "On Mon, Tues, Wed, Thu at 11:00am"
+    1: time
+    2-6: days of week
+    -->
+    <string name="schedule_time_and_days_1_format">On %2$s at %1$s</string>
+    <string name="schedule_time_and_days_2_format">On %2$s and %3$s at %1$s</string>
+    <string name="schedule_time_and_days_3_format">On %2$s, %3$s, and %4$s at %1$s</string>
+    <string name="schedule_time_and_days_4_format">On %2$s, %3$s, %4$s, and %5$s at %1$s</string>
+    <string name="schedule_time_and_days_5_format">On %2$s, %3$s, %4$s, %5$s, and %6$s at %1$s</string>
+    <string name="schedule_time_and_days_6_format">On %2$s, %3$s, %4$s, %5$s, %6$s, and %7$s at %1$s</string>
+    <string name="schedule_time_and_days_all_format">Daily at %1$s</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="action_sign_out">SIGN OUT</string>
+    <string name="action_sharing">Sharing</string>
+    <string name="action_accounts">Accounts</string>
+    <string name="action_scan_device">Add Device</string>
+    <string name="action_automation">Automation</string>
+    <string name="action_activity">Activity</string>
+    <string name="action_delete_device">REMOVE DEVICE</string>
+
+    <string name="title_welcome">Welcome to Afero!</string>
+    <string name="title_gate_login_button">SIGN IN</string>
+    <string name="title_gate_create_account_button">CREATE AN ACCOUNT</string>
+    <string name="label_header_plugin">Make sure your Modulo is plugged in to a USB power source.</string>
+    <string name="label_header_scan">Scan your device’s QR code.</string>
+    <string name="label_header_connectors">Power and Connectors</string>
+    <string name="label_header_chip">ASR-1, the Afero Secure Radio</string>
+    <string name="label_header_led">Some Extras</string>
+    <string name="label_header_button">Now, let’s test your Modulo’s button.</string>
+    <string name="label_header_done">Awesome! Your Modulo is connected and ready to develop!\n\nGo to:</string>
+    <string name="label_develop_url">developer.afero.io</string>
+
+
+    <string name="label_button_ready">Ready!</string>
+    <string name="label_button_led">TEST MY LED LIGHT</string>
+    <string name="label_led">Test LED</string>
+    <string name="label_button">Press button on your board.</string>
+
+    <string name="label_ground">Ground</string>
+    <string name="labal_uart">UART</string>
+    <string name="label_powerin">Power In</string>
+    <string name="label_gpio">GPIO Pins</string>
+    <string name="label_spi">SPI Pins</string>
+
+    <string name="label_login_user">Email</string>
+    <string name="label_login_password">Password</string>
+    <string name="label_create_account_firstname">First Name</string>
+    <string name="label_create_account_lastname">Last Name</string>
+    <string name="title_login_button">SIGN IN</string>
+    <string name="title_forgot_button">FORGOT PASSWORD?</string>
+    <string name="title_remember_button">GO BACK, I REMEMBERED IT</string>
+    <string name="title_create_account_button">CREATE ACCOUNT</string>
+    <string name="error_login_generic">Sorry, that didn’t work quite right. Try signing in again.</string>
+    <string name="error_login_bad_credential">Sorry, the email address or password you typed is incorrect. Try signing in again.</string>
+    <string name="error_email_already_exists">Sorry, that email address is already being used. Try again with a different email address.</string>
+    <string name="reset_password_success">We’ve sent password reset instructions to your email address.</string>
+    <string name="title_reset_button">RESET PASSWORD</string>
+
+    <string name="label_true">True</string>
+    <string name="label_false">False</string>
+
+    <string name="user_list_header_users">Allowed Users</string>
+    <string name="user_list_header_invitations">Open Invitations</string>
+    <string name="invite_email_hint">Email Address</string>
+    <string name="invite_message_hint">Type a message</string>
+    <string name="invite_button_title">INVITE</string>
+
+    <string name="access_full">Full Access</string>
+    <string name="access_owner">Account Owner</string>
+    <string name="invite_email_unknown">(Unknown email)</string>
+    <string name="invite_summary_format">%1$s, invited by %2$s (pending)</string>
+
+    <string name="name_device_prompt">Give your device a friendly name for easy identification.</string>
+    <string name="name_device_hint">Device Name (e.g., Living Room)</string>
+    <string name="name_device_demo_button">View Demo</string>
+
+    <string name="activity_empty">No device activity has occurred.</string>
+
+    <string name="error_text_format">%s</string>
+    <string name="error_text_with_status_code_format">%1$s (%2$s)</string>
+
+    <string name="error_create_device_generic">Sorry, that didn’t work quite right. Please try again.</string>
+
+    <string name="title_done_button">Done</string>
+
+    <string name="automation_button_title">Automation</string>
+    <string name="device_settings_button_title">Settings</string>
+    <string name="device_activity_button_title">DEVICE ACTIVITY</string>
+    <string name="device_settings_name">DEVICE NAME</string>
+    <string name="device_settings_location">LOCATION</string>
+    <string name="device_settings_misc">MISC</string>
+
+
+    <string name="warning_service_changed">The app must restart for this change to take effect.</string>
+    <string name="exit_button">Exit</string>
+
+    <string name="pref_title_about">About</string>
+    <string name="pref_title_debug">Debug</string>
+    <string name="pref_title_version">Version</string>
+    <string name="pref_title_copyright">Copyright</string>
+    <string name="pref_title_device_debug">Device Debug</string>
+    <string name="pref_title_account">Account</string>
+    <string name="pref_title_account_name">Account Email</string>
+    <string name="pref_title_account_id">Account ID</string>
+    <string name="pref_title_hubby_enabled">Soft-Hub Enabled</string>
+    <string name="pref_title_leakcanary_enabled">LeakCanary Enabled</string>
+    <string name="pref_title_session_tracing">Session Tracing</string>
+    <string name="pref_title_show_onboarding">Show Onboarding</string>
+    <string name="pref_value_copyright">© 2015–2016 Afero, Inc.</string>
+
+    <string name="battery_charging">Charging</string>
+    <string name="battery_charge_level">Charge Level:</string>
+    <string name="battery_charge_state">Charge State:</string>
+
+    <string name="temperature_fahrenheit_short">F</string>
+    <string name="temperature_celsius_short">C</string>
+    <string name="temperature_kelvin_short">K</string>
+
+    <string name="notification_title">Afero Notification</string>
+
+    <string name="device_state_online">ONLINE</string>
+    <string name="device_state_offline">OFFLINE</string>
+    <string name="device_state_active">ACTIVE</string>
+
+    <!--
+    These are regex patterns that are used to magically choose an appropriate icon when the user
+    enters a name for a new device group. Each string is a list of unique synonyms for each type
+    of room delimited by a |. They must be all lower case with no punctuation of any kind.
+    -->
+
+    <!-- TODO: Remove or change this placeholder text -->
+
+    <string name="label_scan_qr">Remove outer sleeve on Modulo, then:</string>
+    <string name="label_scan_modulo">Scan QR Code</string>
+    <string name="label_tos_accept_button">ACCEPT</string>
+    <string name="label_tos_decline_button">DECLINE</string>
+    <string name="action_terms_of_service">Terms of Service</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for QR code detection.</string>
+    <string name="low_storage_error">QR code detector dependencies can’t be downloaded due to low device storage.</string>
+    <string name="modulo_connectivity_error">Sorry, your Modulo isn’t connected to the Afero Cloud. Please make sure it’s plugged in, then try again.</string>
+    <string name="error_create_device_forbidden">This device is already linked to someone else’s account. Please remove the device from that account, then try again.</string>
+    <string name="error_create_device_conflict">This device is already linked to your account. Please add another device or go back.</string>
+
+    <string name="labal_oobe_modal_header">How Afero Works</string>
+    <string name="label_oobe_modal_cloud">Afero Cloud</string>
+    <string name="label_oobe_madal_data_connection">Data Connection</string>
+    <string name="label_oobe_modal_radio">Button to Afero Secure Radio</string>
+    <string name="label_oobe_modal_confirmation">Confirmation Email from Cloud</string>
+    <string name="title_manual_add_device">Type ID next to QR code</string>
+    <string name="button_manual_add_device">Manually Add Device</string>
+    <string name="button_add_other_device">Add Other Device</string>
+    <string name="button_skip">Skip</string>
+
+    <string name="permission_needed_title">Access Needed</string>
+    <string name="permission_needed_message">Please grant location, camera and storage access to enable Afero to function properly.</string>
+    <string name="location_enable_message">Please turn on location services so this app can discover and connect with Afero devices.</string>
+    <string name="permission_denied_title">Functionality Limited</string>
+    <string name="permission_denied_message">You haven’t granted all the required permissions.</string>
+    <string name="camera_needed_title">Camera Not Allowed</string>
+
+    <string name="oobe_turn_on_led">Turn on LED</string>
+    <string name="oobe_turn_off_led">Turn off LED</string>
+    <string name="label_oobe_modal_done_button">Got It!</string>
+    <string name="label_tos_description">To use the Afero mobile app you must agree to these terms and read the Afero Privacy Policy.</string>
+
+    <string name="try_again">Try Again</string>
+
+    <string name="web_loading">Just a moment…</string>
+    <string name="add_other_device_prompt">Link other devices\nwith Afero.</string>
+    <string name="add_nest">Add Nest® Learning Thermostat™</string>
+
+    <string name="form_error_min_length">%1$s needs to be more than %2$d characters.</string>
+    <string name="form_error_regex">%1$s is invalid.</string>
+    <string name="form_error_empty">%1$s can’t be empty.</string>
+    <string name="connection_help_move_closer">Try moving your phone closer to your device.</string>
+    <string name="connection_help_check_power">Check your device’s power source.</string>
+    <string name="connection_help_enable_bluetooth">Turn on your phone’s Bluetooth and Wi-Fi.</string>
+
+
+    <string name="device_error_fail">Device in trouble</string>
+
+    <string name="device_error_fail_description">We’re trying to fix the connection. If the problem continues please try this: </string>
+    <string name="device_error_fail_tip1">Power cycle the device.</string>
+    <string name="device_error_fail_tip2">When in range, turn Bluetooth on then off.</string>
+
+    <string name="device_error_not_found">Can’t find device.</string>
+    <string name="device_error_invalid_param">Device isn’t configured correctly.</string>
+    <string name="device_error_timed_out">Device isn’t responding…</string>
+    <string name="device_error_canceled">Operation was canceled.</string>
+    <string name="device_error_shutdown">Device is rebooting.</string>
+    <string name="device_error_connection_failed">Couldn’t connect.</string>
+    <string name="device_error_connection_not_allowed">Connection not allowed!</string>
+    <string name="device_error_ota_download_failed">Couldn’t download device firmware.</string>
+    <string name="device_error_file_io_error">Connection isn’t allowed.</string>
+    <string name="device_error_ota_start_error">Couldn’t update device firmware.</string>
+    <string name="device_error_not_allowed">Sorry! Device blocked access.</string>
+    <string name="device_error_catchall">Sorry! Device is having trouble.</string>
+
+    <string name="device_error_link_default">More Info</string>
+
+    <string name="wifi_label">WI-FI</string>
+    <string name="wifi_select_network">Select Wi-Fi</string>
+    <string name="wifi_select_network_prompt">Connect your device to your local network.</string>
+    <string name="wifi_type_password">Type Wi-Fi Password</string>
+    <string name="wifi_show_password">SHOW PASSWORD</string>
+    <string name="wifi_hide_password">HIDE PASSWORD</string>
+    <string name="wifi_connect_to_wifi">CONNECT TO WIFI</string>
+    <string name="wifi_networks_not_found">We can’t find your Wi-Fi connections. Please move your device closer to the base station.</string>
+    <string name="wifi_please_wait">Please wait.\nThis may take a moment…</string>
+    <string name="wifi_cant_find_wifi">CAN’T FIND WI-FI</string>
+    <string name="wifi_connecting_to_afero">Connecting to Afero…</string>
+    <string name="wifi_cant_connect">CAN’T CONNECT</string>
+    <string name="wifi_cant_connect_to_afero_cloud">We can’t connect you to the Afero Cloud right now. Please try again later.</string>
+    <string name="wifi_success">Success!</string>
+    <string name="wifi_your_device_is_now_connected">Your device is now connected to Afero.</string>
+    <string name="wifi_try_again_button_title">Try Again</string>
+    <string name="wifi_refresh_button_title">REFRESH</string>
+    <string name="wifi_password_connect_button_title">CONNECT</string>
+    <string name="wifi_connect_done_button_title">DONE</string>
+    <string name="wifi_cant_connect_to_device">CAN’T CONNECT TO THE DEVICE</string>
+    <string name="wifi_hold_phone_closer_to_device">Try holding your phone closer to the device.</string>
+    <string name="wifi_connecting_to_device">Connecting to device…</string>
+    <string name="wifi_try_again">Try Again</string>
+    <string name="wifi_not_now_button_title">Not Now</string>
+    <string name="wifi_setup_connect_button_title">Connect to Wi-Fi</string>
+    <string name="wifi_device_added_to_account">This device is Wi-Fi capable!</string>
+    <string name="wifi_do_you_want_to_connect">Do you want to connect this device to a Wi-Fi network now?</string>
+    <string name="wifi_confirm_cancel">Cancel Wi-Fi setup?</string>
+    <string name="wifi_cancel_setup_button_title">CANCEL SETUP</string>
+    <string name="wifi_continue_setup_button_title">CONTINUE SETUP</string>
+    <string name="wifi_unable_to_associate">We couldn’t connect your device to your Wi-Fi network. Please select another network name.</string>
+    <string name="wifi_unable_to_authenticate">We couldn’t authenticate to your Wi-Fi network. Try re-typing your password, or try another network name.</string>
+    <string name="wifi_unable_to_reach_afero">We couldn’t reach the Afero Cloud from your Wi-Fi network. Please check your internet connection, or try another network name.</string>
+    <string name="wifi_not_connected">Not connected</string>
+
+
+    <string name="no_geocoder_available">No geocoder available</string>
+    <string name="fetch_address">Fetch address</string>
+    <string name="address_found">Address found</string>
+    <string name="no_address_found">Sorry, no address found</string>
+    <string name="no_location_data_provided">No location data provided</string>
+    <string name="service_not_available">Sorry, the service is not available</string>
+    <string name="invalid_lat_long_used">Invalid latitude or longitude used</string>
+    <string name="address_edit_button_title">Edit</string>
+    <string name="address_update_button_title">Update</string>
+
+</resources>
