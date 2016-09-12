@@ -10,7 +10,8 @@
 	"locale": {
 		"default": "assets/locale/en.strings",
 		"de": "assets/locale/de.strings",
-		"it": "assets/locale/it.strings"
+		"it": "assets/locale/it.strings",
+		"jp": "assets/locale/jp.strings"
 	},
 	"fonts": [
 		"assets/GT-Walsheim-Black-Oblique.ttf",

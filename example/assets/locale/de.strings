@@ -28,16 +28,16 @@
 "rule_device_trigger_picker_prompt" = "Wählen Sie einen Trigger:";
 "rule_device_picker_prompt" = "Wählen Sie das Gerät:";
 "rule_setup_device" = "Set Up Aktion";
-"rule_remove_action" = "ENTFERNEN";
+"rule_remove_action" = "Entfernen\n";
 "rule_missing_trigger" = "Fehlende-Trigger";
 "rule_tap_to_select_trigger" = "Tippen Sie auf Trigger";
 "rule_operation_none" = "Ignorieren";
-"rule_operation_eq" = "Equals";
-"rule_operation_lt" = "Weniger als";
+"rule_operation_eq" = "Ist gleich";
+"rule_operation_lt" = "Kleiner als";
 "rule_operation_gt" = "Mehr als";
 "charge_state_none" = "Ignorieren";
-"charge_state_charging" = "Lade";
-"charge_state_not_charging" = "Lädt nicht";
+"charge_state_charging" = "Geschätzte Ladezeit";
+"charge_state_not_charging" = "Wird nicht geladen";
 "rule_notify_switch_label" = "Benachrichtigungen senden, wenn sie ausgelöst";
 "rule_action_tap_to_setup" = "Tippen Sie zum Einrichten";
 "rule_item_run" = "LAUF";
@@ -72,7 +72,8 @@
 "schedule_time_and_days_5_format" = "Auf %2$s , %3$s , %4$s , %5$s und %6$s bei %1$s";
 "schedule_time_and_days_6_format" = "Auf %2$s , %3$s , %4$s , %5$s , %6$s und %7$s bei %1$s";
 "schedule_time_and_days_all_format" = "Täglich um %1$s";
-"action_settings" = "Einstellungen\n";
+/* hello */
+"action_settings" = "Einstellungen";
 "action_sign_out" = "Abmelden";
 "action_sharing" = "Teilen";
 "action_accounts" = "Konten";
@@ -136,7 +137,7 @@
 "device_settings_button_title" = "Einstellungen\n";
 "device_activity_button_title" = "DEVICE ACTIVITY";
 "device_settings_name" = "Gerätename";
-"device_settings_location" = "Ort...";
+"device_settings_location" = "Standort";
 "device_settings_misc" = "VERSCHIEDENES";
 "warning_service_changed" = "Die App muss neu starten, damit diese Änderung wirksam wird.";
 "exit_button" = "Ausgang";
@@ -153,12 +154,12 @@
 "pref_title_session_tracing" = "Session-Tracing";
 "pref_title_show_onboarding" = "anzeigen Onboarding";
 "pref_value_copyright" = "© 2015-2016 Afero, Inc.";
-"battery_charging" = "Lade";
+"battery_charging" = "Geschätzte Ladezeit";
 "battery_charge_level" = "Lade Level:";
 "battery_charge_state" = "Gebühr Staat:";
-"temperature_fahrenheit_short" = "F";
-"temperature_celsius_short" = "C";
-"temperature_kelvin_short" = "K";
+"temperature_fahrenheit_short" = "Fr";
+"temperature_celsius_short" = "I";
+"temperature_kelvin_short" = ".K";
 "notification_title" = "Afero Mitteilung";
 "device_state_online" = "ONLINE";
 "device_state_offline" = "OFFLINE";
@@ -192,7 +193,7 @@
 "oobe_turn_off_led" = "Schalten Sie LED";
 "label_oobe_modal_done_button" = "Hab\\'s";
 "label_tos_description" = "Um die Afero mobile app verwenden, müssen Sie diesen Bedingungen zustimmen und die Afero Datenschutzerklärung gelesen.";
-"try_again" = "Versuch es noch einmal";
+"try_again" = "Wiederholen";
 "web_loading" = "Einen Augenblick…";
 "add_other_device_prompt" = "Verknüpfen Sie andere Geräte mit Afero.";
 "add_nest" = "In Nest® Learning Thermostat ™";
@@ -241,7 +242,7 @@
 "wifi_cant_connect_to_device" = "KANN NICHT an das Gerät anschließen";
 "wifi_hold_phone_closer_to_device" = "Versuchen Sie Ihr Handy näher an das Gerät zu halten.";
 "wifi_connecting_to_device" = "Anschluss an Gerät ...";
-"wifi_try_again" = "Versuch es noch einmal";
+"wifi_try_again" = "Wiederholen";
 "wifi_not_now_button_title" = "Nicht Jetzt";
 "wifi_setup_connect_button_title" = "Eine Verbindung mit Wi-Fi";
 "wifi_device_added_to_account" = "Dieses Gerät ist Wi-Fi-fähig!";
