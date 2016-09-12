@@ -19,6 +19,7 @@ private let SchemaVersion = 1
 private let keySchemaVersion = "schemaVersion"
 private let keyFonts = "fonts"
 private let keyImages = "images"
+private let keyLocale = "locale"
 private let keyImagesScaled = "imagesScaled"
 private let keyImagesScaledIos = "imagesScaledIos"
 private let keyImagesScaledAndroid = "imagesScaledAndroid"
@@ -38,7 +39,7 @@ private let keySwift = "swift"
 private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
                                     keyFonts, keySchemaVersion, keyAndroidLayout,
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
-                                    keyImages, keyImagesIos, keyImagesAndroid,
+                                    keyImages, keyImagesIos, keyImagesAndroid, keyLocale,
                                     keyImagesTinted, keyJava, keySwift, keyGlobalTint]
 
 private enum LangType {
@@ -97,6 +98,7 @@ class App
         let details = [keySchemaVersion: "number. Version, which should be \(SchemaVersion)",
                        keyFonts: "array. path to font files",
                        keyImages: "array. path to image files that are common.",
+                       keyLocale: "dictionary. keys are IOS lang. ie, enUS, enES, path to strings file",
                        keyImagesIos: "array. path to image files that are iOS only",
                        keyImagesAndroid: "array. path to image files that are Android only",
                        keyImagesScaled: "array. path to image files that are common and will be scaled",
@@ -572,6 +574,80 @@ class App
         }
     }
     
+    private func writeLocale(localePath:String, properties:Dictionary<String, String>, type: LangType) -> Void
+    {
+        var genString = ""
+        if (type == .Swift) {
+            genString.appendContentsOf("/* Generated with Sango, by Afero.io */\n")
+        }
+        else if (type == .Java) {
+            genString.appendContentsOf("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+            genString.appendContentsOf("<!-- Generated with Sango, by Afero.io -->\n")
+            genString.appendContentsOf("<resources>\n")
+        }
+        for (key, value) in properties {
+            if (type == .Swift) {
+                genString.appendContentsOf("\"" + key + "\" = \"" + value + "\";\n")
+            }
+            else if (type == .Java) {
+                genString.appendContentsOf("\t<string name=\"" + key + "\">" + value.stringByEscapingForHTML() + "</string>\n")
+            }
+        }
+        if (type == .Swift) {
+        }
+        else if (type == .Java) {
+            genString.appendContentsOf("</resources>\n")
+        }
+        saveString(genString, file: localePath)
+    }
+    
+    private func copyLocales(locales: Dictionary <String, AnyObject>, type: LangType) -> Void
+    {
+        // for iOS, path name is:
+        // Resources/en.lproj/Localizable.strings
+        // for Android, oaht name is:
+        // res/values/strings.xml
+        // res/values-fr/strings.xml
+        for (lang, file) in locales {
+            let filePath = sourceAssetFolder! + "/" + (file as! String)
+            let prop = NSDictionary.init(contentsOfFile: filePath)
+            if (prop != nil) {
+                var destPath = outputAssetFolder!
+                let fileName:String
+                if (type == .Swift) {
+                    if ((lang.lowercaseString == "en-us") || (lang.lowercaseString == "enus") || (lang.lowercaseString == "default")) {
+                        destPath.appendContentsOf("/enUS.lproj")
+                    }
+                    else {
+                        let folderName = lang.stringByReplacingOccurrencesOfString("-", withString: "")
+                        destPath.appendContentsOf("/\(folderName).lproj")
+                    }
+                    fileName = "Localizable.strings"
+                }
+                else if (type == .Java) {
+                    if ((lang.lowercaseString == "en-us") || (lang.lowercaseString == "enus") || (lang.lowercaseString == "default")) {
+                        destPath.appendContentsOf("/res/values")
+                    }
+                    else {
+                        destPath.appendContentsOf("/res/values-\(lang)")
+                    }
+                    fileName = "strings.xml"
+                }
+                else {
+                    print("Error: wrong type")
+                    exit(-1)
+                }
+                createFolder(destPath)
+                destPath.appendContentsOf("/" + fileName)
+                writeLocale(destPath, properties: prop as! Dictionary<String, String>, type: type)
+            }
+            else {
+                print("Error: Can't find \(file)")
+                exit(-1)
+            }
+        }
+    }
+
     private func copyAssets(files: [String], type: LangType, assetType: AssetType, useRoot: Bool) -> Void {
         let androidAssetLocations = [
             AssetType.Font:"/assets/fonts/",
@@ -579,12 +655,6 @@ class App
             AssetType.Layout:"/res/layouts/"
         ]
         for file in files {
-            if (type == .Java) {
-                if (file.isAndroidCompatible() == false) {
-                    print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
-                    exit(-1)
-                }
-            }
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
             if (useRoot) {
@@ -622,6 +692,7 @@ class App
                 for (key, value) in data! {
                     var testFile = false
                     var testArray = false
+                    var testingArray = value
                     if (key == keyCopied) {
                         testArray = true
                     }
@@ -658,6 +729,15 @@ class App
                     else if (key == keyAndroidLayout) {
                         testArray = true
                     }
+                    else if (key == keyLocale) {
+                        let langList = value as! [String:String]
+                        var list:[String] = []
+                        for (_, file) in langList {
+                            list.append(file)
+                        }
+                        testArray = true
+                        testingArray = list
+                    }
                     
                     if (testFile) {
                         let file = value as! String
@@ -677,7 +757,7 @@ class App
                         }
                     }
                     if (testArray) {
-                        let list = value as! [String]
+                        let list = testingArray as! [String]
                         for file in list {
                             if (type == .Java) {
                                 if (file.isAndroidCompatible() == false) {
@@ -759,6 +839,9 @@ class App
             }
             else if (key == keyFonts) {
                 copyAssets(value as! Array, type: type, assetType: .Font, useRoot: true)
+            }
+            else if (key == keyLocale) {
+                copyLocales(value as! Dictionary, type: type)
             }
             else if (key == keyImages) {
                 copyImages(value as! Array, type: type, useRoot: true)
@@ -899,6 +982,7 @@ class App
 
     private let baseAssetTemplate = [keySchemaVersion :SchemaVersion,
                                     keyFonts: [],
+                                    keyLocale: ["enUS":""],
                                     keyImages: [],
                                     keyImagesScaled: [],
                                     keyImagesIos: [],

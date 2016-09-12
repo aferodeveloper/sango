@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		AA1CA53A1D6E568A009CF0FC /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CA5391D6E568A009CF0FC /* Version.swift */; };
+		AA89E00B1D8760DC00D2D9A8 /* NSString+Extras.m in Sources */ = {isa = PBXBuildFile; fileRef = AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */; };
 		AAB57D9E1D5B883800FA37CA /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB57D9C1D5B883800FA37CA /* App.swift */; };
 		AAB57D9F1D5B883800FA37CA /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB57D9D1D5B883800FA37CA /* main.swift */; };
 		AACE09741D6627CE003CF4F1 /* Extras.swift in Sources */ = {isa = PBXBuildFile; fileRef = AACE09731D6627CE003CF4F1 /* Extras.swift */; };
@@ -30,6 +31,9 @@
 /* Begin PBXFileReference section */
 		AA1CA5391D6E568A009CF0FC /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Version.swift; path = Source/Version.swift; sourceTree = "<group>"; };
 		AA6C0D771D5A9AB000ECA808 /* Sango */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sango; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA89E0081D8760DB00D2D9A8 /* Sango-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Sango-Bridging-Header.h"; path = "Source/Sango-Bridging-Header.h"; sourceTree = "<group>"; };
+		AA89E0091D8760DC00D2D9A8 /* NSString+Extras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+Extras.h"; path = "Source/NSString+Extras.h"; sourceTree = "<group>"; };
+		AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+Extras.m"; path = "Source/NSString+Extras.m"; sourceTree = "<group>"; };
 		AAB57D9C1D5B883800FA37CA /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = App.swift; path = Source/App.swift; sourceTree = "<group>"; };
 		AAB57D9D1D5B883800FA37CA /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = Source/main.swift; sourceTree = "<group>"; };
 		AACE09731D6627CE003CF4F1 /* Extras.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extras.swift; path = Source/Extras.swift; sourceTree = "<group>"; };
@@ -57,7 +61,10 @@
 				AAE52D641D6E032A002BDE3D /* Shell.swift */,
 				AAE52D661D6E0568002BDE3D /* Utils.swift */,
 				AAB57D9D1D5B883800FA37CA /* main.swift */,
+				AA89E0091D8760DC00D2D9A8 /* NSString+Extras.h */,
+				AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */,
 				AA6C0D781D5A9AB000ECA808 /* Products */,
+				AA89E0081D8760DB00D2D9A8 /* Sango-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -128,6 +135,7 @@
 			files = (
 				AAE52D671D6E0568002BDE3D /* Utils.swift in Sources */,
 				AAB57D9F1D5B883800FA37CA /* main.swift in Sources */,
+				AA89E00B1D8760DC00D2D9A8 /* NSString+Extras.m in Sources */,
 				AACE09741D6627CE003CF4F1 /* Extras.swift in Sources */,
 				AAE52D651D6E032A002BDE3D /* Shell.swift in Sources */,
 				AA1CA53A1D6E568A009CF0FC /* Version.swift in Sources */,
@@ -226,6 +234,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Source/Sango-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -236,6 +245,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Source/Sango-Bridging-Header.h";
 			};
 			name = Release;
 		};
