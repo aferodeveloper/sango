@@ -616,7 +616,7 @@ class App
                 let fileName:String
                 if (type == .Swift) {
                     if ((lang.lowercaseString == "en-us") || (lang.lowercaseString == "enus") || (lang.lowercaseString == "default")) {
-                        destPath.appendContentsOf("/enUS.lproj")
+                        destPath.appendContentsOf("/Base.lproj")
                     }
                     else {
                         let folderName = lang.stringByReplacingOccurrencesOfString("-", withString: "")
