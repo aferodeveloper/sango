@@ -82,8 +82,8 @@ class App
     func usage() -> Void {
         print(copyrightNotice)
         print("Usage:")
-        print(" -asset_template [basename]          creates a json template, specificly for the assets")
-        print(" -config_template [file.json]        creates a json template, specificly for the app")
+        print(" -asset_template [basename]          creates a json template, specifically for the assets")
+        print(" -config_template [file.json]        creates a json template, specifically for the app")
         print(" -config [file.json]                 use config file for options, instead of command line")
         print(" -validate [asset_file.json, ...]    validates asset JSON file(s), requires -input_assets")
         print(" -input [file.json]                  asset json file")
