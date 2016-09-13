@@ -574,6 +574,31 @@ class App
         }
     }
     
+    /**
+     * Covert a string that has parameters, like %1$s, %1$d, %1$@, to be correct per platform.
+     * ie $@ is converted to $s on android, and left along for iOS, and $s is converted to
+     * @ on iOS
+     */
+    private func updateStringParameters(string:String, type: LangType) -> String
+    {
+        var newString = string
+        if (type == .Swift) {
+            if (string.containsString("$s")) {
+                newString = string.stringByReplacingOccurrencesOfString("$s", withString: "$@")
+            }
+        }
+        else if (type == .Java) {
+            if (string.containsString("$@")) {
+                newString = string.stringByReplacingOccurrencesOfString("$@", withString: "$s")
+            }
+        }
+        else {
+            print("Error: incorrect type")
+            exit(-1)
+        }
+        return newString
+    }
+    
     private func writeLocale(localePath:String, properties:Dictionary<String, String>, type: LangType) -> Void
     {
         var genString = ""
@@ -586,11 +611,12 @@ class App
             genString.appendContentsOf("<resources>\n")
         }
         for (key, value) in properties {
+            let newString = updateStringParameters(value, type: type)
             if (type == .Swift) {
-                genString.appendContentsOf("\"" + key + "\" = \"" + value + "\";\n")
+                genString.appendContentsOf("\"" + key + "\" = \"" + newString + "\";\n")
             }
             else if (type == .Java) {
-                genString.appendContentsOf("\t<string name=\"" + key + "\">" + value.stringByEscapingForHTML() + "</string>\n")
+                genString.appendContentsOf("\t<string name=\"" + key + "\">" + newString.stringByEscapingForHTML() + "</string>\n")
             }
         }
         if (type == .Swift) {
