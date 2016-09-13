@@ -1,6 +1,6 @@
 {
 	"input_assets": "example",
-	"inputs": ["base.json","brand_2.json"],
+	"inputs": ["base.json","brand2.json"],
 	"out_source": "temp_ios/Constants.swift",
 	"out_assets": "temp_ios/Resources",
 	"type": "swift"

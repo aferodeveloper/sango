@@ -62,6 +62,7 @@ class App
 {
     private var package:String = ""
     private var baseClass:String = ""
+    private var appIconName:String = "ic_launcher.png"
     private var sourceAssetFolder:String? = nil
     private var outputAssetFolder:String? = nil
 
@@ -536,8 +537,6 @@ class App
         "Icon-167.png": 167,
         "Icon-83.5@2x.png": 167
     ]
-    // ic_launcher.png
-    private let AndroidDefaultIconName = "ic_launcher.png"
     private let AndroidIconSizes = [
         "mdpi": 48,
         "hdpi": 72,
@@ -580,7 +579,7 @@ class App
                 let newImage = iconImage.resize(width, height: height)
                 let destPath = outputAssetFolder! + "/res/drawable-" + key
                 createFolder(destPath)
-                let destFile = destPath + "/" + AndroidDefaultIconName
+                let destFile = destPath + "/" + appIconName
                 saveImage(newImage, file: destFile)
                 Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
             }
@@ -848,6 +847,13 @@ class App
                 let options = value as! Dictionary<String, AnyObject>
                 baseClass = options["base"] as! String
                 package = options["package"] as! String
+                var name = options["launcher_icon_name"] as? String
+                if (name != nil) {
+                    if (name!.hasSuffix(".png") == false) {
+                        name!.appendContentsOf(".png")
+                    }
+                    appIconName = name!
+                }
             }
             else if (key == keySwift) {
                 let options = value as! Dictionary<String, AnyObject>
