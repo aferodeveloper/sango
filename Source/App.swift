@@ -27,6 +27,8 @@ private let keyImagesIos = "imagesIos"
 private let keyImagesAndroid = "imagesAndroid"
 private let keyImagesTinted = "imagesTinted"
 private let keyGlobalTint = "globalTint"
+private let keyGlobalIosTint = "globalTintIos"
+private let keyGlobalAndroidTint = "globalTintAndroid"
 private let keyCopied = "copied"
 private let keyCopiedIos = "copiedIos"
 private let keyCopiedAndroid = "copiedAndroid"
@@ -40,7 +42,8 @@ private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon,
                                     keyFonts, keySchemaVersion, keyAndroidLayout,
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
                                     keyImages, keyImagesIos, keyImagesAndroid, keyLocale,
-                                    keyImagesTinted, keyJava, keySwift, keyGlobalTint]
+                                    keyImagesTinted, keyJava, keySwift, keyGlobalTint,
+                                    keyGlobalIosTint, keyGlobalAndroidTint]
 
 private enum LangType {
     case Unset
@@ -70,6 +73,8 @@ class App
     private var compileType:LangType = .Unset
 
     private var globalTint:NSColor? = nil
+    private var globalIosTint:NSColor? = nil
+    private var globalAndroidTint:NSColor? = nil
     private let copyrightNotice = "Sango © 2016 Afero, Inc - Build \(BUILD_REVISION) \(BUILD_DATE)"
 
     private var gitEnabled = false
@@ -112,7 +117,10 @@ class App
                        keyAndroidAppIcon: "string. path to app icon that is Android only and is scaled",
                        keyAndroidLayout: "array. path to layout files that is Android only",
                        keySwift: "dictionary. keys are base:class name",
-                       keyJava: "dictionary. keys are base:class name, package:package name"
+                       keyJava: "dictionary. keys are base:class name, package:package name",
+                       keyGlobalTint: "color. ie #F67D4B. apply as tint to all images saved",
+                       keyGlobalIosTint: "color. ie #F67D4B. apply as tint to all images saved for iOS",
+                       keyGlobalAndroidTint: "color. ie #F67D4B. apply as tint to all images saved for Android"
                        ]
         var keyLength = 0
         for (key, _) in details {
@@ -121,7 +129,7 @@ class App
             }
         }
         print("JSON keys and their meaning:")
-        for (key, value) in details {
+        for (key, value) in Array(details).sort({$0.0 < $1.0}) {
             let keyPad = key.stringByPaddingToLength(keyLength + 3, withString: " ", startingAtIndex: 0)
             print(keyPad + value)
         }
@@ -129,7 +137,16 @@ class App
     
     // Save image, tinted
     func saveImage(image: NSImage, file: String) -> Bool {
-        if (globalTint != nil) {
+        var tint:NSColor? = globalTint
+        
+        if ((compileType == .Java) && (globalAndroidTint != nil)) {
+            tint = globalAndroidTint
+        }
+        else if ((compileType == .Swift) && (globalIosTint != nil)) {
+            tint = globalIosTint
+        }
+        
+        if (tint != nil) {
             let tintedImage = image.tint(globalTint!)
             return tintedImage.saveTo(file)
         }
@@ -472,7 +489,7 @@ class App
         }
         let roots = imageResourcePath(file, type: type, useRoot: useRoot)
         createFolder(roots.destPath)
-        if (globalTint == nil) {
+        if ((globalTint == nil) && (globalIosTint == nil) && (globalAndroidTint == nil)) {
             copyFile(roots.sourceFile, dest: roots.destFile)
         }
         else {
@@ -839,6 +856,18 @@ class App
             else if (key == keyGlobalTint) {
                 let color = parseColor(value as! String)
                 globalTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
+            }
+            else if (key == keyGlobalIosTint) {
+                if (type == .Swift) {
+                    let color = parseColor(value as! String)
+                    globalIosTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
+                }
+            }
+            else if (key == keyGlobalAndroidTint) {
+                if (type == .Java) {
+                    let color = parseColor(value as! String)
+                    globalAndroidTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
+                }
             }
         }
         
