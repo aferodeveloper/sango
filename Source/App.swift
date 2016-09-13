@@ -718,9 +718,11 @@ class App
                 for (key, value) in data! {
                     var testFile = false
                     var testArray = false
+                    var testAndroid = true
                     var testingArray = value
                     if (key == keyCopied) {
                         testArray = true
+                        testAndroid = false
                     }
                     else if (key == keyAppIcon) {
                         testFile = true
@@ -730,9 +732,11 @@ class App
                     }
                     else if (key == keyIOSAppIcon) {
                         testFile = true
+                        testAndroid = false
                     }
                     else if (key == keyFonts) {
                         testArray = true
+                        testAndroid = false
                     }
                     else if (key == keyImages) {
                         testArray = true
@@ -763,11 +767,12 @@ class App
                         }
                         testArray = true
                         testingArray = list
+                        testAndroid = false
                     }
                     
                     if (testFile) {
                         let file = value as! String
-                        if (type == .Java) {
+                        if ((type == .Java) && (testAndroid == true)) {
                             if (file.isAndroidCompatible() == false) {
                                 print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                                 exit(-1)
@@ -785,7 +790,7 @@ class App
                     if (testArray) {
                         let list = testingArray as! [String]
                         for file in list {
-                            if (type == .Java) {
+                            if ((type == .Java) && (testAndroid == true)) {
                                 if (file.isAndroidCompatible() == false) {
                                     print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                                     exit(-1)
@@ -1077,14 +1082,29 @@ class App
             exit(0)
         }
         
-        let validateInputs = getOptions(args, option: "-validate")
+        var validateInputs:[String]? = nil
+        var validateLang:LangType = .Unset
+        validateInputs = getOptions(args, option: "-validate")
+        if (validateInputs == nil) {
+            validateInputs = getOptions(args, option: "-validate_ios")
+            validateLang = .Swift
+        }
+        if (validateInputs == nil) {
+            validateInputs = getOptions(args, option: "-validate_android")
+            validateLang = .Java
+        }
         if (validateInputs != nil) {
             sourceAssetFolder = getOption(args, option: "-input_assets")
             if (sourceAssetFolder != nil) {
                 sourceAssetFolder = NSString(string: sourceAssetFolder!).stringByExpandingTildeInPath
 
-                validate(validateInputs!, type: .Swift)
-                validate(validateInputs!, type: .Java)
+                if (validateLang == .Unset) {
+                    validate(validateInputs!, type: .Swift)
+                    validate(validateInputs!, type: .Java)
+                }
+                else {
+                    validate(validateInputs!, type: validateLang)
+                }
             }
             else {
                 print("Error: missing source asset folder")
