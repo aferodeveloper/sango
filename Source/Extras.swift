@@ -74,13 +74,13 @@ public extension NSImage
         NSGraphicsContext.setCurrentContext(NSGraphicsContext(bitmapImageRep: bitmap))
         self.drawAtPoint(NSPoint.zero,
                          fromRect: NSRect.zero,
-                         operation: .CompositeSourceOver,
+                         operation: .SourceOver,
                          fraction: 1.0)
         
         NSGraphicsContext.restoreGraphicsState()
         
         var ok = false
-        let imageData = bitmap.representationUsingType(NSBitmapImageFileType.NSPNGFileType,
+        let imageData = bitmap.representationUsingType(NSBitmapImageFileType.PNG,
                                                        properties: [NSImageCompressionFactor: 1.0])
         if (imageData != nil) {
             ok = imageData!.writeToFile((file as NSString).stringByStandardizingPath, atomically: true)
@@ -138,13 +138,13 @@ public extension NSImage
         NSGraphicsContext.setCurrentContext(context)
         self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
                         fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
-                        operation: .CompositeSourceOver,
+                        operation: .SourceOver,
                         fraction: 1.0)
         
         // tint with Source Atop operation, via 
         // http://www.w3.org/TR/2014/CR-compositing-1-20140220/#porterduffcompositingoperators
         color.set()
-        NSRectFillUsingOperation(rect, .CompositeSourceAtop)
+        NSRectFillUsingOperation(rect, .SourceAtop)
 
         NSGraphicsContext.restoreGraphicsState()
         let newImage = NSImage(size: destSize)
@@ -173,7 +173,7 @@ public extension NSImage
         NSGraphicsContext.setCurrentContext(context)
         self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
                         fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
-                        operation: .CompositeSourceOver,
+                        operation: .SourceOver,
                         fraction: 1.0)
         
         NSGraphicsContext.restoreGraphicsState()
