@@ -41,7 +41,13 @@ clear_build:
 	@$(REVERT) Source/Version.swift
 
 install: distro
-	@sudo cp $(TARGET) /usr/local/bin/$(TARGET)
+	@if [ -w /usr/local/bin ]; then \
+	cp $(TARGET) /usr/local/bin/$(TARGET); \
+	else \
+	echo "/usr/local/bin not writable; need permission to install."; \
+	sudo cp $(TARGET) /usr/local/bin/$(TARGET); \
+	fi
+
 
 test1: _clean_temps
 	@./$(TARGET) -config brand1_config.json -verbose
