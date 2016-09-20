@@ -324,7 +324,7 @@ class App
                     }
                 }
 
-                let line = "\tpublic static final " + type + " " + key + " = "
+                let line = "\tpublic static final " + type + " " + key.uppercaseString + " = "
                 outputString.appendContentsOf(line)
                 if (useQuotes) {
                     let line = "\"" + strValue + "\"" + endQuote

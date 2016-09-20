@@ -34,6 +34,10 @@
 		AA89E0081D8760DB00D2D9A8 /* Sango-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Sango-Bridging-Header.h"; path = "Source/Sango-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA89E0091D8760DC00D2D9A8 /* NSString+Extras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+Extras.h"; path = "Source/NSString+Extras.h"; sourceTree = "<group>"; };
 		AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+Extras.m"; path = "Source/NSString+Extras.m"; sourceTree = "<group>"; };
+		AA9523641D91EB6E003C3FC6 /* base.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = base.json; path = example/base.json; sourceTree = "<group>"; };
+		AA9523651D91EB6E003C3FC6 /* brand1_android.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = brand1_android.json; path = example/brand1_android.json; sourceTree = "<group>"; };
+		AA9523661D91EB6E003C3FC6 /* brand1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = brand1.json; path = example/brand1.json; sourceTree = "<group>"; };
+		AA9523671D91EB6E003C3FC6 /* brand2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = brand2.json; path = example/brand2.json; sourceTree = "<group>"; };
 		AAB57D9C1D5B883800FA37CA /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = App.swift; path = Source/App.swift; sourceTree = "<group>"; };
 		AAB57D9D1D5B883800FA37CA /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = Source/main.swift; sourceTree = "<group>"; };
 		AACE09731D6627CE003CF4F1 /* Extras.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extras.swift; path = Source/Extras.swift; sourceTree = "<group>"; };
@@ -63,6 +67,10 @@
 				AAB57D9D1D5B883800FA37CA /* main.swift */,
 				AA89E0091D8760DC00D2D9A8 /* NSString+Extras.h */,
 				AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */,
+				AA9523641D91EB6E003C3FC6 /* base.json */,
+				AA9523651D91EB6E003C3FC6 /* brand1_android.json */,
+				AA9523661D91EB6E003C3FC6 /* brand1.json */,
+				AA9523671D91EB6E003C3FC6 /* brand2.json */,
 				AA6C0D781D5A9AB000ECA808 /* Products */,
 				AA89E0081D8760DB00D2D9A8 /* Sango-Bridging-Header.h */,
 			);
