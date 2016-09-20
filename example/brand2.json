@@ -27,5 +27,8 @@
 	"copied": [
 		"assets/file_data1",
 		"assets/file_data2"
-	]
+	],
+	"Service": {
+		"BRAND_TYPE": "brand2"
+	}
 }

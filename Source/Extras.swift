@@ -183,20 +183,53 @@ public extension NSImage
     }
 }
 
-public func + <K,V>(left: Dictionary<K,V>, right: Dictionary<K,V>)
-    -> Dictionary<K,V>
+public func + (left: [String: [String: AnyObject]]?, right: [String: [String: AnyObject]]) -> [String: [String: AnyObject]]? {
+
+    let localLeft: [String: [String: AnyObject]] = left ?? [:]
+    let localRight: [String: [String: AnyObject]] = right ?? [:]
+
+    return localRight.reduce(localLeft) {
+        curr, next in
+        var ret = curr
+        ret[next.0] = next.1
+        return ret
+    }
+    
+}
+
+public func + (left: Dictionary<String, Array<AnyObject>>?, right: Dictionary<String, Array<AnyObject>>?) -> Dictionary<String, Array<AnyObject>> {
+    
+    let localLeft: [String: Array<AnyObject>] = left ?? [:]
+    let localRight: [String: Array<AnyObject>] = right ?? [:]
+    
+    return localRight.reduce(localLeft) {
+        curr, next in
+        var ret = curr
+        ret[next.0] = [ret[next.0], next.1].flatMap({$0})
+        return ret
+    }
+    
+}
+
+public func + (left: Dictionary<String, AnyObject>, right: Dictionary<String, AnyObject>)
+    -> Dictionary<String, AnyObject>
 {
     var map = left
     for (k, v) in right {
+        
+        // merge arrays
         if let _v = v as? [AnyObject] {
             if let la = map[k] as? [AnyObject] {
-                if let c = [_v, la].flatMap({$0}) as? V {
-                    map[k] = c
-                }
+                map[k] = la + _v
             }
             else {
                 map[k] = v
             }
+        }
+        else if
+            let _v = v as? Dictionary<String, AnyObject>,
+            let la = map[k] as? Dictionary<String, AnyObject> {
+            map[k] = la + _v
         }
         else {
             map[k] = v
