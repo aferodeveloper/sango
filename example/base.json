@@ -29,7 +29,7 @@
 		"assets/large/brokenwashingmachine@3x.png",
 		"assets/kenmore_pay_logo_horizontal@3x.png"
 	],
-	"Colors": {
+	"Settings": {
 		"UI_BASE_COLOR": "67,163,199,1",
 		"UI_SECONDARY_COLOR": "#431298",
 		"UI_SECONDARY_COLOR_LOW": "#80431298",
@@ -37,7 +37,9 @@
 		"DEFAULT_AVATAR": "account_avatar1",
 		"PREF_ACCOUNT_NAME": "pref_account_display_name",
 		"PREF_SERVICE": "pref_service_name",
-		"DEFAULT_DISPLAY_UI_STYLE": 1,
+		"DEFAULT_DISPLAY_UI_STYLE": 1
+	},
+	"Colors": {
 		"Gray01_50": "#F2EDEB",
 		"Gray02_50": "#D0CBC7",
 		"Gray03_50": "#A4A099",

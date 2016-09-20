@@ -172,7 +172,7 @@ class App
         var outputString = "\n"
         if (type == .Swift) {
             // public static let UiSecondaryColorTinted = ["account_avatar1", "account_avatar2"]
-            for (key, value) in stringArray {
+            for (key, value) in Array(stringArray).sort({$0.0 < $1.0}) {
                 outputString.appendContentsOf("\tpublic static let \(key) = [\"")
                 let strValue = String(value)
                 outputString.appendContentsOf(strValue + "\"]\n")
@@ -180,7 +180,7 @@ class App
         }
         else if (type == .Java) {
             // public static final String[] UI_SECONDARY_COLOR_TINTED = {"account_avatar1", "account_avatar2"};
-            for (key, value) in stringArray {
+            for (key, value) in Array(stringArray).sort({$0.0 < $1.0}) {
                 outputString.appendContentsOf("\tpublic static final String[] \(key) = {\"")
                 let strValue = String(value)
                 outputString.appendContentsOf(strValue + "\"};\n")
@@ -259,7 +259,7 @@ class App
         if (type == .Swift) {
             outputString.appendContentsOf("public struct ")
             outputString.appendContentsOf(name + " {\n")
-            for (key, value) in constants {
+            for (key, value) in Array(constants).sort({$0.0 < $1.0}) {
                 let line = "\tstatic let " + key.snakeCaseToCamelCase() + " = "
                 outputString.appendContentsOf(line)
 
@@ -295,7 +295,7 @@ class App
             outputString.appendContentsOf("public final class ")
             outputString.appendContentsOf(name + " {\n")
 
-            for (key, value) in constants {
+            for (key, value) in Array(constants).sort({$0.0 < $1.0}) {
                 var type = "int"
                 var endQuote = ";"
                 var parmSize = ""
