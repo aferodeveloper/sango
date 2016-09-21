@@ -1167,6 +1167,11 @@ class App
             exit(0)
         }
 
+        gitEnabled = Shell.gitInstalled()
+        if (findOption(args, option: "-ignore_git")) {
+            gitEnabled = false
+        }
+        
         Utils.debug(copyrightNotice)
 
         let baseName = getOption(args, option: "-asset_template")
@@ -1319,17 +1324,25 @@ class App
                 exit(-1)
             }
         }
-        
+
         if (result != nil) {
             var currentBranch:String? = nil
-            if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
+            if (gitEnabled) && (sourceAssetFolder != nil) {
                 currentBranch = Shell.gitCurrentBranch(sourceAssetFolder!)
-                if (Shell.gitCheckoutAtTag(sourceAssetFolder!, tag: assetTag!) == false) {
-                    print("Error: Can't set asset repo to \(assetTag) tag")
-                    exit(-1)
+                if (assetTag != nil) {
+                    if (Shell.gitCheckoutAtTag(sourceAssetFolder!, tag: assetTag!) == false) {
+                        print("Error: Can't set asset repo to \(assetTag) tag")
+                        exit(-1)
+                    }
+                }
+                else {
+                    if (Shell.gitResetHead(sourceAssetFolder!, branch: currentBranch!) == false) {
+                        print("Error: Can't reset asset repo to HEAD")
+                        exit(-1)
+                    }
                 }
             }
-            
+
             // process
             consume(result!, type: compileType, langOutputFile: outputClassFile!)
 

@@ -77,6 +77,12 @@ public class Shell
         return (output.status == 0)
     }
     
+    public static func gitResetHead(path: String, branch: String) -> Bool {
+        let output = _shell(["cd \(path)",
+            "\(gitPath) reset --hard origin/\(branch)"])
+        return (output.status == 0)
+    }
+    
     public static func gitCurrentBranch(path: String) -> String
     {
         let output = _shell(["cd \(path)",
