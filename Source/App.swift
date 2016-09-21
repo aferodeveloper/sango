@@ -77,6 +77,9 @@ private enum AssetType {
     case Raw
 }
 
+private let assetTagIgnore = "~"
+private let assetTagHead = "head"
+
 class App
 {
     private var package:String = ""
@@ -1110,6 +1113,27 @@ class App
         return ok
     }
 
+    func prepareGitRepro(folder:String, tag:String?) -> Void {
+        let currentBranch = Shell.gitCurrentBranch(folder)
+        if (tag != nil) {
+            if (tag!.containsString(assetTagIgnore)) {
+                return
+            }
+            else if (tag!.lowercaseString.containsString(assetTagHead)) {
+                if (Shell.gitResetHead(folder, branch: currentBranch) == false) {
+                    print("Error: Can't reset asset repo to HEAD")
+                    exit(-1)
+                }
+            }
+            else {
+                if (Shell.gitCheckoutAtTag(folder, tag: tag!) == false) {
+                    print("Error: Can't set asset repo to \(tag) tag")
+                    exit(-1)
+                }
+            }
+        }
+    }
+    
     private let baseAssetTemplate = [keySchemaVersion :SchemaVersion,
                                     keyFonts: [],
                                     keyLocale: ["enUS":""],
@@ -1168,9 +1192,6 @@ class App
         }
 
         gitEnabled = Shell.gitInstalled()
-        if (findOption(args, option: "-ignore_git")) {
-            gitEnabled = false
-        }
         
         Utils.debug(copyrightNotice)
 
@@ -1257,13 +1278,6 @@ class App
             assetTag = getOption(args, option: "-input_assets_tag")
         }
 
-        if (assetTag != nil) {
-            // check for latest tag
-            if (assetTag == "~") {
-                assetTag = nil
-            }
-        }
-
         if (outputClassFile == nil) {
             outputClassFile = getOption(args, option: "-out_source")
         }
@@ -1326,31 +1340,12 @@ class App
         }
 
         if (result != nil) {
-            var currentBranch:String? = nil
             if (gitEnabled) && (sourceAssetFolder != nil) {
-                currentBranch = Shell.gitCurrentBranch(sourceAssetFolder!)
-                if (assetTag != nil) {
-                    if (Shell.gitCheckoutAtTag(sourceAssetFolder!, tag: assetTag!) == false) {
-                        print("Error: Can't set asset repo to \(assetTag) tag")
-                        exit(-1)
-                    }
-                }
-                else {
-                    if (Shell.gitResetHead(sourceAssetFolder!, branch: currentBranch!) == false) {
-                        print("Error: Can't reset asset repo to HEAD")
-                        exit(-1)
-                    }
-                }
+                prepareGitRepro(sourceAssetFolder!, tag: assetTag!)
             }
 
             // process
             consume(result!, type: compileType, langOutputFile: outputClassFile!)
-
-            if (gitEnabled) && (assetTag != nil) && (sourceAssetFolder != nil) {
-                if (currentBranch != nil) {
-                    Shell.gitSetBranch(sourceAssetFolder!, branch: currentBranch!)
-                }
-            }
         }
         else {
             print("Error: missing input file")
