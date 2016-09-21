@@ -61,6 +61,10 @@
 		"Orange01": "#EDAC93",
 		"White01": "#FFFFFF"
 	},
+    "enums": {
+        "DAY": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"],
+        "TIME_OF_DAY": ["BREAKFAST", "LUNCH", "SNACK", "DINNER"]
+    },
 	"Service": {
 		"BASE_URL_PROD_USW2": "api.afero.io",
 		"BASE_URL_STAGE": "api.dev.afero.io"

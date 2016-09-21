@@ -14,12 +14,31 @@ import CoreGraphics
 // https://docs.google.com/document/d/1X-pHtwzB6Qbkh0uuhmqtG98o2_Dv_okDUim6Ohxhd8U/edit
 // for more details
 
+
+/* enums
+ 
+ java
+ public enum Day {
+    SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
+    THURSDAY, FRIDAY, SATURDAY
+ }
+ swift
+ enum Day {
+ case Sunday
+ case Monday
+ case Tuesday
+ case Wednesday
+ }
+
+*/
+
 private let SchemaVersion = 1
 
 private let keySchemaVersion = "schemaVersion"
 private let keyFonts = "fonts"
 private let keyImages = "images"
 private let keyLocale = "locale"
+private let keyEnums = "enums"
 private let keyImagesScaled = "imagesScaled"
 private let keyImagesScaledIos = "imagesScaledIos"
 private let keyImagesScaledAndroid = "imagesScaledAndroid"
@@ -39,7 +58,7 @@ private let keyAndroidLayout = "layoutAndroid"
 private let keyJava = "java"
 private let keySwift = "swift"
 private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
-                                    keyFonts, keySchemaVersion, keyAndroidLayout,
+                                    keyFonts, keySchemaVersion, keyAndroidLayout, keyEnums,
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
                                     keyImages, keyImagesIos, keyImagesAndroid, keyLocale,
                                     keyImagesTinted, keyJava, keySwift, keyGlobalTint,
@@ -103,6 +122,7 @@ class App
     private func helpKeys() -> Void {
         let details = [keySchemaVersion: "number. Version, which should be \(SchemaVersion)",
                        keyFonts: "array. path to font files",
+                       keyEnums: "dictionary. keys are enum key:value name",
                        keyImages: "array. path to image files that are common.",
                        keyLocale: "dictionary. keys are IOS lang. ie, enUS, enES, path to strings file",
                        keyImagesIos: "array. path to image files that are iOS only",
@@ -254,6 +274,43 @@ class App
         return nil
     }
     
+    private func writeEnums(enums: Dictionary<String, AnyObject>, type: LangType) -> String {
+        var outputString = "\n"
+        let sorted = Array(enums).sort({$0.0 < $1.0})
+        if (type == .Swift) {
+            for (key, value) in sorted {
+                let list:[String] = value as! [String]
+                outputString.appendContentsOf("public enum \(key) {\n")
+                for itm in list {
+                    outputString.appendContentsOf("\tcase \(itm.snakeCaseToCamelCase())\n")
+                }
+                outputString.appendContentsOf("}\n")
+            }
+        }
+        else if (type == .Java) {
+            for (key, value) in sorted {
+                let list:[String] = value as! [String]
+                outputString.appendContentsOf("public enum \(key) {\n\t")
+                var firstComma = false
+                for itm in list {
+                    if (firstComma) {
+                        outputString.appendContentsOf(", ")
+                    }
+                    else {
+                        firstComma = true
+                    }
+                    outputString.appendContentsOf(itm.uppercaseString)
+                }
+                outputString.appendContentsOf("\n}\n")
+            }
+        }
+        else {
+            print("Error: invalide output type")
+            exit(-1)
+        }
+        return outputString
+    }
+
     private func writeConstants(name: String, constants: Dictionary<String, AnyObject>, type: LangType) -> String {
         var outputString = "\n"
         if (type == .Swift) {
@@ -939,6 +996,13 @@ class App
             else if (key == keyAndroidLayout) {
                 if (type == .Java) {
                     copyAssets(value as! Array, type: type, assetType: .Layout, useRoot: true)
+                }
+            }
+            else if (key == keyEnums) {
+                let enums = value as? [String:AnyObject]
+                if (enums != nil) {
+                    let line = writeEnums(enums!, type: type)
+                    genString.appendContentsOf(line)
                 }
             }
         }
