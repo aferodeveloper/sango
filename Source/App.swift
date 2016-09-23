@@ -522,6 +522,7 @@ class App
         var destPath = (destFile as NSString).stringByDeletingLastPathComponent
         
         var fileName = file.lastPathComponent()
+        let fileExt = file.fileExtention()
         fileName = (fileName as NSString).stringByDeletingPathExtension
         
         if (type == .Swift) {
@@ -529,9 +530,13 @@ class App
         }
         else if (type == .Java) {
             let result = NSImage.getScaleFrom(fileName)
-            let drawable = iOStoAndroid[result.scale]!
+            var drawable = iOStoAndroid[result.scale]!
+            // if our image is a jpg, just place it into the xxhdpi folder
+            if ((fileExt.containsString("jpg")) && (result.scale == 1)) {
+                drawable = "xxhdpi"
+            }
             destPath = destPath + "/res/drawable-" + drawable + "/"
-            destFile = destPath + result.file + ".png"
+            destFile = destPath + result.file + ".\(fileExt)"
         }
         else {
             print("Error: Wrong type")
@@ -551,6 +556,7 @@ class App
         let roots = imageResourcePath(file, type: type, useRoot: useRoot)
         createFolder(roots.destPath)
         if ((globalTint == nil) && (globalIosTint == nil) && (globalAndroidTint == nil)) {
+            // just copy the image file raw, no tinting
             copyFile(roots.sourceFile, dest: roots.destFile)
         }
         else {

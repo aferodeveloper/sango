@@ -259,6 +259,10 @@ public extension String
         return (self as NSString).lastPathComponent
     }
 
+    public func fileExtention() -> String {
+        return (self as NSString).pathExtension.lowercaseString
+    }
+
     public func removeScale() -> String {
         var file = self.stringByReplacingOccurrencesOfString("@2x", withString: "")
         file = file.stringByReplacingOccurrencesOfString("@3x", withString: "")
