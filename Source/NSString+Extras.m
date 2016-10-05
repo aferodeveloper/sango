@@ -361,6 +361,19 @@ static HTMLEscapeMap gUnicodeHTMLEscapeMap[] = {
     {@"&euro;", 8364},
 };
 
+static HTMLEscapeMap gUnicodeAndroidEscapeMap[] = {
+    // C0 Controls and Basic Latin
+    {@"&quot;", 34},
+    {@"&amp;", 38},
+    {@"&apos;", 39},
+    {@"&lt;", 60},
+    {@"&gt;", 62},
+    
+    // Spacing Modifier Letters
+    {@"&circ;", 710},
+    {@"&tilde;", 732}
+};
+
 // Utility function for Bsearching table above
 static int EscapeMapCompare(const void *ucharVoid, const void *mapVoid)
 {
@@ -456,6 +469,13 @@ static int EscapeMapCompare(const void *ucharVoid, const void *mapVoid)
                                          ofSize:sizeof(gUnicodeHTMLEscapeMap)
                                 escapingUnicode:NO];
 } // stringByEscapingHTML
+
+- (NSString *)stringByEscapingForAndroid
+{
+    return [self stringByEscapingHTMLUsingTable:gUnicodeHTMLEscapeMap
+                                         ofSize:sizeof(gUnicodeAndroidEscapeMap)
+                                escapingUnicode:NO];
+} // stringByEscapingForAndroid
 
 - (NSString *)stringByEscapingForAsciiHTML
 {

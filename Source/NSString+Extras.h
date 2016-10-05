@@ -26,6 +26,7 @@
 //    Autoreleased NSString
 //
 - (NSString *)stringByEscapingForHTML;
+- (NSString *)stringByEscapingForAndroid;
 
 /// Get a string where internal characters that need escaping for HTML are escaped
 //

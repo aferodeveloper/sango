@@ -699,7 +699,8 @@ class App
                 genString.appendContentsOf("\"" + key + "\" = \"" + newString + "\";\n")
             }
             else if (type == .Java) {
-                genString.appendContentsOf("\t<string name=\"" + key + "\">" + newString.stringByEscapingForHTML() + "</string>\n")
+                newString = newString.stringByEscapingForAndroid();
+                genString.appendContentsOf("\t<string name=\"" + key + "\">" + newString + "</string>\n")
             }
         }
         if (type == .Swift) {
