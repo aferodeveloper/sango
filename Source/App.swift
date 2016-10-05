@@ -725,7 +725,7 @@ class App
                 var destPath = outputAssetFolder!
                 let fileName:String
                 if (type == .Swift) {
-                    if ((lang.lowercaseString == "en-us") || (lang.lowercaseString == "enus") || (lang.lowercaseString == "default")) {
+                    if (lang.lowercaseString == "default") {
                         destPath.appendContentsOf("/Base.lproj")
                     }
                     else {
@@ -735,7 +735,7 @@ class App
                     fileName = "Localizable.strings"
                 }
                 else if (type == .Java) {
-                    if ((lang.lowercaseString == "en-us") || (lang.lowercaseString == "enus") || (lang.lowercaseString == "default")) {
+                    if ((lang.lowercaseString == "en") || (lang.lowercaseString == "en-us") || (lang.lowercaseString == "enus") || (lang.lowercaseString == "default")) {
                         destPath.appendContentsOf("/res/values")
                     }
                     else {
