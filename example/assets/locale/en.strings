@@ -263,3 +263,6 @@
 "invalid_lat_long_used" = "Invalid latitude or longitude used";
 "address_edit_button_title" = "Edit";
 "address_update_button_title" = "Update";
+"bluetooth_needed" = "Bluetooth Needed";
+"bluetooth_please_turn_on" = "Please turn on Bluetooth so Afero can use the secure connection to transfer Wi-Fi credentials to your device.";
+"turn_on_bluetooth_button" = "Turn on Bluetooth";

@@ -692,8 +692,9 @@ class App
             genString.appendContentsOf("<!-- Generated with Sango, by Afero.io -->\n")
             genString.appendContentsOf("<resources>\n")
         }
-        for (key, value) in properties {
-            let newString = updateStringParameters(value, type: type)
+        for (key, value) in Array(properties).sort({$0.0 < $1.0}) {
+            var newString = updateStringParameters(value, type: type)
+            newString = newString.stringByReplacingOccurrencesOfString("\n", withString: "\\n");
             if (type == .Swift) {
                 genString.appendContentsOf("\"" + key + "\" = \"" + newString + "\";\n")
             }
