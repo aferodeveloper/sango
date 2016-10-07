@@ -472,7 +472,7 @@ static int EscapeMapCompare(const void *ucharVoid, const void *mapVoid)
 
 - (NSString *)stringByEscapingForAndroid
 {
-    return [self stringByEscapingHTMLUsingTable:gUnicodeHTMLEscapeMap
+    return [self stringByEscapingHTMLUsingTable:gUnicodeAndroidEscapeMap
                                          ofSize:sizeof(gUnicodeAndroidEscapeMap)
                                 escapingUnicode:NO];
 } // stringByEscapingForAndroid

@@ -16,6 +16,7 @@
 "automation_title_description" = "あなたの自動化されたスケジュールとルール";
 "rule_list_empty" = "それらを相互にリンクすることによって、あなたのデバイスを自動化し、時間に基づいて、またはオンデマンドで実行されているスケジューリング。";
 "rule_setup_format" = "設定%s";
+"Select format:" = "\"select\"形式";
 "rule_setup_rule" = "オートメーションを設定";
 "rule_create_prompt" = "新しいオートメーションの種類を選択します";
 "rule_create_title" = "NEW AUTOMATIONのCREATE";

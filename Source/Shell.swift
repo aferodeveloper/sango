@@ -11,6 +11,7 @@ import CoreFoundation
 
 public class Shell
 {
+    private static var plutilPath = "/usr/bin/plutil"
     private static var gitPath = "/usr/bin/git"
     private enum GitInstalled {
         case Unset
@@ -96,6 +97,11 @@ public class Shell
         let output = _shell(["cd \(path)",
             "\(gitPath) checkout \(branch)"])
         Utils.debug(output.output)
+        return (output.status == 0)
+    }
+
+    public static func plint(file: String) -> Bool {
+        let output = _shell(["\(plutilPath) -lint \(file)"])
         return (output.status == 0)
     }
     

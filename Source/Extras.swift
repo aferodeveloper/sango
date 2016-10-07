@@ -255,6 +255,51 @@ public extension String
         return camelCase
     }
     
+    // from http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf
+    public func escapeStr() -> String {
+        let set = [
+            "\"":"\u{005C}\"",
+            "/":"\\/",
+            "\u{0001}":"",
+            "\u{0002}":"",
+            "\u{0003}":"",
+            "\u{0004}":"",
+            "\u{0005}":"",
+            "\u{0006}":"",
+            "\u{0007}":"",
+            "\u{0008}":"\\b",
+            "\u{0009}":"\\t",
+            "\u{000A}":"\\n",
+            "\u{000B}":"",
+            "\u{000C}":"\\f",
+            "\u{000D}":"\\r",
+            "\u{000E}":"",
+            "\u{000F}":"",
+            "\u{0010}":"",
+            "\u{0011}":"",
+            "\u{0012}":"",
+            "\u{0013}":"",
+            "\u{0014}":"",
+            "\u{0015}":"",
+            "\u{0016}":"",
+            "\u{0017}":"",
+            "\u{0018}":"",
+            "\u{0019}":"",
+            "\u{001A}":"",
+            "\u{001B}":"",
+            "\u{001C}":"",
+            "\u{001D}":"",
+            "\u{001E}":"",
+            "\u{001F}":""
+        ]
+            
+        var escaped = self
+        for (key, value) in set {
+            escaped = escaped.stringByReplacingOccurrencesOfString(key, withString: value)
+        }
+        return escaped
+    }
+
     public func lastPathComponent() -> String {
         return (self as NSString).lastPathComponent
     }
@@ -264,9 +309,8 @@ public extension String
     }
 
     public func removeScale() -> String {
-        var file = self.stringByReplacingOccurrencesOfString("@2x", withString: "")
-        file = file.stringByReplacingOccurrencesOfString("@3x", withString: "")
-        return file
+        let file = self.stringByReplacingOccurrencesOfString("@2x", withString: "")
+        return file.stringByReplacingOccurrencesOfString("@3x", withString: "")
     }
 
     /**

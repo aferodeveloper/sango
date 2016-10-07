@@ -695,7 +695,9 @@ class App
         for (key, value) in Array(properties).sort({$0.0 < $1.0}) {
             var newString = updateStringParameters(value, type: type)
             newString = newString.stringByReplacingOccurrencesOfString("\n", withString: "\\n");
+            
             if (type == .Swift) {
+                newString = newString.escapeStr()
                 genString.appendContentsOf("\"" + key + "\" = \"" + newString + "\";\n")
             }
             else if (type == .Java) {
