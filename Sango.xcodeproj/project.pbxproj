@@ -38,6 +38,10 @@
 		AA9523651D91EB6E003C3FC6 /* brand1_android.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = brand1_android.json; path = example/brand1_android.json; sourceTree = "<group>"; };
 		AA9523661D91EB6E003C3FC6 /* brand1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = brand1.json; path = example/brand1.json; sourceTree = "<group>"; };
 		AA9523671D91EB6E003C3FC6 /* brand2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = brand2.json; path = example/brand2.json; sourceTree = "<group>"; };
+		AAA944AA1DAC019800608CFB /* base.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = base.json; sourceTree = "<group>"; };
+		AAA944AB1DAC019800608CFB /* brand1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = brand1.json; sourceTree = "<group>"; };
+		AAA944AC1DAC019800608CFB /* brand1_android.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = brand1_android.json; sourceTree = "<group>"; };
+		AAA944AD1DAC019800608CFB /* brand2.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = brand2.json; sourceTree = "<group>"; };
 		AAB57D9C1D5B883800FA37CA /* App.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = App.swift; path = Source/App.swift; sourceTree = "<group>"; };
 		AAB57D9D1D5B883800FA37CA /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = main.swift; path = Source/main.swift; sourceTree = "<group>"; };
 		AACE09731D6627CE003CF4F1 /* Extras.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Extras.swift; path = Source/Extras.swift; sourceTree = "<group>"; };
@@ -67,6 +71,7 @@
 				AAB57D9D1D5B883800FA37CA /* main.swift */,
 				AA89E0091D8760DC00D2D9A8 /* NSString+Extras.h */,
 				AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */,
+				AAA944771DAC019800608CFB /* example */,
 				AA9523641D91EB6E003C3FC6 /* base.json */,
 				AA9523651D91EB6E003C3FC6 /* brand1_android.json */,
 				AA9523661D91EB6E003C3FC6 /* brand1.json */,
@@ -82,6 +87,17 @@
 				AA6C0D771D5A9AB000ECA808 /* Sango */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AAA944771DAC019800608CFB /* example */ = {
+			isa = PBXGroup;
+			children = (
+				AAA944AA1DAC019800608CFB /* base.json */,
+				AAA944AB1DAC019800608CFB /* brand1.json */,
+				AAA944AC1DAC019800608CFB /* brand1_android.json */,
+				AAA944AD1DAC019800608CFB /* brand2.json */,
+			);
+			path = example;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
