@@ -1,4 +1,7 @@
 {
+	"locale": {
+		"default": "assets/locale/en-brand2.strings",
+	},
 	"images": [
 		"assets/Afero/ASR-1/asr_1@2x.png",
 		"assets/Afero/ASR-1/asr_1@3x.png",

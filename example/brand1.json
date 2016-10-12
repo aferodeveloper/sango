@@ -1,6 +1,9 @@
 {
 	"globalTint": "#80B3A34A",
 	"appIcon": "assets/Afero/AferoHexFull/AferoHexFull.png",
+	"locale": {
+		"default": "assets/locale/en-brand1.strings",
+	},
 	"images": [
 		"assets/Afero/ASR-1/asr_1@2x.png",
 		"assets/Afero/ASR-1/asr_1@3x.png",
