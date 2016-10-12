@@ -713,17 +713,70 @@ class App
         saveString(genString, file: localePath)
     }
     
+    /*
+     Given a current locale dictionary in the form of:
+     "locale" : {
+         "en" : ["file1/path1, "file1/path2"]
+         "de" : ["file2/path1, "file2/path2"]
+     }
+     
+     and a new dictioanry in the form of:
+     {
+         "en" : "file/path1"
+         "de" : "file/path2"
+     }
+     
+     merge and return:
+     "locale" : {
+         "en" : ["file1/path1, "file1/path2"]
+         "de" : ["file2/path1, "file2/path2"]
+     }
+     */
+    private func mergeLocales(src: Dictionary<String, AnyObject>, newInput : Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+        var mergedLocales = src
+        
+        for (key, value) in newInput {
+            var list = mergedLocales[key] as? [String]
+            if (list != nil) {
+                list?.append(value as! String)
+                mergedLocales[key] = list
+            }
+            else {
+                mergedLocales[key] = [value]
+            }
+        }
+        
+        return mergedLocales
+    }
+    
+    /*
+     Expecting locales to be in the form of:
+     {
+        "en" : ["file1/path1, "file1/path2"]
+        "de" : ["file2/path1, "file2/path2"]
+     }
+     */
     private func copyLocales(locales: Dictionary <String, AnyObject>, type: LangType) -> Void
     {
         // for iOS, path name is:
         // Resources/en.lproj/Localizable.strings
-        // for Android, oaht name is:
+        // for Android, path name is:
         // res/values/strings.xml
         // res/values-fr/strings.xml
-        for (lang, file) in locales {
-            let filePath = sourceAssetFolder! + "/" + (file as! String)
-            let prop = NSDictionary.init(contentsOfFile: filePath)
-            if (prop != nil) {
+        for (lang, fileList) in locales {
+            var prop:[String:AnyObject] = [:]
+            for file in fileList as! [String] {
+                let filePath = sourceAssetFolder! + "/" + file
+                let newProps = NSDictionary.init(contentsOfFile: filePath) as? [String:AnyObject]
+                if (newProps != nil) {
+                    prop = prop + newProps!
+                }
+                else {
+                    print("Error: Can't find \(file)")
+                    exit(-1)
+                }
+            }
+            if (prop.count > 0) {
                 var destPath = outputAssetFolder!
                 let fileName:String
                 if (type == .Swift) {
@@ -752,10 +805,6 @@ class App
                 createFolder(destPath)
                 destPath.appendContentsOf("/" + fileName)
                 writeLocale(destPath, properties: prop as! Dictionary<String, String>, type: type)
-            }
-            else {
-                print("Error: Can't find \(file)")
-                exit(-1)
             }
         }
     }
@@ -1322,6 +1371,7 @@ class App
             exit(-1)
         }
 
+        var locales:[String:AnyObject] = [:]
         var result:[String:AnyObject]? = nil
         if (inputFiles == nil) {
             inputFiles = getOptions(args, option: "-inputs")
@@ -1330,13 +1380,22 @@ class App
             result = [:]
             for file in inputFiles! {
                 let filePath = sourceAssetFolder! + "/" + file
-                if let d = Utils.fromJSONFile(filePath) {
+                if var d = Utils.fromJSONFile(filePath) {
+                    let locale: [String: String]? = d[keyLocale] as? [String:String]
+                    if (locale != nil) {
+                        d.removeValueForKey(keyLocale)
+                        locales = mergeLocales(locales, newInput:locale!)
+                    }
                     result = result! + d
                 }
                 else {
                     exit(-1)
                 }
             }
+        }
+
+        if (locales.count > 0) {
+            result![keyLocale] = locales
         }
 
         if (inputFile == nil) {
