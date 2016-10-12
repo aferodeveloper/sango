@@ -13,6 +13,7 @@
 "dialog_button_discard_rule" = "DELETE";
 "group_device_picker_prompt" = "Tap a device to add or remove it:";
 "group_device_picker_close" = "CLOSE";
+"We can’t connect you to the Afero Cloud right now.\n(ERROR CODE: %d)" = "We can’t connect you to the Afero Cloud right now.\n(ERROR CODE: %d)";
 "automation_title_description" = "Your automated schedules and rules";
 "rule_list_empty" = "Automate your devices by linking them to each other, scheduling based on time, or running on demand.";
 "rule_setup_format" = "Set Up %s";

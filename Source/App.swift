@@ -698,11 +698,13 @@ class App
             
             if (type == .Swift) {
                 newString = newString.escapeStr()
-                genString.appendContentsOf("\"" + key + "\" = \"" + newString + "\";\n")
+                let newKey = key.escapeStr()
+                genString.appendContentsOf("\"" + newKey + "\" = \"" + newString + "\";\n")
             }
             else if (type == .Java) {
                 newString = newString.stringByEscapingForAndroid();
-                genString.appendContentsOf("\t<string name=\"" + key + "\">" + newString + "</string>\n")
+                let newKey = key.stringByEscapingForAndroid()
+                genString.appendContentsOf("\t<string name=\"" + newKey + "\">" + newString + "</string>\n")
             }
         }
         if (type == .Swift) {
