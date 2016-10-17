@@ -45,7 +45,11 @@ public extension NSImage
         var scale = 1
         var fileName = file.lastPathComponent()
         fileName = (fileName as NSString).stringByDeletingPathExtension
-        if (fileName.hasSuffix("@2x")) {
+        if (fileName.hasSuffix("@1x")) {
+            scale = 1
+            fileName = fileName.stringByReplacingOccurrencesOfString("@1x", withString: "")
+        }
+        else if (fileName.hasSuffix("@2x")) {
             scale = 2
             fileName = fileName.stringByReplacingOccurrencesOfString("@2x", withString: "")
         }
@@ -92,28 +96,33 @@ public extension NSImage
     }
     
     public func scale(percent: CGFloat) -> NSImage {
-        var newR = CGRectMake(0, 0, self.size.width, self.size.height)
-        let Width = CGRectGetWidth(newR)
-        let Height = CGRectGetHeight(newR)
-        let newWidth = (Width * percent) / 100.0
-        let newHeight = (Height * percent) / 100.0
-        
-        let ratioOld = Width / Height
-        let ratioNew = newWidth / newHeight
-        
-        if (ratioOld > ratioNew) {
-            newR.size.width = newWidth                         // width of mapped rect
-            newR.size.height = newR.size.width / ratioOld      // height of mapped rect
-            newR.origin.x = 0                                  // x-coord of mapped rect
-            newR.origin.y = (newHeight - newR.size.height) / 2 // y-coord of centered mapped rect
+        if (percent == 100) {
+            return self
         }
         else {
-            newR.size.height = newHeight
-            newR.size.width = newR.size.height * ratioOld
-            newR.origin.y = 0
-            newR.origin.x = (newWidth - newR.size.width) / 2
+            var newR = CGRectMake(0, 0, self.size.width, self.size.height)
+            let Width = CGRectGetWidth(newR)
+            let Height = CGRectGetHeight(newR)
+            let newWidth = (Width * percent) / 100.0
+            let newHeight = (Height * percent) / 100.0
+            
+            let ratioOld = Width / Height
+            let ratioNew = newWidth / newHeight
+            
+            if (ratioOld > ratioNew) {
+                newR.size.width = newWidth                         // width of mapped rect
+                newR.size.height = newR.size.width / ratioOld      // height of mapped rect
+                newR.origin.x = 0                                  // x-coord of mapped rect
+                newR.origin.y = (newHeight - newR.size.height) / 2 // y-coord of centered mapped rect
+            }
+            else {
+                newR.size.height = newHeight
+                newR.size.width = newR.size.height * ratioOld
+                newR.origin.y = 0
+                newR.origin.x = (newWidth - newR.size.width) / 2
+            }
+            return resize(newR.width, height: newR.height)
         }
-        return resize(newR.width, height: newR.height)
     }
     
     public func tint(color: NSColor) -> NSImage {

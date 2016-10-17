@@ -42,6 +42,9 @@ private let keyEnums = "enums"
 private let keyImagesScaled = "imagesScaled"
 private let keyImagesScaledIos = "imagesScaledIos"
 private let keyImagesScaledAndroid = "imagesScaledAndroid"
+private let keyImagesScaledUp = "imagesScaledUp"
+private let keyImagesScaledIosUp = "imagesScaledIosUp"
+private let keyImagesScaledAndroidUp = "imagesScaledAndroidUp"
 private let keyImagesIos = "imagesIos"
 private let keyImagesAndroid = "imagesAndroid"
 private let keyImagesTinted = "imagesTinted"
@@ -60,6 +63,7 @@ private let keySwift = "swift"
 private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
                                     keyFonts, keySchemaVersion, keyAndroidLayout, keyEnums,
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
+                                    keyImagesScaledUp, keyImagesScaledIosUp, keyImagesScaledAndroidUp,
                                     keyImages, keyImagesIos, keyImagesAndroid, keyLocale,
                                     keyImagesTinted, keyJava, keySwift, keyGlobalTint,
                                     keyGlobalIosTint, keyGlobalAndroidTint]
@@ -75,6 +79,11 @@ private enum AssetType {
     case Layout
     case Image
     case Raw
+}
+
+private enum ScaleType {
+    case Up
+    case Down
 }
 
 private let assetTagIgnore = "~"
@@ -130,9 +139,12 @@ class App
                        keyLocale: "dictionary. keys are IOS lang. ie, enUS, enES, path to strings file",
                        keyImagesIos: "array. path to image files that are iOS only",
                        keyImagesAndroid: "array. path to image files that are Android only",
-                       keyImagesScaled: "array. path to image files that are common and will be scaled",
-                       keyImagesScaledIos: "array. path to image files that are iOS only and will be scaled",
-                       keyImagesScaledAndroid: "array. path to image files that are Android only and will be scaled",
+                       keyImagesScaled: "array. path to image files that are common and will be scaled. Source is always scaled down",
+                       keyImagesScaledIos: "array. path to image files that are iOS only and will be scaled. Source is always scaled down",
+                       keyImagesScaledAndroid: "array. path to image files that are Android only and will be scaled. Source is always scaled down",
+                       keyImagesScaledUp: "array. path to image files that are common and will be scaled. Source is always scaled up",
+                       keyImagesScaledIosUp: "array. path to image files that are iOS only and will be scaled. Source is always scaled up",
+                       keyImagesScaledAndroidUp: "array. path to image files that are Android only and will be scaled. Source is always scaled up",
                        keyCopied: "array. path to files that are common and are just copied",
                        keyCopiedIos: "array. path to files that are iOS only and are just copied",
                        keyCopiedAndroid: "array. path to files that Android only and are just copied",
@@ -407,7 +419,7 @@ class App
 
     // http://petrnohejl.github.io/Android-Cheatsheet-For-Graphic-Designers/
     
-    private func scaleAndCopyImages(files: [String], type: LangType, useRoot: Bool) -> Void {
+    private func scaleAndCopyImages(files: [String], type: LangType, useRoot: Bool, scale: ScaleType) -> Void {
         for file in files {
             if (type == .Java) {
                 if (file.isAndroidCompatible() == false) {
@@ -426,71 +438,60 @@ class App
             let destPath = (destFile as NSString).stringByDeletingLastPathComponent
             createFolder(destPath)
 
-            var fileName = file.lastPathComponent()
-            fileName = (fileName as NSString).stringByDeletingPathExtension
-            fileName = fileName.stringByReplacingOccurrencesOfString("@2x", withString: "")
-            fileName = fileName.stringByReplacingOccurrencesOfString("@3x", withString: "")
+            let imageScale = NSImage.getScaleFrom(file)
+            let fileName = imageScale.file
 
+            let baseImage = NSImage.loadFrom(filePath)
+            if (baseImage == nil) {
+                print("Error: missing file \(filePath)")
+                exit(-1)
+            }
             if (type == .Swift) {
-                // Ok, we're going to create the @3, @2, and normal size from the given assumed largest image
-                let image3 = NSImage.loadFrom(filePath) // @3
-                if (image3 == nil) {
-                    print("Error: missing file \(filePath)")
-                    exit(-1)
+                let iosScales: [CGFloat:String] = [
+                    100:   "@3x.png",
+                    66.67: "@2x.png",
+                    33.34: ".png"
+                ]
+                let iosScalesUp: [CGFloat:String] = [
+                    300: "@3x.png",
+                    200: "@2x.png",
+                    100: ".png"
+                ]
+                let scales = (scale == .Down) ? iosScales : iosScalesUp
+                for (key, value) in Array(scales).sort({$0.0 < $1.0}) {
+                    let image = baseImage.scale(key)
+                    let imageFile = destPath + "/" + fileName + value
+                    Utils.debug("Image scale and copy \(filePath) -> \(imageFile)")
+                    if (saveImage(image, file: imageFile) == false) {
+                        exit(-1)
+                    }
                 }
-                let image2 = image3.scale(66.67)        // @2
-                let image = image3.scale(33.34)         // @1
-                var file = destPath + "/" + fileName + "@3x.png"
-                if (saveImage(image3, file: file) == false) {
-                    exit(-1)
-                }
-                Utils.debug("Image scale and copy \(filePath) -> \(file)")
-                file = destPath + "/" + fileName + "@2x.png"
-                if (saveImage(image2, file: file) == false) {
-                    exit(-1)
-                }
-                Utils.debug("Image scale and copy \(filePath) -> \(file)")
-                file = destPath + "/" + fileName + ".png"
-                if (saveImage(image, file: file) == false) {
-                    exit(-1)
-                }
-                Utils.debug("Image scale and copy \(filePath) -> \(file)")
             }
             else if (type == .Java) {
-                let image4 = NSImage.loadFrom(filePath) // 3x
-                if (image4 == nil) {
-                    print("Error: missing file \(filePath)")
-                    exit(-1)
+                let androidScales: [CGFloat:String] = [
+                    100:   "/res/drawable-xxhdpi/", // 3x
+                    66.67: "/res/drawable-xhdpi/",  // 2x
+                    50:    "/res/drawable-hdpi/",   // 1.5x
+                    33.34: "/res/drawable-mdpi/"    // 1x
+                ]
+                let androidScalesUp: [CGFloat:String] = [
+                    300:   "/res/drawable-xxhdpi/", // 3x
+                    200:   "/res/drawable-xhdpi/",  // 2x
+                    150:   "/res/drawable-hdpi/",   // 1.5x
+                    100:   "/res/drawable-mdpi/"    // 1x
+                ]
+                let scales = (scale == .Down) ? androidScales : androidScalesUp
+                for (key, value) in Array(scales).sort({$0.0 < $1.0}) {
+                    let image = baseImage.scale(key)
+                    let folderPath = destPath + value
+                    let imageFile = folderPath + fileName + ".png"
+                    if (createFolders([folderPath])) {
+                        Utils.debug("Image scale and copy \(filePath) -> \(imageFile)")
+                        if (saveImage(image, file: imageFile) == false) {
+                            exit(-1)
+                        }
+                    }
                 }
-                let image3 = image4.scale(66.67)        // 2x
-                let image2 = image4.scale(50)           // 1.5x
-                let image = image4.scale(33.34)         // 1x
-                let mdpi = destPath + "/res/drawable-mdpi/"
-                let hdpi = destPath + "/res/drawable-hdpi/"
-                let xhdpi = destPath + "/res/drawable-xhdpi/"
-                let xxhdpi = destPath + "/res/drawable-xxhdpi/"
-                createFolders([mdpi, hdpi, xhdpi, xxhdpi])
-                fileName = fileName + ".png"
-                var file = xxhdpi + fileName
-                if (saveImage(image4, file: file) == false) {
-                    exit(-1)
-                }
-                Utils.debug("Image scale and copy \(filePath) -> \(file)")
-                file = xhdpi + fileName
-                if (saveImage(image3, file: file) == false) {
-                    exit(-1)
-                }
-                Utils.debug("Image scale and copy \(filePath) -> \(file)")
-                file = hdpi + fileName
-                if (saveImage(image2, file: file) == false) {
-                    exit(-1)
-                }
-                Utils.debug("Image scale and copy \(filePath) -> \(file)")
-                file = mdpi + fileName
-                if (saveImage(image, file: file) == false) {
-                    exit(-1)
-                }
-                Utils.debug("Image scale and copy \(filePath) -> \(file)")
             }
             else {
                 print("Error: wrong type")
@@ -878,13 +879,10 @@ class App
                     else if (key == keyImages) {
                         testArray = true
                     }
-                    else if (key == keyImagesScaled) {
+                    else if ((key == keyImagesScaled) || (key == keyImagesScaledIos) || (key == keyImagesScaledAndroid)) {
                         testArray = true
                     }
-                    else if (key == keyImagesScaledIos) {
-                        testArray = true
-                    }
-                    else if (key == keyImagesScaledAndroid) {
+                    else if ((key == keyImagesScaledUp) || (key == keyImagesScaledIosUp) || (key == keyImagesScaledAndroidUp)) {
                         testArray = true
                     }
                     else if (key == keyImagesIos) {
@@ -1034,19 +1032,31 @@ class App
                 copyImages(value as! Array, type: type, useRoot: true)
             }
             else if (key == keyImagesScaled) {
-                scaleAndCopyImages(value as! Array, type: type, useRoot: true)
+                scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
             }
             else if (key == keyImagesScaledIos) {
                 if (type == .Swift) {
-                    scaleAndCopyImages(value as! Array, type: type, useRoot: true)
+                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
                 }
             }
             else if (key == keyImagesScaledAndroid) {
                 if (type == .Java) {
-                    scaleAndCopyImages(value as! Array, type: type, useRoot: true)
+                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
                 }
             }
-                
+            else if (key == keyImagesScaledUp) {
+                scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+            }
+            else if (key == keyImagesScaledIosUp) {
+                if (type == .Swift) {
+                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+                }
+            }
+            else if (key == keyImagesScaledAndroidUp) {
+                if (type == .Java) {
+                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+                }
+            }
             else if (key == keyImagesIos) {
                 if (type == .Swift) {
                     copyImages(value as! Array, type: type, useRoot: true)
