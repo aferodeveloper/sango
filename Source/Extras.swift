@@ -318,7 +318,8 @@ public extension String
     }
 
     public func removeScale() -> String {
-        let file = self.stringByReplacingOccurrencesOfString("@2x", withString: "")
+        var file = self.stringByReplacingOccurrencesOfString("@1x", withString: "")
+        file = file.stringByReplacingOccurrencesOfString("@2x", withString: "")
         return file.stringByReplacingOccurrencesOfString("@3x", withString: "")
     }
 
