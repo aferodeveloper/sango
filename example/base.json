@@ -23,13 +23,13 @@
 		"assets/Afero/ASR-1/asr_1.png"
 	],
 	"imagesScaledUp": [
-		"assets/sango_asset_test/AC_icon_small_ai@1x.ai",
-		"assets/sango_asset_test/AC_icon_small_eps@1x.eps"
+		"assets/sango_asset_test/ac_icon_small_ai@1x.ai",
+		"assets/sango_asset_test/ac_icon_small_eps@1x.eps"
 	],
 	"imagesScaled": [
-		"assets/sango_asset_test/AC_icon_large_ai@3x.ai",
-		"assets/sango_asset_test/AC_icon_large_eps@3x.eps",
-		"assets/sango_asset_test/AC_icon_large_png@3x.png",
+		"assets/sango_asset_test/ac_icon_large_ai@3x.ai",
+		"assets/sango_asset_test/ac_icon_large_eps@3x.eps",
+		"assets/sango_asset_test/ac_icon_large_png@3x.png",
 		"assets/vector_avatar.pdf",
 		"assets/business_men.ai",
 		"assets/green_guy.eps",
