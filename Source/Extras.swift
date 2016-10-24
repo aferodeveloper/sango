@@ -144,6 +144,7 @@ public extension NSImage
         
         let context = NSGraphicsContext(bitmapImageRep: bitmap)
         context?.imageInterpolation = .High
+        context?.shouldAntialias = true
         NSGraphicsContext.setCurrentContext(context)
         self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
                         fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
@@ -179,6 +180,7 @@ public extension NSImage
         
         let context = NSGraphicsContext(bitmapImageRep: bitmap)
         context?.imageInterpolation = .High
+        context?.shouldAntialias = true
         NSGraphicsContext.setCurrentContext(context)
         self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
                         fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),

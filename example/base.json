@@ -24,8 +24,7 @@
 	],
 	"imagesScaledUp": [
 		"assets/sango_asset_test/ac_icon_small_ai@1x.ai",
-		"assets/sango_asset_test/ac_icon_small_eps@1x.eps",
-		"assets/TopInsetShadowBorder.png"
+		"assets/sango_asset_test/ac_icon_small_eps@1x.eps"
 	],
 	"imagesScaled": [
 		"assets/sango_asset_test/ac_icon_large_ai@3x.ai",
@@ -35,7 +34,8 @@
 		"assets/business_men.ai",
 		"assets/green_guy.eps",
 		"assets/large/brokenwashingmachine@3x.png",
-		"assets/kenmore_pay_logo_horizontal@3x.png"
+		"assets/kenmore_pay_logo_horizontal@3x.png",
+		"assets/TopInsetShadowBorder.png"
 	],
 	"Settings": {
 		"UI_BASE_COLOR": "67,163,199,1",
