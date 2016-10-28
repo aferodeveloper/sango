@@ -89,6 +89,24 @@ private enum ScaleType {
 private let assetTagIgnore = "~"
 private let assetTagHead = "head"
 
+// app command line options
+private let optAssetTemplates = "-asset_template"
+private let optConfigTemplate = "-config_template"
+private let optConfig = "-config"
+private let optValidate = "-validate"
+private let optInput = "-input"
+private let optInputs = "-inputs"
+private let optInputAssets = "-input_assets"
+private let optOutSource = "-out_source"
+private let optJava = "-java"
+private let optSwift = "-swift"
+private let optOutAssets = "-out_assets"
+private let optInputAssetsTag = "-input_assets_tag"
+private let optVerbose = "-verbose"
+private let optHelpKeys = "-help_keys"
+private let optVersion = "-version"
+private let optLocaleOnly = "-locale_only"
+
 class App
 {
     private var package:String = ""
@@ -103,6 +121,7 @@ class App
     private var assetTag:String? = nil
 
     private var compileType:LangType = .Unset
+    private var localeOnly:Bool = false
 
     private var globalTint:NSColor? = nil
     private var globalIosTint:NSColor? = nil
@@ -111,23 +130,45 @@ class App
     private var gitEnabled = false
 
     func usage() -> Void {
+        let details = [
+            optAssetTemplates: ["[basename]", "creates a json template, specifically for the assets"],
+            optConfigTemplate: ["[file.json]", "creates a json template, specifically for the app"],
+            optConfig: ["[file.json]", "use config file for options, instead of command line"],
+            optValidate: ["[asset_file.json, ...]", "validates asset JSON file(s), requires \(optInputAssets)"],
+            optInput: ["[file.json]", "asset json file"],
+            optInputs: ["[file1.json file2.json ...]", "merges asset files and process"],
+            optInputAssets: ["[folder]", "asset source folder (read)"],
+            optOutSource: ["[source.java|swift]", "path to result of language"],
+            optJava: ["", "write java source"],
+            optSwift: ["", "write swift source"],
+            optOutAssets: ["[folder]", "asset root folder (write), typically iOS Resource, or Android app/src/main"],
+            optInputAssetsTag: ["[tag]", "optional git tag to pull repro at before processing"],
+            optVerbose: ["", "be verbose in details"],
+            optHelpKeys: ["", "display JSON keys and their use"],
+            optVersion: ["", "version"],
+            optLocaleOnly: ["", "when included, process localization files only"]
+        ]
+        var keyLength = 0
+        var parmLength = 0
+        for (key, value) in details {
+            if (key.characters.count > keyLength) {
+                keyLength = key.characters.count
+            }
+            if (value[0].characters.count > parmLength) {
+                parmLength = value[0].characters.count
+            }
+        }
+        
         print(App.copyrightNotice)
         print("Usage:")
-        print(" -asset_template [basename]          creates a json template, specifically for the assets")
-        print(" -config_template [file.json]        creates a json template, specifically for the app")
-        print(" -config [file.json]                 use config file for options, instead of command line")
-        print(" -validate [asset_file.json, ...]    validates asset JSON file(s), requires -input_assets")
-        print(" -input [file.json]                  asset json file")
-        print(" -inputs [file1.json file2.json ...] merges asset files and process")
-        print(" -input_assets [folder]              asset source folder (read)")
-        print(" -out_source [source.java|swift]     path to result of language")
-        print(" -java                               write java source")
-        print(" -swift                              write swift source")
-        print(" -out_assets [folder]                asset root folder (write), typically iOS Resource, or Android app/src/main")
-        print(" -input_assets_tag [tag]             optional git tag to pull repro at before processing")
-        print(" -verbose                            be verbose in details")
-        print(" -help_keys                          display JSON keys and their use")
-        print(" -version                            version")
+        for (key, value) in Array(details).sort({$0.0 < $1.0}) {
+            let item1 = value[0]
+            let item2 = value[1]
+            let output = key.stringByPaddingToLength(keyLength + 3, withString: " ", startingAtIndex: 0) +
+                        item1.stringByPaddingToLength(parmLength + 3, withString: " ", startingAtIndex: 0) +
+                        "  " + item2
+            print(output)
+        }
     }
 
     private func helpKeys() -> Void {
@@ -739,6 +780,7 @@ class App
                 genString.appendContentsOf("\t<string name=\"" + newKey + "\">" + newString + "</string>\n")
             }
         }
+        Utils.debug("Generate locale \(localePath)")
         if (type == .Swift) {
         }
         else if (type == .Java) {
@@ -1036,116 +1078,125 @@ class App
                 genString.appendContentsOf(line)
             }
         }
+        var completeOutput = true
         for (key, value) in data {
-            if (key == keyCopied) {
-                copyAssets(value as! Array, type: type, assetType: .Raw, useRoot: false)
-            }
-            else if (key == keyAppIcon) {
-                copyAppIcon(value as! String, type: type)
-            }
-            else if (key == keyAndroidAppIcon) {
-                if (type == .Java) {
-                    copyAppIcon(value as! String, type: type)
-                }
-            }
-            else if (key == keyIOSAppIcon) {
-                if (type == .Swift) {
-                    copyAppIcon(value as! String, type: type)
-                }
-            }
-            else if (key == keyFonts) {
-                copyAssets(value as! Array, type: type, assetType: .Font, useRoot: true)
-            }
-            else if (key == keyLocale) {
+            if (key == keyLocale) {
                 copyLocales(value as! Dictionary, type: type)
             }
-            else if (key == keyImages) {
-                copyImages(value as! Array, type: type, useRoot: true)
-            }
-            else if (key == keyImagesScaled) {
-                scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
-            }
-            else if (key == keyImagesScaledIos) {
-                if (type == .Swift) {
-                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
+            if (self.localeOnly == false) {
+                if (key == keyCopied) {
+                    copyAssets(value as! Array, type: type, assetType: .Raw, useRoot: false)
                 }
-            }
-            else if (key == keyImagesScaledAndroid) {
-                if (type == .Java) {
-                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
+                else if (key == keyAppIcon) {
+                    copyAppIcon(value as! String, type: type)
                 }
-            }
-            else if (key == keyImagesScaledUp) {
-                scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
-            }
-            else if (key == keyImagesScaledIosUp) {
-                if (type == .Swift) {
-                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+                else if (key == keyAndroidAppIcon) {
+                    if (type == .Java) {
+                        copyAppIcon(value as! String, type: type)
+                    }
                 }
-            }
-            else if (key == keyImagesScaledAndroidUp) {
-                if (type == .Java) {
-                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+                else if (key == keyIOSAppIcon) {
+                    if (type == .Swift) {
+                        copyAppIcon(value as! String, type: type)
+                    }
                 }
-            }
-            else if (key == keyImagesIos) {
-                if (type == .Swift) {
+                else if (key == keyFonts) {
+                    copyAssets(value as! Array, type: type, assetType: .Font, useRoot: true)
+                }
+                else if (key == keyImages) {
                     copyImages(value as! Array, type: type, useRoot: true)
                 }
-            }
-            else if (key == keyImagesAndroid) {
-                if (type == .Java) {
-                    copyImages(value as! Array, type: type, useRoot: true)
+                else if (key == keyImagesScaled) {
+                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
+                }
+                else if (key == keyImagesScaledIos) {
+                    if (type == .Swift) {
+                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
+                    }
+                }
+                else if (key == keyImagesScaledAndroid) {
+                    if (type == .Java) {
+                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
+                    }
+                }
+                else if (key == keyImagesScaledUp) {
+                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+                }
+                else if (key == keyImagesScaledIosUp) {
+                    if (type == .Swift) {
+                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+                    }
+                }
+                else if (key == keyImagesScaledAndroidUp) {
+                    if (type == .Java) {
+                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+                    }
+                }
+                else if (key == keyImagesIos) {
+                    if (type == .Swift) {
+                        copyImages(value as! Array, type: type, useRoot: true)
+                    }
+                }
+                else if (key == keyImagesAndroid) {
+                    if (type == .Java) {
+                        copyImages(value as! Array, type: type, useRoot: true)
+                    }
+                }
+                else if (key == keyAndroidLayout) {
+                    if (type == .Java) {
+                        copyAssets(value as! Array, type: type, assetType: .Layout, useRoot: true)
+                    }
+                }
+                else if (key == keyEnums) {
+                    let enums = value as? [String:AnyObject]
+                    if (enums != nil) {
+                        let line = writeEnums(enums!, type: type)
+                        genString.appendContentsOf(line)
+                    }
                 }
             }
-            else if (key == keyAndroidLayout) {
-                if (type == .Java) {
-                    copyAssets(value as! Array, type: type, assetType: .Layout, useRoot: true)
-                }
-            }
-            else if (key == keyEnums) {
-                let enums = value as? [String:AnyObject]
-                if (enums != nil) {
-                    let line = writeEnums(enums!, type: type)
-                    genString.appendContentsOf(line)
-                }
+            else {
+                completeOutput = false
             }
         }
-        if (genString.isEmpty == false) {
-            var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
-            if (type == .Swift) {
-                outputStr.appendContentsOf("import UIKit\n")
-            }
-            else if (type == .Java) {
-                if (package.isEmpty) {
-                    outputStr.appendContentsOf("package java.lang;\n")
-                }
-                else {
-                    outputStr.appendContentsOf("package \(package);\n")
-                }
-            }
-            if (baseClass.isEmpty == false) {
-                genString = genString.stringByReplacingOccurrencesOfString("\n", withString: "\n\t")
+        
+        if (completeOutput) {
+            if (genString.isEmpty == false) {
+                var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
                 if (type == .Swift) {
-                    outputStr.appendContentsOf("public struct \(baseClass) {")
+                    outputStr.appendContentsOf("import UIKit\n")
                 }
                 else if (type == .Java) {
-                    outputStr.appendContentsOf("public final class \(baseClass) {")
+                    if (package.isEmpty) {
+                        outputStr.appendContentsOf("package java.lang;\n")
+                    }
+                    else {
+                        outputStr.appendContentsOf("package \(package);\n")
+                    }
                 }
-                genString.appendContentsOf("\n}")
+                if (baseClass.isEmpty == false) {
+                    genString = genString.stringByReplacingOccurrencesOfString("\n", withString: "\n\t")
+                    if (type == .Swift) {
+                        outputStr.appendContentsOf("public struct \(baseClass) {")
+                    }
+                    else if (type == .Java) {
+                        outputStr.appendContentsOf("public final class \(baseClass) {")
+                    }
+                    genString.appendContentsOf("\n}")
+                }
+                outputStr.appendContentsOf(genString + "\n")
+                saveString(outputStr, file: langOutputFile)
             }
-            outputStr.appendContentsOf(genString + "\n")
-            saveString(outputStr, file: langOutputFile)
+            let sangoExtras = writeSangoExtras(type)
+            var sangoFile = langOutputFile.pathOnlyComponent()
+            if (type == .Swift) {
+                sangoFile += "/Sango.swift"
+            }
+            else if (type == .Java) {
+                sangoFile += "/Sango.java"
+            }
+            saveString(sangoExtras, file: sangoFile)
         }
-        let sangoExtras = writeSangoExtras(type)
-        var sangoFile = langOutputFile.pathOnlyComponent()
-        if (type == .Swift) {
-            sangoFile += "/Sango.swift"
-        }
-        else if (type == .Java) {
-            sangoFile += "/Sango.java"
-        }
-        saveString(sangoExtras, file: sangoFile)
     }
 
     private func createFolders(folders: [String]) -> Bool {
@@ -1293,11 +1344,11 @@ class App
             exit(0)
         }
 
-        if (findOption(args, option: "-help_keys")) {
+        if (findOption(args, option: optHelpKeys)) {
             helpKeys()
             exit(0)
         }
-        if (findOption(args, option: "-version")) {
+        if (findOption(args, option: optVersion)) {
             print(App.copyrightNotice)
             exit(0)
         }
@@ -1306,21 +1357,23 @@ class App
         
         Utils.debug(App.copyrightNotice)
 
-        let baseName = getOption(args, option: "-asset_template")
+        let baseName = getOption(args, option: optAssetTemplates)
         if (baseName != nil) {
             createAssetTemplate(baseName!)
             exit(0)
         }
 
-        let configTemplateFile = getOption(args, option: "-config_template")
+        let configTemplateFile = getOption(args, option: optConfigTemplate)
         if (configTemplateFile != nil) {
             createConfigTemplate(configTemplateFile!)
             exit(0)
         }
         
+        self.localeOnly = findOption(args, option: optLocaleOnly)
+
         var validateInputs:[String]? = nil
         var validateLang:LangType = .Unset
-        validateInputs = getOptions(args, option: "-validate")
+        validateInputs = getOptions(args, option: optValidate)
         if (validateInputs == nil) {
             validateInputs = getOptions(args, option: "-validate_ios")
             validateLang = .Swift
@@ -1330,7 +1383,7 @@ class App
             validateLang = .Java
         }
         if (validateInputs != nil) {
-            sourceAssetFolder = getOption(args, option: "-input_assets")
+            sourceAssetFolder = getOption(args, option: optInputAssets)
             if (sourceAssetFolder != nil) {
                 sourceAssetFolder = NSString(string: sourceAssetFolder!).stringByExpandingTildeInPath
 
@@ -1349,7 +1402,7 @@ class App
             exit(0)
         }
         
-        let configFile = getOption(args, option: "-config")
+        let configFile = getOption(args, option: optConfig)
         if (configFile != nil) {
             let result = Utils.fromJSONFile(configFile!)
             if (result != nil) {
@@ -1373,10 +1426,10 @@ class App
         }
         
         if (compileType == .Unset) {
-            if (findOption(args, option: "-java")) {
+            if (findOption(args, option: optJava)) {
                 compileType = .Java
             }
-            else if (findOption(args, option: "-swift")) {
+            else if (findOption(args, option: optSwift)) {
                 compileType = .Swift
             }
             else {
@@ -1386,11 +1439,11 @@ class App
         }
 
         if (assetTag == nil) {
-            assetTag = getOption(args, option: "-input_assets_tag")
+            assetTag = getOption(args, option: optInputAssetsTag)
         }
 
         if (outputClassFile == nil) {
-            outputClassFile = getOption(args, option: "-out_source")
+            outputClassFile = getOption(args, option: optOutSource)
         }
         if (outputClassFile != nil) {
             outputClassFile = NSString(string: outputClassFile!).stringByExpandingTildeInPath
@@ -1400,7 +1453,7 @@ class App
             exit(-1)
         }
 
-        let overrideSourceAssets = getOption(args, option: "-input_assets")
+        let overrideSourceAssets = getOption(args, option: optInputAssets)
         if (overrideSourceAssets != nil) {
             sourceAssetFolder = overrideSourceAssets
         }
@@ -1413,7 +1466,7 @@ class App
         }
         
         if (outputAssetFolder == nil) {
-            outputAssetFolder = getOption(args, option: "-out_assets")
+            outputAssetFolder = getOption(args, option: optOutAssets)
         }
         if (outputAssetFolder != nil) {
             outputAssetFolder = NSString(string: outputAssetFolder!).stringByExpandingTildeInPath
@@ -1426,7 +1479,7 @@ class App
         var locales:[String:AnyObject] = [:]
         var result:[String:AnyObject]? = nil
         if (inputFiles == nil) {
-            inputFiles = getOptions(args, option: "-inputs")
+            inputFiles = getOptions(args, option: optInputs)
         }
         if (inputFiles != nil) {
             result = [:]
@@ -1451,7 +1504,7 @@ class App
         }
 
         if (inputFile == nil) {
-            inputFile = getOption(args, option: "-input")
+            inputFile = getOption(args, option: optInput)
         }
         if (inputFile != nil) {
             result = Utils.fromJSONFile(inputFile!)

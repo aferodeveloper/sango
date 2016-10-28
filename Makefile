@@ -32,6 +32,7 @@ distro: clean set_build
 	@xcodebuild | sed -nE '/error:/,/^[[:digit:]] errors? generated/ p'
 	@cp ./build/Release/Sango $(TARGET)
 	@$(MAKE) clear_build
+	@echo "Done!"
 
 set_build:
 	@echo "public let BUILD_DATE = "\"$(BUILD_DATE)\" > Source/Version.swift

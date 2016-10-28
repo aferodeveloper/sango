@@ -32,7 +32,7 @@ public class Shell
             }
         }
         task.arguments = ["-c", arg]
-        Utils.debug("$ \(arg)")
+//        Utils.debug("$ \(arg)")
         
         let pipe = NSPipe()
         task.standardOutput = pipe
@@ -107,12 +107,6 @@ public class Shell
     
     public static func setup() -> Void
     {
-        if gitInstalled() {
-            Utils.debug("git installed")
-        }
-        else {
-            Utils.debug("git not installed")
-            
-        }
+        gitInstalled()
     }
 }
