@@ -27,11 +27,12 @@ clean: _clean_temps clear_build
 	@rm -rdf build
 	@rm -f $(TARGET)
 
+# @xcodebuild | sed -nE '/error:/,/^[[:digit:]] errors? generated/ p'
+
 distro: clean set_build
-	@xcodebuild | sed -nE '/error:/,/^[[:digit:]] errors? generated/ p'
+	@xcodebuild | xcpretty
 	@cp ./build/Release/Sango $(TARGET)
 	@$(MAKE) clear_build
-	@echo done!
 
 set_build:
 	@echo "public let BUILD_DATE = "\"$(BUILD_DATE)\" > Source/Version.swift
