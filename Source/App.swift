@@ -107,12 +107,11 @@ class App
     private var globalTint:NSColor? = nil
     private var globalIosTint:NSColor? = nil
     private var globalAndroidTint:NSColor? = nil
-    private let copyrightNotice = "Sango © 2016 Afero, Inc - Build \(BUILD_REVISION) \(BUILD_DATE)"
-
+    static let copyrightNotice = "Sango © 2016 Afero, Inc - Build \(BUILD_REVISION)"
     private var gitEnabled = false
 
     func usage() -> Void {
-        print(copyrightNotice)
+        print(App.copyrightNotice)
         print("Usage:")
         print(" -asset_template [basename]          creates a json template, specifically for the assets")
         print(" -config_template [file.json]        creates a json template, specifically for the app")
@@ -324,6 +323,38 @@ class App
             exit(-1)
         }
         return outputString
+    }
+
+    private func writeSangoExtras(type: LangType) -> String {
+        var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
+        if (type == .Swift) {
+            outputStr.appendContentsOf("import UIKit\n")
+        }
+        else if (type == .Java) {
+            if (package.isEmpty) {
+                outputStr.appendContentsOf("package java.lang;\n")
+            }
+            else {
+                outputStr.appendContentsOf("package \(package);\n")
+            }
+        }
+        if (type == .Swift) {
+            outputStr.appendContentsOf("public struct Sango {\n")
+            outputStr.appendContentsOf("\tpublic static let Version = \"\(App.copyrightNotice)\"\n")
+            outputStr.appendContentsOf("}\n\n")
+            outputStr.appendContentsOf("extension String {\n")
+            outputStr.appendContentsOf("\tinit(locKey key: String, value: String) {\n")
+            outputStr.appendContentsOf("\t\tlet v = NSLocalizedString(key, tableName: nil, bundle: nil, value: value, comment: nil)\n")
+            outputStr.appendContentsOf("\t\tself.init(v)\n")
+            outputStr.appendContentsOf("\t}\n")
+            outputStr.appendContentsOf("}\n")
+        }
+        else if (type == .Java) {
+            outputStr.appendContentsOf("public final class Sango {\n")
+            outputStr.appendContentsOf("\tpublic static final String VERSION = \"\(App.copyrightNotice)\";\n")
+            outputStr.appendContentsOf("}\n")
+        }
+        return outputStr
     }
 
     private func writeConstants(name: String, constants: Dictionary<String, AnyObject>, type: LangType) -> String {
@@ -1106,6 +1137,15 @@ class App
             outputStr.appendContentsOf(genString + "\n")
             saveString(outputStr, file: langOutputFile)
         }
+        let sangoExtras = writeSangoExtras(type)
+        var sangoFile = langOutputFile.pathOnlyComponent()
+        if (type == .Swift) {
+            sangoFile += "/Sango.swift"
+        }
+        else if (type == .Java) {
+            sangoFile += "/Sango.java"
+        }
+        saveString(sangoExtras, file: sangoFile)
     }
 
     private func createFolders(folders: [String]) -> Bool {
@@ -1258,13 +1298,13 @@ class App
             exit(0)
         }
         if (findOption(args, option: "-version")) {
-            print(copyrightNotice)
+            print(App.copyrightNotice)
             exit(0)
         }
 
         gitEnabled = Shell.gitInstalled()
         
-        Utils.debug(copyrightNotice)
+        Utils.debug(App.copyrightNotice)
 
         let baseName = getOption(args, option: "-asset_template")
         if (baseName != nil) {

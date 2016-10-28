@@ -315,6 +315,10 @@ public extension String
         return (self as NSString).lastPathComponent
     }
 
+    public func pathOnlyComponent() -> String {
+        return (self as NSString).stringByDeletingLastPathComponent
+    }
+
     public func fileExtention() -> String {
         return (self as NSString).pathExtension.lowercaseString
     }
