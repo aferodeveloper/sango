@@ -335,7 +335,7 @@ class App
         if (type == .Swift) {
             for (key, value) in sorted {
                 let list:[String] = value as! [String]
-                outputString.appendContentsOf("public enum \(key) {\n")
+                outputString.appendContentsOf("public enum \(key.snakeCaseToCamelCase()) {\n")
                 for itm in list {
                     outputString.appendContentsOf("\tcase \(itm.snakeCaseToCamelCase())\n")
                 }
