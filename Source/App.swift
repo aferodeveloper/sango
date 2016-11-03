@@ -36,6 +36,7 @@ private let SchemaVersion = 1
 
 private let keySchemaVersion = "schemaVersion"
 private let keyFonts = "fonts"
+private let keyFontRoot = "fontRoot"
 private let keyImages = "images"
 private let keyLocale = "locale"
 private let keyEnums = "enums"
@@ -61,7 +62,7 @@ private let keyAndroidLayout = "layoutAndroid"
 private let keyJava = "java"
 private let keySwift = "swift"
 private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
-                                    keyFonts, keySchemaVersion, keyAndroidLayout, keyEnums,
+                                    keyFonts, keyFontRoot, keySchemaVersion, keyAndroidLayout, keyEnums,
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
                                     keyImagesScaledUp, keyImagesScaledIosUp, keyImagesScaledAndroidUp,
                                     keyImages, keyImagesIos, keyImagesAndroid, keyLocale,
@@ -174,6 +175,7 @@ class App
     private func helpKeys() -> Void {
         let details = [keySchemaVersion: "number. Version, which should be \(SchemaVersion)",
                        keyFonts: "array. path to font files",
+                       keyFontRoot: "path. Destination font root. Default is root of resources",
                        keyEnums: "dictionary. keys are enum key:value name",
                        keyImages: "array. path to image files that are common.",
                        keyLocale: "dictionary. keys are IOS lang. ie, enUS, enES, path to strings file",
@@ -885,7 +887,16 @@ class App
         }
     }
 
-    private func copyAssets(files: [String], type: LangType, assetType: AssetType, useRoot: Bool) -> Void {
+    enum AssetLocation {
+        case Root
+        case Relative
+        case Custom
+    }
+    
+    private func copyAssets(files: [String], type: LangType,
+                            assetType: AssetType,
+                            destLocation: AssetLocation,
+                            root: String = "") -> Void {
         let androidAssetLocations = [
             AssetType.Font:"/assets/fonts/",
             AssetType.Raw:"/assets/",
@@ -894,11 +905,15 @@ class App
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
-            if (useRoot) {
+            if (destLocation == .Root) {
                 destFile = outputAssetFolder! + "/" + file.lastPathComponent()
             }
-            else {
+            else if (destLocation == .Relative) {
                 destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
+            }
+            else {
+                // Custom
+                destFile = outputAssetFolder! + "/" + root + "/" + file.lastPathComponent()
             }
             let destPath = (destFile as NSString).stringByDeletingLastPathComponent
             createFolder(destPath)
@@ -919,7 +934,7 @@ class App
             }
         }
     }
-    
+
     private func validate(files:[String], type: LangType) -> Void
     {
         for file in files {
@@ -1078,6 +1093,12 @@ class App
                 genString.appendContentsOf(line)
             }
         }
+        var fontRoot = ""
+        for (key, value) in data {
+            if (key == keyFontRoot) {
+                fontRoot = value as! String
+            }
+        }
         var completeOutput = true
         for (key, value) in data {
             if (key == keyLocale) {
@@ -1085,7 +1106,7 @@ class App
             }
             if (self.localeOnly == false) {
                 if (key == keyCopied) {
-                    copyAssets(value as! Array, type: type, assetType: .Raw, useRoot: false)
+                    copyAssets(value as! Array, type: type, assetType: .Raw, destLocation: .Relative)
                 }
                 else if (key == keyAppIcon) {
                     copyAppIcon(value as! String, type: type)
@@ -1101,7 +1122,7 @@ class App
                     }
                 }
                 else if (key == keyFonts) {
-                    copyAssets(value as! Array, type: type, assetType: .Font, useRoot: true)
+                    copyAssets(value as! Array, type: type, assetType: .Font, destLocation: .Custom, root: fontRoot)
                 }
                 else if (key == keyImages) {
                     copyImages(value as! Array, type: type, useRoot: true)
@@ -1144,7 +1165,7 @@ class App
                 }
                 else if (key == keyAndroidLayout) {
                     if (type == .Java) {
-                        copyAssets(value as! Array, type: type, assetType: .Layout, useRoot: true)
+                        copyAssets(value as! Array, type: type, assetType: .Layout, destLocation: .Root)
                     }
                 }
                 else if (key == keyEnums) {

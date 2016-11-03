@@ -27,9 +27,8 @@ clean: _clean_temps clear_build
 	@rm -rdf build
 	@rm -f $(TARGET)
 
-
 distro: clean set_build
-	@xcodebuild | sed -nE '/error:/,/^[[:digit:]] errors? generated/ p'
+	@xcodebuild -project Sango.xcodeproj
 	@cp ./build/Release/Sango $(TARGET)
 	@$(MAKE) clear_build
 	@echo "Done!"
