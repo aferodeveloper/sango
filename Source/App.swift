@@ -432,7 +432,7 @@ class App
     private func writeAndroidColors() -> Void {
         if (androidColors?.count > 0) {
             var destPath = outputAssetFolder! + "/res/values"
-            createFolder(destPath)
+            Utils.createFolder(destPath)
             destPath.appendContentsOf("/colors.xml")
             var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
             outputStr.appendContentsOf("<resources>\n")
@@ -556,7 +556,7 @@ class App
                 destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
             }
             let destPath = (destFile as NSString).stringByDeletingLastPathComponent
-            createFolder(destPath)
+            Utils.createFolder(destPath)
 
             let imageScale = NSImage.getScaleFrom(file)
             let fileName = imageScale.file
@@ -605,7 +605,7 @@ class App
                     let image = baseImage.scale(key)
                     let folderPath = destPath + value
                     let imageFile = folderPath + fileName + ".png"
-                    if (createFolders([folderPath])) {
+                    if (Utils.createFolders([folderPath])) {
                         Utils.debug("Image scale and copy \(filePath) -> \(imageFile)")
                         if (saveImage(image, file: imageFile) == false) {
                             exit(-1)
@@ -675,10 +675,10 @@ class App
             }
         }
         let roots = imageResourcePath(file, type: type, useRoot: useRoot)
-        createFolder(roots.destPath)
+        Utils.createFolder(roots.destPath)
         if ((globalTint == nil) && (globalIosTint == nil) && (globalAndroidTint == nil)) {
             // just copy the image file raw, no tinting
-            copyFile(roots.sourceFile, dest: roots.destFile)
+            Utils.copyFile(roots.sourceFile, dest: roots.destFile)
         }
         else {
             let image = NSImage.loadFrom(roots.sourceFile)
@@ -749,7 +749,7 @@ class App
         }
         if (type == .Swift) {
             let destPath = outputAssetFolder! + "/icons"
-            createFolder(destPath)
+            Utils.createFolder(destPath)
             for (key, value) in iOSAppIconSizes {
                 let width = CGFloat(value)
                 let height = CGFloat(value)
@@ -765,7 +765,7 @@ class App
                 let height = CGFloat(value)
                 let newImage = iconImage.resize(width, height: height)
                 let destPath = outputAssetFolder! + "/res/drawable-" + key
-                createFolder(destPath)
+                Utils.createFolder(destPath)
                 let destFile = destPath + "/" + appIconName
                 saveImage(newImage, file: destFile)
                 Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
@@ -926,7 +926,7 @@ class App
                     print("Error: wrong type")
                     exit(-1)
                 }
-                createFolder(destPath)
+                Utils.createFolder(destPath)
                 destPath.appendContentsOf("/" + fileName)
                 writeLocale(destPath, properties: prop as! Dictionary<String, String>, type: type)
             }
@@ -948,6 +948,10 @@ class App
             AssetType.Raw:"/assets/",
             AssetType.Layout:"/res/layouts/"
         ]
+        if ((assetType == .Font) && (type == .Java)) {
+            let defaultLoc = outputAssetFolder! + androidAssetLocations[assetType]!
+            Utils.deleteFolder(defaultLoc)
+        }
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
@@ -962,17 +966,17 @@ class App
                 destFile = outputAssetFolder! + "/" + root + "/" + file.lastPathComponent()
             }
             let destPath = (destFile as NSString).stringByDeletingLastPathComponent
-            createFolder(destPath)
+            Utils.createFolder(destPath)
             
             let fileName = file.lastPathComponent()
             
             if (type == .Swift) {
-                copyFile(filePath, dest: destFile)
+                Utils.copyFile(filePath, dest: destFile)
             }
             else if (type == .Java) {
                 let defaultLoc = destPath + androidAssetLocations[assetType]!
-                createFolder(defaultLoc)
-                copyFile(filePath, dest: defaultLoc + fileName)
+                Utils.createFolder(defaultLoc)
+                Utils.copyFile(filePath, dest: defaultLoc + fileName)
             }
             else {
                 print("Error: wrong type")
@@ -1085,7 +1089,7 @@ class App
     
     private func consume(data: Dictionary <String, AnyObject>, type: LangType, langOutputFile: String) -> Void
     {
-        createFolderForFile(langOutputFile)
+        Utils.createFolderForFile(langOutputFile)
 
         // process first pass keys
         for (key, value) in data {
@@ -1260,83 +1264,7 @@ class App
             }
         }
     }
-
-    private func createFolders(folders: [String]) -> Bool {
-        for file in folders {
-            do {
-                try NSFileManager.defaultManager().createDirectoryAtPath(file, withIntermediateDirectories: true, attributes: nil)
-            }
-            catch {
-                print("Error: creating folder \(file)")
-                exit(-1)
-            }
-        }
-        return true
-    }
-
-    private func createFolderForFile(srcFile: String) -> Bool {
-        let destPath = (srcFile as NSString).stringByDeletingLastPathComponent
-        return createFolder(destPath)
-    }
-
-    private func createFolder(src: String) -> Bool {
-        var ok = true
-        do {
-            try NSFileManager.defaultManager().createDirectoryAtPath(src, withIntermediateDirectories: true, attributes: nil)
-        }
-        catch {
-            print("Error: creating folder \(src)")
-            ok = false
-        }
-        
-        return ok
-    }
-
-//    private func copyFiles(files: [String], type: LangType, useRoot: Bool) -> Void {
-//        for file in files {
-//            let filePath = sourceAssetFolder! + "/" + file
-//            var destFile:String
-//            if (useRoot) {
-//                destFile = outputAssetFolder! + "/" + file.lastPathComponent()
-//            }
-//            else {
-//                destFile = outputAssetFolder! + "/" + file
-//            }
-//            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
-//            createFolder(destPath)
-//            if (copyFile(filePath, dest: destFile) == false) {
-//                exit(-1)
-//            }
-//        }
-//    }
     
-    private func copyFile(src: String, dest: String, restrict: Bool = false) -> Bool {
-        deleteFile(dest)
-        var ok = true
-        do {
-            try NSFileManager.defaultManager().copyItemAtPath(src, toPath: dest)
-            Utils.debug("Copy \(src) -> \(dest)")
-        }
-        catch {
-            print("Error: copying file \(src) to \(dest)")
-            ok = false
-        }
-
-        return ok
-    }
-    
-    private func deleteFile(src: String) -> Bool {
-        var ok = true
-        do {
-            try NSFileManager.defaultManager().removeItemAtPath(src)
-        }
-        catch {
-            ok = false
-        }
-        
-        return ok
-    }
-
     func prepareGitRepro(folder:String, tag:String?) -> Void {
         let currentBranch = Shell.gitCurrentBranch(folder)
         if (tag != nil) {
