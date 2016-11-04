@@ -34,10 +34,6 @@
 		AA89E0081D8760DB00D2D9A8 /* Sango-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Sango-Bridging-Header.h"; path = "Source/Sango-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA89E0091D8760DC00D2D9A8 /* NSString+Extras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+Extras.h"; path = "Source/NSString+Extras.h"; sourceTree = "<group>"; };
 		AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+Extras.m"; path = "Source/NSString+Extras.m"; sourceTree = "<group>"; };
-		AA9523641D91EB6E003C3FC6 /* base.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = base.json; path = example/base.json; sourceTree = "<group>"; };
-		AA9523651D91EB6E003C3FC6 /* brand1_android.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = brand1_android.json; path = example/brand1_android.json; sourceTree = "<group>"; };
-		AA9523661D91EB6E003C3FC6 /* brand1.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = brand1.json; path = example/brand1.json; sourceTree = "<group>"; };
-		AA9523671D91EB6E003C3FC6 /* brand2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = brand2.json; path = example/brand2.json; sourceTree = "<group>"; };
 		AAA944AA1DAC019800608CFB /* base.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = base.json; sourceTree = "<group>"; };
 		AAA944AB1DAC019800608CFB /* brand1.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = brand1.json; sourceTree = "<group>"; };
 		AAA944AC1DAC019800608CFB /* brand1_android.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = brand1_android.json; sourceTree = "<group>"; };
@@ -72,10 +68,6 @@
 				AA89E0091D8760DC00D2D9A8 /* NSString+Extras.h */,
 				AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */,
 				AAA944771DAC019800608CFB /* example */,
-				AA9523641D91EB6E003C3FC6 /* base.json */,
-				AA9523651D91EB6E003C3FC6 /* brand1_android.json */,
-				AA9523661D91EB6E003C3FC6 /* brand1.json */,
-				AA9523671D91EB6E003C3FC6 /* brand2.json */,
 				AA6C0D781D5A9AB000ECA808 /* Products */,
 				AA89E0081D8760DB00D2D9A8 /* Sango-Bridging-Header.h */,
 			);

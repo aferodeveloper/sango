@@ -130,6 +130,10 @@ class App
     static let copyrightNotice = "Sango © 2016 Afero, Inc - Build \(BUILD_REVISION)"
     private var gitEnabled = false
 
+    // because Android colors are stored as an xml file, we collect them when walking through the constants,
+    // and write them out last
+    private var androidColors:[String:AnyObject]? = [:]
+    
     func usage() -> Void {
         let details = [
             optAssetTemplates: ["[basename]", "creates a json template, specifically for the assets"],
@@ -270,7 +274,9 @@ class App
         return outputString
     }
 
-    private func parseColor(color: String) -> (r:Double, g:Double, b:Double, a:Double, s:Int, rgb:UInt32)? {
+    private func parseColor(color: String) -> (r:Double, g:Double, b:Double, a:Double, s:Int,
+                                            rgb:UInt32, hexRgb:String)?
+    {
         var red:Double = 0
         var green:Double = 0
         var blue:Double = 0
@@ -278,7 +284,7 @@ class App
         var rgbValue:UInt32 = 0
         var isColor = false
         var size = 0
-
+        var hexRgb = ""
         let parts = color.componentsSeparatedByString(",")
         if (parts.count == 3 || parts.count == 4) {
             // color
@@ -297,6 +303,12 @@ class App
             let b = UInt32(blue * 255.0)
             let a = UInt32(alpha * 255.0)
             rgbValue = (a << 24) | (r << 16) | (g << 8) | b
+            if (size == 4) {
+                hexRgb = String(format:"#%.2X%.2X%.2X%.2X", a, r, g, b)
+            }
+            else {
+                hexRgb = String(format:"#%.2X%.2X%.2X", r, g, b)
+            }
         }
         else if (color.hasPrefix("#")) {
             var hexStr = color.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
@@ -324,9 +336,19 @@ class App
                 size = 4
             }
             isColor = true
+            let r = UInt32(red * 255.0)
+            let g = UInt32(green * 255.0)
+            let b = UInt32(blue * 255.0)
+            let a = UInt32(alpha * 255.0)
+            if (size == 4) {
+                hexRgb = String(format:"#%.2X%.2X%.2X%.2X", a, r, g, b)
+            }
+            else {
+                hexRgb = String(format:"#%.2X%.2X%.2X", r, g, b)
+            }
         }
         if (isColor) {
-            return (r: red, g: green, b: blue, a: alpha, s: size, rgb:rgbValue)
+            return (r: red, g: green, b: blue, a: alpha, s: size, rgb:rgbValue, hexRgb: hexRgb)
         }
         return nil
     }
@@ -368,7 +390,7 @@ class App
         return outputString
     }
 
-    private func writeSangoExtras(type: LangType) -> String {
+    private func writeSangoExtras(type: LangType, filePath: String) -> Void {
         var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
         if (type == .Swift) {
             outputStr.appendContentsOf("import UIKit\n")
@@ -397,9 +419,38 @@ class App
             outputStr.appendContentsOf("\tpublic static final String VERSION = \"\(App.copyrightNotice)\";\n")
             outputStr.appendContentsOf("}\n")
         }
-        return outputStr
+        var sangoFile = filePath
+        if (type == .Swift) {
+            sangoFile += "/Sango.swift"
+        }
+        else if (type == .Java) {
+            sangoFile += "/Sango.java"
+        }
+        saveString(outputStr, file: sangoFile)
     }
 
+    private func writeAndroidColors() -> Void {
+        if (androidColors?.count > 0) {
+            var destPath = outputAssetFolder! + "/res/values"
+            createFolder(destPath)
+            destPath.appendContentsOf("/colors.xml")
+            var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
+            outputStr.appendContentsOf("<resources>\n")
+            for (key, value) in androidColors! {
+                let color = parseColor(value as! String)
+                if (color != nil) {
+                    //    <color name="medium_gray">#939597</color>
+                    // RGB
+                    // ARGB
+                    let hex = String(color!.hexRgb)
+                    outputStr.appendContentsOf("\t<color name=\"\(key.lowercaseString)\">\(hex)</color>\n")
+                }
+            }
+            outputStr.appendContentsOf("</resources>\n")
+            saveString(outputStr, file: destPath)
+        }
+    }
+    
     private func writeConstants(name: String, constants: Dictionary<String, AnyObject>, type: LangType) -> String {
         var outputString = "\n"
         if (type == .Swift) {
@@ -443,10 +494,9 @@ class App
 
             for (key, value) in Array(constants).sort({$0.0 < $1.0}) {
                 var type = "int"
-                var endQuote = ";"
-                var parmSize = ""
                 var useQuotes = false
-                var strValue = String(value)
+                var skipValue = false
+                let strValue = String(value)
                 if (value is String) {
                     useQuotes = true
                     if (strValue.isNumber() == true) {
@@ -457,30 +507,26 @@ class App
 
                         let color = parseColor(strValue)
                         if (color != nil) {
-                            type = "int"
-                            if (color?.s == 4) {
-                                parmSize = "L"
-                                type = "long"
-                            }
-                            let line = String(color!.rgb)
-                            strValue = String(line + parmSize + ";\t// \(value)")
-                            useQuotes = false
-                            endQuote = ""
+                            skipValue = true
+                            // ok, we have a color, so we're going to store it
+                            let colorKey = name.uppercaseString + "_\(key.uppercaseString)"
+                            androidColors![colorKey] = strValue
                         }
                     }
                 }
-
-                let line = "\tpublic static final " + type + " " + key.uppercaseString + " = "
-                outputString.appendContentsOf(line)
-                if (useQuotes) {
-                    let line = "\"" + strValue + "\"" + endQuote
-                    outputString.appendContentsOf(line);
+                if (skipValue == false) {
+                    let line = "\tpublic static final " + type + " " + key.uppercaseString + " = "
+                    outputString.appendContentsOf(line)
+                    if (useQuotes) {
+                        let line = "\"" + strValue + "\";"
+                        outputString.appendContentsOf(line);
+                    }
+                    else {
+                        let line = strValue + ";"
+                        outputString.appendContentsOf(line);
+                    }
+                    outputString.appendContentsOf("\n")
                 }
-                else {
-                    let line = strValue + endQuote
-                    outputString.appendContentsOf(line);
-                }
-                outputString.appendContentsOf("\n")
             }
             outputString.appendContentsOf("}")
         }
@@ -1208,15 +1254,10 @@ class App
                 outputStr.appendContentsOf(genString + "\n")
                 saveString(outputStr, file: langOutputFile)
             }
-            let sangoExtras = writeSangoExtras(type)
-            var sangoFile = langOutputFile.pathOnlyComponent()
-            if (type == .Swift) {
-                sangoFile += "/Sango.swift"
+            writeSangoExtras(type, filePath: langOutputFile.pathOnlyComponent())
+            if (type == .Java) {
+                writeAndroidColors()
             }
-            else if (type == .Java) {
-                sangoFile += "/Sango.java"
-            }
-            saveString(sangoExtras, file: sangoFile)
         }
     }
 
