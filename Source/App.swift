@@ -436,8 +436,9 @@ class App
             destPath.appendContentsOf("/colors.xml")
             var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
             outputStr.appendContentsOf("<resources>\n")
-            for (key, value) in androidColors! {
-                let color = parseColor(value as! String)
+            let sorted = androidColors!.keys.sort()
+            for key in sorted {
+                let color = parseColor(androidColors![key] as! String)
                 if (color != nil) {
                     //    <color name="medium_gray">#939597</color>
                     // RGB
