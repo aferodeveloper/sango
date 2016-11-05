@@ -444,7 +444,7 @@ class App
                     // RGB
                     // ARGB
                     let hex = String(color!.hexRgb)
-                    outputStr.appendContentsOf("\t<color name=\"\(key.lowercaseString)\">\(hex)</color>\n")
+                    outputStr.appendContentsOf("\t<color name=\"\(key)\">\(hex)</color>\n")
                 }
             }
             outputStr.appendContentsOf("</resources>\n")
@@ -490,8 +490,8 @@ class App
             outputString.appendContentsOf("}")
         }
         else if (type == .Java) {
-            outputString.appendContentsOf("public final class ")
-            outputString.appendContentsOf(name + " {\n")
+            var skipClass = true
+            var outputClassString = ""
 
             for (key, value) in Array(constants).sort({$0.0 < $1.0}) {
                 var type = "int"
@@ -502,6 +502,7 @@ class App
                     useQuotes = true
                     if (strValue.isNumber() == true) {
                         useQuotes = false
+                        skipClass = false
                     }
                     else {
                         type = "String"
@@ -510,26 +511,37 @@ class App
                         if (color != nil) {
                             skipValue = true
                             // ok, we have a color, so we're going to store it
-                            let colorKey = name.uppercaseString + "_\(key.uppercaseString)"
-                            androidColors![colorKey] = strValue
+                            let colorKey = name + "_\(key)"
+                            androidColors![colorKey.lowercaseString] = strValue
+                        }
+                        else {
+                            skipClass = false
                         }
                     }
                 }
+                else {
+                    skipClass = false
+                }
                 if (skipValue == false) {
                     let line = "\tpublic static final " + type + " " + key.uppercaseString + " = "
-                    outputString.appendContentsOf(line)
+                    outputClassString.appendContentsOf(line)
                     if (useQuotes) {
                         let line = "\"" + strValue + "\";"
-                        outputString.appendContentsOf(line);
+                        outputClassString.appendContentsOf(line);
                     }
                     else {
                         let line = strValue + ";"
-                        outputString.appendContentsOf(line);
+                        outputClassString.appendContentsOf(line);
                     }
-                    outputString.appendContentsOf("\n")
+                    outputClassString.appendContentsOf("\n")
                 }
             }
-            outputString.appendContentsOf("}")
+            if (skipClass == false) {
+                outputString.appendContentsOf("public final class ")
+                outputString.appendContentsOf(name + " {\n")
+                outputString.appendContentsOf(outputClassString)
+                outputString.appendContentsOf("}")
+            }
         }
         else {
             print("Error: invalide output type")
