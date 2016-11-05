@@ -542,6 +542,9 @@ class App
                 outputString.appendContentsOf(outputClassString)
                 outputString.appendContentsOf("}")
             }
+            else {
+                outputString = ""
+            }
         }
         else {
             print("Error: invalide output type")
