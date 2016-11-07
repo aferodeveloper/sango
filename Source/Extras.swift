@@ -261,6 +261,11 @@ public extension String
         let items = self.componentsSeparatedByString("_")
         var camelCase = ""
         items.enumerate().forEach {
+            if ($1.isNumber()) {
+                // this is a special case, so we can support a label:
+                // Green_50
+                camelCase += "_";
+            }
             camelCase += $1.capitalizedString
         }
         return camelCase
