@@ -69,12 +69,17 @@
 		"White01": "#FFFFFF"
 	},
     "enums": {
-        "AUTH_TYPE": ["AFERO", "ASSURELINK"]
-    },
-    "enums": {
+        "AUTH_TYPE": ["AFERO", "ASSURELINK"],
         "DAY": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"],
-        "TIME_OF_DAY": ["BREAKFAST", "LUNCH", "SNACK", "DINNER"]
+        "TIME_OF_DAY": ["BREAKFAST", "LUNCH", "SNACK", "DINNER"],
+		"SAFE_IMAGES": ["asr_1", "ac_icon_large"]
     },
+	"Hello": [
+		"one",
+		"two",
+		"three"
+	],
+	
 	"Service": {
         "AUTH_TYPE": "AFERO",
 		"BASE_URL_PROD_USW2": "api.afero.io",
