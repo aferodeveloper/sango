@@ -74,12 +74,14 @@
         "TIME_OF_DAY": ["BREAKFAST", "LUNCH", "SNACK", "DINNER"],
 		"SAFE_IMAGES": ["asr_1", "ac_icon_large"]
     },
-	"Hello": [
+	"HELLO": [
 		"one",
 		"two",
 		"three"
 	],
-	
+	"RAINBOW_COLORS" :[
+		"#535557", "#9D9C98", "#F2845B", "#F67D4B", "#EDAC93"
+	],
 	"Service": {
         "AUTH_TYPE": "AFERO",
 		"BASE_URL_PROD_USW2": "api.afero.io",

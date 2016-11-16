@@ -452,90 +452,119 @@ class App
         }
     }
     
-    private func writeConstants(name: String, constants: Dictionary<String, AnyObject>, type: LangType) -> String {
-        var outputString = "\n"
-        if (type == .Swift) {
-            outputString.appendContentsOf("public struct ")
-            outputString.appendContentsOf(name + " {\n")
-            for (key, value) in Array(constants).sort({$0.0 < $1.0}) {
-                let line = "\tstatic let " + key.snakeCaseToCamelCase() + " = "
-                outputString.appendContentsOf(line)
-
-                var useQuotes = false
-                let strValue = String(value)
-                if (value is String) {
-                    useQuotes = true
-                    if (strValue.isNumber() == true) {
-                        useQuotes = false
-                    }
-                    else {
-                        let color = parseColor(strValue)
-                        if (color != nil) {
-                            let line = "UIColor(red: \(color!.r.roundTo3f), green: \(color!.g.roundTo3f), blue: \(color!.b.roundTo3f), alpha: \(color!.a.roundTo3f))"
-                            outputString.appendContentsOf(line + "\t// ")
-                            useQuotes = false
-                        }
-                    }
-                }
-                if (useQuotes) {
-                    let line = "\"" + String(value) + "\""
-                    outputString.appendContentsOf(line);
+    private func parseSwiftConstant(value: AnyObject) -> String {
+        var outputString = ""
+        let strValue = String(value)
+        if (value is String) {
+            if (strValue.isNumber() == true) {
+                outputString.appendContentsOf(String(value));
+            }
+            else {
+                let color = parseColor(strValue)
+                if (color != nil) {
+                    let line = "UIColor(red: \(color!.r.roundTo3f), green: \(color!.g.roundTo3f), blue: \(color!.b.roundTo3f), alpha: \(color!.a.roundTo3f))"
+                    outputString.appendContentsOf(line + " /* \(value) */")
                 }
                 else {
-                    let line = String(value)
-                    outputString.appendContentsOf(line);
+                    outputString.appendContentsOf("\"\(String(value))\"")
                 }
-                outputString.appendContentsOf("\n")
             }
-            outputString.appendContentsOf("}")
+        }
+        else {
+            outputString.appendContentsOf(String(value));
+        }
+        return outputString
+    }
+    
+    func parseJavaConstant(value: AnyObject) -> String {
+        var outputString = ""
+
+        return outputString
+    }
+    
+    private func writeConstants(name: String, value: AnyObject, type: LangType) -> String {
+        var outputString = "\n"
+        if (type == .Swift) {
+            if let constantsDictionary = value as? Dictionary<String, AnyObject> {
+                outputString.appendContentsOf("public struct ")
+                outputString.appendContentsOf(name + " {\n")
+                for (key, value) in Array(constantsDictionary).sort({$0.0 < $1.0}) {
+                    let line = "\tstatic let " + key.snakeCaseToCamelCase() + " = "
+                    outputString.appendContentsOf(line)
+                    
+                    let lineValue = parseSwiftConstant(value)
+                    outputString.appendContentsOf(lineValue + "\n");
+                }
+                outputString.appendContentsOf("}")
+            }
+            else if let constantsArray = value as? Array<AnyObject> {
+                outputString.appendContentsOf("public let \(name.snakeCaseToCamelCase()) = [\n\t\t")
+                let lastItm = constantsArray.count - 1
+                for (index, itm) in constantsArray.enumerate() {
+                    let lineValue = parseSwiftConstant(itm)
+                    outputString.appendContentsOf(lineValue);
+                    if (index < lastItm) {
+                        outputString.appendContentsOf(",\n\t\t")
+                    }
+                }
+                outputString.appendContentsOf("\n\t]");
+            }
         }
         else if (type == .Java) {
             var skipClass = true
             var outputClassString = ""
-
-            for (key, value) in Array(constants).sort({$0.0 < $1.0}) {
-                var type = "int"
-                var useQuotes = false
-                var skipValue = false
-                let strValue = String(value)
-                if (value is String) {
-                    useQuotes = true
-                    if (strValue.isNumber() == true) {
-                        useQuotes = false
-                        skipClass = false
-                    }
-                    else {
-                        type = "String"
-
-                        let color = parseColor(strValue)
-                        if (color != nil) {
-                            skipValue = true
-                            // ok, we have a color, so we're going to store it
-                            let colorKey = name + "_\(key)"
-                            androidColors![colorKey.lowercaseString] = strValue
-                        }
-                        else {
+            
+            if let constantsDictionary = value as? Dictionary<String, AnyObject> {
+                for (key, value) in Array(constantsDictionary).sort({$0.0 < $1.0}) {
+                    var type = "int"
+                    var useQuotes = false
+                    var skipValue = false
+                    let strValue = String(value)
+                    if (value is String) {
+                        useQuotes = true
+                        if (strValue.isNumber() == true) {
+                            useQuotes = false
                             skipClass = false
                         }
-                    }
-                }
-                else {
-                    skipClass = false
-                }
-                if (skipValue == false) {
-                    let line = "\tpublic static final " + type + " " + key.uppercaseString + " = "
-                    outputClassString.appendContentsOf(line)
-                    if (useQuotes) {
-                        let line = "\"" + strValue + "\";"
-                        outputClassString.appendContentsOf(line);
+                        else {
+                            type = "String"
+                            
+                            let color = parseColor(strValue)
+                            if (color != nil) {
+                                skipValue = true
+                                // ok, we have a color, so we're going to store it
+                                let colorKey = name + "_\(key)"
+                                androidColors![colorKey.lowercaseString] = strValue
+                            }
+                            else {
+                                skipClass = false
+                            }
+                        }
                     }
                     else {
-                        let line = strValue + ";"
-                        outputClassString.appendContentsOf(line);
+                        skipClass = false
                     }
-                    outputClassString.appendContentsOf("\n")
+                    if (skipValue == false) {
+                        let line = "\tpublic static final " + type + " " + key.uppercaseString + " = "
+                        outputClassString.appendContentsOf(line)
+                        if (useQuotes) {
+                            let line = "\"" + strValue + "\";"
+                            outputClassString.appendContentsOf(line);
+                        }
+                        else {
+                            let line = strValue + ";"
+                            outputClassString.appendContentsOf(line);
+                        }
+                        outputClassString.appendContentsOf("\n")
+                    }
                 }
             }
+            else if let constantsArray = value as? Array<AnyObject> {
+                for itm in constantsArray {
+                    
+                }
+            }
+
             if (skipClass == false) {
                 outputString.appendContentsOf("public final class ")
                 outputString.appendContentsOf(name + " {\n")
@@ -1154,8 +1183,7 @@ class App
         var genString = ""
         for (key, value) in data {
             if (firstPassIgnoredKeys.contains(key) == false) {
-                let constants = value as! Dictionary<String, AnyObject>
-                let line = writeConstants(key, constants:constants, type: type)
+                let line = writeConstants(key, value:value, type: type)
                 genString.appendContentsOf(line)
             }
         }
