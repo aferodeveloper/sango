@@ -454,8 +454,9 @@ class App
     
     enum ValueType :String {
         case Color = "Color"
-        case Number = "Number"
+        case Int = "int"
         case String = "String"
+        case Float = "float"
         case Boolean = "Boolean"
     }
     
@@ -468,7 +469,7 @@ class App
             outputString.appendContentsOf(value.boolValue.description)
         }
         else if (value is String) {
-            if (strValue.isNumber() == true) {
+            if (strValue.isInteger() == true) {
                 outputString.appendContentsOf(String(value));
             }
             else {
@@ -490,15 +491,19 @@ class App
     
     func parseJavaConstant(value: AnyObject) -> (type:ValueType, output:String) {
         var outputString = ""
-        var type = ValueType.Number
+        var type = ValueType.Int
         let strValue = String(value)
 
         if (value.className == "__NSCFBoolean") {
             type = ValueType.Boolean
             outputString.appendContentsOf(value.boolValue.description)
         }
+        else if (strValue.isFloat()) {
+            type = ValueType.Float
+            outputString.appendContentsOf(strValue)
+        }
         else if (value is String) {
-            if (strValue.isNumber() == true) {
+            if (strValue.isInteger() == true) {
                 outputString.appendContentsOf(strValue)
             }
             else {
@@ -596,7 +601,7 @@ class App
             }
 
             if (skipClass == false) {
-                outputString.appendContentsOf("public final class ")
+                outputString.appendContentsOf("public static final class ")
                 outputString.appendContentsOf(name + " {\n")
                 outputString.appendContentsOf(outputClassString)
                 outputString.appendContentsOf("}")

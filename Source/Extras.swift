@@ -261,7 +261,7 @@ public extension String
         let items = self.componentsSeparatedByString("_")
         var camelCase = ""
         items.enumerate().forEach {
-            if ($1.isNumber()) {
+            if ($1.isInteger()) {
                 // this is a special case, so we can support a label:
                 // Green_50
                 camelCase += "_";
@@ -350,11 +350,17 @@ public extension String
         return true
     }
 
-    public func isNumber() -> Bool {
+    public func isInteger() -> Bool {
         let numberCharacters = NSCharacterSet.decimalDigitCharacterSet().invertedSet
         return !self.isEmpty && self.rangeOfCharacterFromSet(numberCharacters) == nil
     }
 
+    public func isFloat() -> Bool {
+        let floatCharacters = NSMutableCharacterSet()
+        floatCharacters.addCharactersInString(".")
+        return !self.isEmpty && self.rangeOfCharacterFromSet(floatCharacters.invertedSet) == nil
+    }
+    
     public func isBoolean() -> Bool {
         return !self.isEmpty && self.lowercaseString == "true"
     }
