@@ -356,12 +356,69 @@ public extension String
     }
 
     public func isFloat() -> Bool {
-        return Double(self) != nil
+        var floaty = false
+        if (!self.isEmpty) {
+            let numberCharacters = NSMutableCharacterSet.decimalDigitCharacterSet()
+            numberCharacters.addCharactersInString(".")
+            numberCharacters.invert()
+            if (self.rangeOfCharacterFromSet(numberCharacters) == nil) {
+                if (self.containsString(".")) {
+                    floaty = true
+                }
+            }
+        }
+        return floaty
     }
     
     public func isBoolean() -> Bool {
         return !self.isEmpty && self.lowercaseString == "true"
     }
+}
+
+public func hasArrayFloats(list: AnyObject) -> Bool {
+    var valid = false
+    let alist = list as? Array<AnyObject>
+    if (alist != nil) {
+        for itm in alist! {
+            if let itm = itm as? String {
+                if (itm.isFloat()) {
+                    valid = true
+                    break
+                }
+            }
+            else if ((itm is Double) || (itm is Int)) {
+                let strItm = String(itm)
+                if (strItm.isFloat()) {
+                    valid = true
+                    break
+                }
+            }
+        }
+    }
+    return valid
+}
+
+public func hasArrayInts(list: AnyObject) -> Bool {
+    var valid = false
+    let alist = list as? Array<AnyObject>
+    if (alist != nil) {
+        for itm in alist! {
+            if let itm = itm as? String {
+                if (itm.isInteger()) {
+                    valid = true
+                    break
+                }
+            }
+            else if (itm is Int) {
+                let strItm = String(itm)
+                if (strItm.isInteger()) {
+                    valid = true
+                    break
+                }
+            }
+        }
+    }
+    return valid
 }
 
 func test() -> Void {

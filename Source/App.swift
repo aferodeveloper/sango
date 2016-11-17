@@ -520,6 +520,9 @@ class App
             }
         }
         else {
+            if (strValue.isFloat()) {
+                type = .Float
+            }
             outputString.appendContentsOf(strValue);
         }
         return (type:type, output:outputString)
@@ -541,7 +544,7 @@ class App
                 outputString.appendContentsOf("}")
             }
             else if let constantsArray = value as? Array<AnyObject> {
-                outputString.appendContentsOf("public let \(name.snakeCaseToCamelCase()) = [\n\t\t")
+                outputString.appendContentsOf("public let \(name) = [\n\t\t")
                 let lastItm = constantsArray.count - 1
                 for (index, itm) in constantsArray.enumerate() {
                     let lineValue = parseSwiftConstant(itm)
@@ -577,6 +580,16 @@ class App
             else if let constantsArray = value as? Array<AnyObject> {
                 let lastItm = constantsArray.count - 1
                 var ending = false
+                // ok we have an array of strings, int, floats, we have to figure out a type before hand for Java
+                var type:ValueType = .String
+                if (hasArrayFloats(value)) {
+                    type = .Float
+                }
+                else if (hasArrayInts(value)) {
+                    type = .Int
+                }
+                outputString.appendContentsOf("public static final \(type.rawValue) \(name)[] = {\n\t")
+
                 for (index, itm) in constantsArray.enumerate() {
                     let lineValue = parseJavaConstant(itm)
                     if (lineValue.type == .Color) {
@@ -586,9 +599,6 @@ class App
                     }
                     else {
                         ending = true
-                        if (index == 0) {
-                            outputString.appendContentsOf("public static final \(lineValue.type.rawValue) \(name.snakeCaseToCamelCase())[] = {\n\t")
-                        }
                         outputString.appendContentsOf(lineValue.output);
                         if (index < lastItm) {
                             outputString.appendContentsOf(",\n\t")
