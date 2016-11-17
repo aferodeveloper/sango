@@ -277,10 +277,10 @@ class App
     private func parseColor(color: String) -> (r:Double, g:Double, b:Double, a:Double, s:Int,
                                             rgb:UInt32, hexRgb:String)?
     {
-        var red:Double = 0
-        var green:Double = 0
-        var blue:Double = 0
-        var alpha:Double = 1
+        var red:Double = 0.0
+        var green:Double = 0.0
+        var blue:Double = 0.0
+        var alpha:Double = 1.0
         var rgbValue:UInt32 = 0
         var isColor = false
         var size = 0
@@ -1225,7 +1225,7 @@ class App
         
         // everything else is converted to Java, Swift classes
         var genString = ""
-        for (key, value) in data {
+        for (key, value) in Array(data).sort({$0.0 < $1.0}) {
             if (firstPassIgnoredKeys.contains(key) == false) {
                 let line = writeConstants(key, value:value, type: type)
                 genString.appendContentsOf(line)

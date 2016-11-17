@@ -356,9 +356,7 @@ public extension String
     }
 
     public func isFloat() -> Bool {
-        let floatCharacters = NSMutableCharacterSet()
-        floatCharacters.addCharactersInString(".")
-        return !self.isEmpty && self.rangeOfCharacterFromSet(floatCharacters.invertedSet) == nil
+        return Double(self) != nil
     }
     
     public func isBoolean() -> Bool {

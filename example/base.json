@@ -37,7 +37,8 @@
 		"assets/kenmore_pay_logo_horizontal@3x.png"
 	],
 	"Settings": {
-		"UI_BASE_COLOR": "67,163,199,1",
+		"UI_BASE_COLOR": "67,163,199,255",
+		"UI_BASE_COLOR2": "67,163,199,20",
 		"UI_SECONDARY_COLOR": "#431298",
 		"UI_SECONDARY_COLOR_LOW": "#80431298",
 		"DEFAULT_UI_FONT": "GT-Walsheim-Black.ttf",
