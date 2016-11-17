@@ -58,16 +58,17 @@ public class Utils
     
     public static func fromJSON(data:NSData) -> [String: AnyObject]?
     {
-        var dict:[String: AnyObject]?
+        var dict: AnyObject?
         do {
-            dict = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments) as? [String: AnyObject]
+            dict = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
         }
         catch let error as NSError {
             let message:String = error.userInfo["NSDebugDescription"] as! String
             print(message)
             dict = nil
         }
-        return dict
+        
+        return dict as? [String: AnyObject]
     }
 
     public static func createFolders(folders: [String]) -> Bool {
@@ -107,7 +108,6 @@ public class Utils
             try NSFileManager.defaultManager().removeItemAtPath(src)
         }
         catch {
-            print("Error: creating folder \(src)")
             ok = false
         }
         

@@ -452,10 +452,22 @@ class App
         }
     }
     
+    enum ValueType :String {
+        case Color = "Color"
+        case Number = "Number"
+        case String = "String"
+        case Boolean = "Boolean"
+    }
+    
+
     private func parseSwiftConstant(value: AnyObject) -> String {
         var outputString = ""
         let strValue = String(value)
-        if (value is String) {
+
+        if (value.className == "__NSCFBoolean") {
+            outputString.appendContentsOf(value.boolValue.description)
+        }
+        else if (value is String) {
             if (strValue.isNumber() == true) {
                 outputString.appendContentsOf(String(value));
             }
@@ -471,15 +483,41 @@ class App
             }
         }
         else {
-            outputString.appendContentsOf(String(value));
+            outputString.appendContentsOf(strValue);
         }
         return outputString
     }
     
-    func parseJavaConstant(value: AnyObject) -> String {
+    func parseJavaConstant(value: AnyObject) -> (type:ValueType, output:String) {
         var outputString = ""
+        var type = ValueType.Number
+        let strValue = String(value)
 
-        return outputString
+        if (value.className == "__NSCFBoolean") {
+            type = ValueType.Boolean
+            outputString.appendContentsOf(value.boolValue.description)
+        }
+        else if (value is String) {
+            if (strValue.isNumber() == true) {
+                outputString.appendContentsOf(strValue)
+            }
+            else {
+                type = ValueType.String
+                
+                let color = parseColor(strValue)
+                if (color != nil) {
+                    type = ValueType.Color
+                }
+                else {
+                    let line = "\"" + strValue + "\""
+                    outputString.appendContentsOf(line)
+                }
+            }
+        }
+        else {
+            outputString.appendContentsOf(strValue);
+        }
+        return (type:type, output:outputString)
     }
     
     private func writeConstants(name: String, value: AnyObject, type: LangType) -> String {
@@ -516,52 +554,44 @@ class App
             
             if let constantsDictionary = value as? Dictionary<String, AnyObject> {
                 for (key, value) in Array(constantsDictionary).sort({$0.0 < $1.0}) {
-                    var type = "int"
-                    var useQuotes = false
-                    var skipValue = false
                     let strValue = String(value)
-                    if (value is String) {
-                        useQuotes = true
-                        if (strValue.isNumber() == true) {
-                            useQuotes = false
-                            skipClass = false
-                        }
-                        else {
-                            type = "String"
-                            
-                            let color = parseColor(strValue)
-                            if (color != nil) {
-                                skipValue = true
-                                // ok, we have a color, so we're going to store it
-                                let colorKey = name + "_\(key)"
-                                androidColors![colorKey.lowercaseString] = strValue
-                            }
-                            else {
-                                skipClass = false
-                            }
-                        }
+                    let lineValue = parseJavaConstant(value)
+                    if (lineValue.type == .Color) {
+                        // ok, we have a color, so we're going to store it
+                        let colorKey = name + "_\(key)"
+                        androidColors![colorKey.lowercaseString] = strValue
                     }
                     else {
-                        skipClass = false
-                    }
-                    if (skipValue == false) {
-                        let line = "\tpublic static final " + type + " " + key.uppercaseString + " = "
+                        let line = "\tpublic static final " + lineValue.type.rawValue + " " +
+                                key.uppercaseString + " = \(lineValue.output);\n"
                         outputClassString.appendContentsOf(line)
-                        if (useQuotes) {
-                            let line = "\"" + strValue + "\";"
-                            outputClassString.appendContentsOf(line);
-                        }
-                        else {
-                            let line = strValue + ";"
-                            outputClassString.appendContentsOf(line);
-                        }
-                        outputClassString.appendContentsOf("\n")
+                        skipClass = false
                     }
                 }
             }
             else if let constantsArray = value as? Array<AnyObject> {
-                for itm in constantsArray {
-                    
+                let lastItm = constantsArray.count - 1
+                var ending = false
+                for (index, itm) in constantsArray.enumerate() {
+                    let lineValue = parseJavaConstant(itm)
+                    if (lineValue.type == .Color) {
+                        // ok, we have a color, so we're going to store it
+                        let colorKey = name + "_\(index)"
+                        androidColors![colorKey.lowercaseString] = String(itm)
+                    }
+                    else {
+                        ending = true
+                        if (index == 0) {
+                            outputString.appendContentsOf("public static final \(lineValue.type.rawValue) \(name.snakeCaseToCamelCase())[] = {\n\t")
+                        }
+                        outputString.appendContentsOf(lineValue.output);
+                        if (index < lastItm) {
+                            outputString.appendContentsOf(",\n\t")
+                        }
+                    }
+                }
+                if (ending) {
+                    outputString.appendContentsOf("\n};");
                 }
             }
 
@@ -570,9 +600,6 @@ class App
                 outputString.appendContentsOf(name + " {\n")
                 outputString.appendContentsOf(outputClassString)
                 outputString.appendContentsOf("}")
-            }
-            else {
-                outputString = ""
             }
         }
         else {
@@ -1132,6 +1159,18 @@ class App
         }
     }
     
+    private func insertTabPerLine(text: String) -> String {
+        var output = ""
+        let lines = text.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+        for line in lines {
+            if (line.characters.count > 0) {
+                output.appendContentsOf("\n\t")
+            }
+            output.appendContentsOf(line)
+        }
+        return output
+    }
+    
     private func consume(data: Dictionary <String, AnyObject>, type: LangType, langOutputFile: String) -> Void
     {
         Utils.createFolderForFile(langOutputFile)
@@ -1290,7 +1329,7 @@ class App
                     }
                 }
                 if (baseClass.isEmpty == false) {
-                    genString = genString.stringByReplacingOccurrencesOfString("\n", withString: "\n\t")
+                    genString = insertTabPerLine(genString)
                     if (type == .Swift) {
                         outputStr.appendContentsOf("public struct \(baseClass) {")
                     }

@@ -354,6 +354,10 @@ public extension String
         let numberCharacters = NSCharacterSet.decimalDigitCharacterSet().invertedSet
         return !self.isEmpty && self.rangeOfCharacterFromSet(numberCharacters) == nil
     }
+
+    public func isBoolean() -> Bool {
+        return !self.isEmpty && self.lowercaseString == "true"
+    }
 }
 
 func test() -> Void {
