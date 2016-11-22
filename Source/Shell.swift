@@ -11,16 +11,16 @@ import CoreFoundation
 
 public class Shell
 {
-    private static var plutilPath = "/usr/bin/plutil"
-    private static var gitPath = "/usr/bin/git"
-    private enum GitInstalled {
+    static var plutilPath = "/usr/bin/plutil"
+    static var gitPath = "/usr/bin/git"
+    enum GitInstalled {
         case Unset
         case Installed
         case Uninstalled
     }
-    private static var isGitInstalled:GitInstalled = .Unset
+    static var isGitInstalled:GitInstalled = .Unset
 
-    private static func _shell(arguments: [String]) -> (output: String, status: Int32)
+    static func _shell(arguments: [String]) -> (output: String, status: Int32)
     {
         let task = NSTask()
         task.launchPath = "/bin/bash"

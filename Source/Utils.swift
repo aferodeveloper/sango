@@ -10,7 +10,7 @@ import Foundation
 
 public class Utils
 {
-    private static var verbose = false
+    static var verbose = false
 
     public static func setVerbose(state: Bool) -> Void
     {

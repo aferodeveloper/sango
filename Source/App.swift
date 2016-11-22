@@ -32,36 +32,36 @@ import CoreGraphics
 
 */
 
-private let SchemaVersion = 1
+let SchemaVersion = 1
 
-private let keySchemaVersion = "schemaVersion"
-private let keyFonts = "fonts"
-private let keyFontRoot = "fontRoot"
-private let keyImages = "images"
-private let keyLocale = "locale"
-private let keyEnums = "enums"
-private let keyImagesScaled = "imagesScaled"
-private let keyImagesScaledIos = "imagesScaledIos"
-private let keyImagesScaledAndroid = "imagesScaledAndroid"
-private let keyImagesScaledUp = "imagesScaledUp"
-private let keyImagesScaledIosUp = "imagesScaledIosUp"
-private let keyImagesScaledAndroidUp = "imagesScaledAndroidUp"
-private let keyImagesIos = "imagesIos"
-private let keyImagesAndroid = "imagesAndroid"
-private let keyImagesTinted = "imagesTinted"
-private let keyGlobalTint = "globalTint"
-private let keyGlobalIosTint = "globalTintIos"
-private let keyGlobalAndroidTint = "globalTintAndroid"
-private let keyCopied = "copied"
-private let keyCopiedIos = "copiedIos"
-private let keyCopiedAndroid = "copiedAndroid"
-private let keyAppIcon = "appIcon"
-private let keyIOSAppIcon = "appIconIos"
-private let keyAndroidAppIcon = "appIconAndroid"
-private let keyAndroidLayout = "layoutAndroid"
-private let keyJava = "java"
-private let keySwift = "swift"
-private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
+let keySchemaVersion = "schemaVersion"
+let keyFonts = "fonts"
+let keyFontRoot = "fontRoot"
+let keyImages = "images"
+let keyLocale = "locale"
+let keyEnums = "enums"
+let keyImagesScaled = "imagesScaled"
+let keyImagesScaledIos = "imagesScaledIos"
+let keyImagesScaledAndroid = "imagesScaledAndroid"
+let keyImagesScaledUp = "imagesScaledUp"
+let keyImagesScaledIosUp = "imagesScaledIosUp"
+let keyImagesScaledAndroidUp = "imagesScaledAndroidUp"
+let keyImagesIos = "imagesIos"
+let keyImagesAndroid = "imagesAndroid"
+let keyImagesTinted = "imagesTinted"
+let keyGlobalTint = "globalTint"
+let keyGlobalIosTint = "globalTintIos"
+let keyGlobalAndroidTint = "globalTintAndroid"
+let keyCopied = "copied"
+let keyCopiedIos = "copiedIos"
+let keyCopiedAndroid = "copiedAndroid"
+let keyAppIcon = "appIcon"
+let keyIOSAppIcon = "appIconIos"
+let keyAndroidAppIcon = "appIconAndroid"
+let keyAndroidLayout = "layoutAndroid"
+let keyJava = "java"
+let keySwift = "swift"
+let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
                                     keyFonts, keyFontRoot, keySchemaVersion, keyAndroidLayout, keyEnums,
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
                                     keyImagesScaledUp, keyImagesScaledIosUp, keyImagesScaledAndroidUp,
@@ -69,70 +69,70 @@ private let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon,
                                     keyImagesTinted, keyJava, keySwift, keyGlobalTint,
                                     keyGlobalIosTint, keyGlobalAndroidTint]
 
-private enum LangType {
+enum LangType {
     case Unset
     case Java
     case Swift
 }
 
-private enum AssetType {
+enum AssetType {
     case Font
     case Layout
     case Image
     case Raw
 }
 
-private enum ScaleType {
+enum ScaleType {
     case Up
     case Down
 }
 
-private let assetTagIgnore = "~"
-private let assetTagHead = "head"
+let assetTagIgnore = "~"
+let assetTagHead = "head"
 
 // app command line options
-private let optAssetTemplates = "-asset_template"
-private let optConfigTemplate = "-config_template"
-private let optConfig = "-config"
-private let optValidate = "-validate"
-private let optInput = "-input"
-private let optInputs = "-inputs"
-private let optInputAssets = "-input_assets"
-private let optOutSource = "-out_source"
-private let optJava = "-java"
-private let optSwift = "-swift"
-private let optOutAssets = "-out_assets"
-private let optInputAssetsTag = "-input_assets_tag"
-private let optVerbose = "-verbose"
-private let optHelpKeys = "-help_keys"
-private let optVersion = "-version"
-private let optLocaleOnly = "-locale_only"
+let optAssetTemplates = "-asset_template"
+let optConfigTemplate = "-config_template"
+let optConfig = "-config"
+let optValidate = "-validate"
+let optInput = "-input"
+let optInputs = "-inputs"
+let optInputAssets = "-input_assets"
+let optOutSource = "-out_source"
+let optJava = "-java"
+let optSwift = "-swift"
+let optOutAssets = "-out_assets"
+let optInputAssetsTag = "-input_assets_tag"
+let optVerbose = "-verbose"
+let optHelpKeys = "-help_keys"
+let optVersion = "-version"
+let optLocaleOnly = "-locale_only"
 
 class App
 {
-    private var package:String = ""
-    private var baseClass:String = ""
-    private var appIconName:String = "ic_launcher.png"
-    private var sourceAssetFolder:String? = nil
-    private var outputAssetFolder:String? = nil
+    var package:String = ""
+    var baseClass:String = ""
+    var appIconName:String = "ic_launcher.png"
+    var sourceAssetFolder:String? = nil
+    var outputAssetFolder:String? = nil
 
-    private var inputFile:String? = nil
-    private var inputFiles:[String]? = nil
-    private var outputClassFile:String? = nil
-    private var assetTag:String? = nil
+    var inputFile:String? = nil
+    var inputFiles:[String]? = nil
+    var outputClassFile:String? = nil
+    var assetTag:String? = nil
 
-    private var compileType:LangType = .Unset
-    private var localeOnly:Bool = false
+    var compileType:LangType = .Unset
+    var localeOnly:Bool = false
 
-    private var globalTint:NSColor? = nil
-    private var globalIosTint:NSColor? = nil
-    private var globalAndroidTint:NSColor? = nil
+    var globalTint:NSColor? = nil
+    var globalIosTint:NSColor? = nil
+    var globalAndroidTint:NSColor? = nil
     static let copyrightNotice = "Sango © 2016 Afero, Inc - Build \(BUILD_REVISION)"
-    private var gitEnabled = false
+    var gitEnabled = false
 
     // because Android colors are stored as an xml file, we collect them when walking through the constants,
     // and write them out last
-    private var androidColors:[String:AnyObject]? = [:]
+    var androidColors:[String:AnyObject]? = [:]
     
     func usage() -> Void {
         let details = [
@@ -176,7 +176,7 @@ class App
         }
     }
 
-    private func helpKeys() -> Void {
+    func helpKeys() -> Void {
         let details = [keySchemaVersion: "number. Version, which should be \(SchemaVersion)",
                        keyFonts: "array. path to font files",
                        keyFontRoot: "path. Destination font root. Default is root of resources",
@@ -249,7 +249,7 @@ class App
         return true
     }
     
-    private func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
+    func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
         var outputString = "\n"
         if (type == .Swift) {
             // public static let UiSecondaryColorTinted = ["account_avatar1", "account_avatar2"]
@@ -274,7 +274,7 @@ class App
         return outputString
     }
 
-    private func parseColor(color: String) -> (r:Double, g:Double, b:Double, a:Double, s:Int,
+    func parseColor(color: String) -> (r:Double, g:Double, b:Double, a:Double, s:Int,
                                             rgb:UInt32, hexRgb:String)?
     {
         var red:Double = 0.0
@@ -353,7 +353,7 @@ class App
         return nil
     }
     
-    private func writeEnums(enums: Dictionary<String, AnyObject>, type: LangType) -> String {
+    func writeEnums(enums: Dictionary<String, AnyObject>, type: LangType) -> String {
         var outputString = "\n"
         let sorted = Array(enums).sort({$0.0 < $1.0})
         if (type == .Swift) {
@@ -390,7 +390,7 @@ class App
         return outputString
     }
 
-    private func writeSangoExtras(type: LangType, filePath: String) -> Void {
+    func writeSangoExtras(type: LangType, filePath: String) -> Void {
         var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
         if (type == .Swift) {
             outputStr.appendContentsOf("import UIKit\n")
@@ -429,7 +429,7 @@ class App
         saveString(outputStr, file: sangoFile)
     }
 
-    private func writeAndroidColors() -> Void {
+    func writeAndroidColors() -> Void {
         if (androidColors?.count > 0) {
             var destPath = outputAssetFolder! + "/res/values"
             Utils.createFolder(destPath)
@@ -461,7 +461,7 @@ class App
     }
     
 
-    private func parseSwiftConstant(value: AnyObject) -> String {
+    func parseSwiftConstant(value: AnyObject) -> String {
         var outputString = ""
         let strValue = String(value)
 
@@ -528,7 +528,7 @@ class App
         return (type:type, output:outputString)
     }
     
-    private func writeConstants(name: String, value: AnyObject, type: LangType) -> String {
+    func writeConstants(name: String, value: AnyObject, type: LangType) -> String {
         var outputString = "\n"
         if (type == .Swift) {
             if let constantsDictionary = value as? Dictionary<String, AnyObject> {
@@ -626,7 +626,7 @@ class App
 
     // http://petrnohejl.github.io/Android-Cheatsheet-For-Graphic-Designers/
     
-    private func scaleAndCopyImages(files: [String], type: LangType, useRoot: Bool, scale: ScaleType) -> Void {
+    func scaleAndCopyImages(files: [String], type: LangType, useRoot: Bool, scale: ScaleType) -> Void {
         for file in files {
             if (type == .Java) {
                 if (file.isAndroidCompatible() == false) {
@@ -708,14 +708,14 @@ class App
     }
     
     // this table to used to place images marked with either @2, @3 into their respective android equals
-    private let iOStoAndroid = [
+    let iOStoAndroid = [
         1: "mdpi",
         2: "xhdpi",
         3: "xxhdpi"
     ]
 
     
-    private func imageResourcePath(file: String, type: LangType, useRoot: Bool) -> (sourceFile: String,
+    func imageResourcePath(file: String, type: LangType, useRoot: Bool) -> (sourceFile: String,
                                                                                     destFile: String,
                                                                                     destPath: String)
     {
@@ -753,7 +753,7 @@ class App
         return (sourceFile: filePath, destFile: destFile, destPath: destPath)
     }
     
-    private func copyImage(file: String, type: LangType, useRoot: Bool) -> Void
+    func copyImage(file: String, type: LangType, useRoot: Bool) -> Void
     {
         if (type == .Java) {
             if (file.isAndroidCompatible() == false) {
@@ -779,13 +779,13 @@ class App
         }
     }
 
-    private func copyImages(files: [String], type: LangType, useRoot: Bool) -> Void {
+    func copyImages(files: [String], type: LangType, useRoot: Bool) -> Void {
         for file in files {
             copyImage(file, type: type, useRoot: useRoot)
         }
     }
     
-    private let iOSAppIconSizes = [
+    let iOSAppIconSizes = [
         "Icon-Small.png": 29,
         "Icon-Small@2x.png": 58,
         "Icon-Small@3x.png": 87,
@@ -811,7 +811,7 @@ class App
         "Icon-167.png": 167,
         "Icon-83.5@2x.png": 167
     ]
-    private let AndroidIconSizes = [
+    let AndroidIconSizes = [
         "mdpi": 48,
         "hdpi": 72,
         "xhdpi": 96,
@@ -821,7 +821,7 @@ class App
 
     // http://iconhandbook.co.uk/reference/chart/android/
     // https://developer.apple.com/library/ios/qa/qa1686/_index.html
-    private func copyAppIcon(file: String, type: LangType) -> Void {
+    func copyAppIcon(file: String, type: LangType) -> Void {
         if (type == .Java) {
             if (file.isAndroidCompatible() == false) {
                 print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
@@ -869,7 +869,7 @@ class App
      * ie $@ is converted to $s on android, and left along for iOS, and $s is converted to
      * @ on iOS
      */
-    private func updateStringParameters(string:String, type: LangType) -> String
+    func updateStringParameters(string:String, type: LangType) -> String
     {
         var newString = string
         if (type == .Swift) {
@@ -889,7 +889,7 @@ class App
         return newString
     }
     
-    private func writeLocale(localePath:String, properties:Dictionary<String, String>, type: LangType) -> Void
+    func writeLocale(localePath:String, properties:Dictionary<String, String>, type: LangType) -> Void
     {
         var genString = ""
         if (type == .Swift) {
@@ -943,7 +943,7 @@ class App
          "de" : ["file2/path1, "file2/path2"]
      }
      */
-    private func mergeLocales(src: Dictionary<String, AnyObject>, newInput : Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+    func mergeLocales(src: Dictionary<String, AnyObject>, newInput : Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
         var mergedLocales = src
         
         for (key, value) in newInput {
@@ -967,7 +967,7 @@ class App
         "de" : ["file2/path1, "file2/path2"]
      }
      */
-    private func copyLocales(locales: Dictionary <String, AnyObject>, type: LangType) -> Void
+    func copyLocales(locales: Dictionary <String, AnyObject>, type: LangType) -> Void
     {
         // for iOS, path name is:
         // Resources/en.lproj/Localizable.strings
@@ -1026,7 +1026,7 @@ class App
         case Custom
     }
     
-    private func copyAssets(files: [String], type: LangType,
+    func copyAssets(files: [String], type: LangType,
                             assetType: AssetType,
                             destLocation: AssetLocation,
                             root: String = "") -> Void {
@@ -1072,7 +1072,7 @@ class App
         }
     }
 
-    private func validate(files:[String], type: LangType) -> Void
+    func validate(files:[String], type: LangType) -> Void
     {
         for file in files {
             Utils.debug("Validating \(file)")
@@ -1174,7 +1174,7 @@ class App
         }
     }
     
-    private func insertTabPerLine(text: String) -> String {
+    func insertTabPerLine(text: String) -> String {
         var output = ""
         let lines = text.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
         for line in lines {
@@ -1186,7 +1186,7 @@ class App
         return output
     }
     
-    private func consume(data: Dictionary <String, AnyObject>, type: LangType, langOutputFile: String) -> Void
+    func consume(data: Dictionary <String, AnyObject>, type: LangType, langOutputFile: String) -> Void
     {
         Utils.createFolderForFile(langOutputFile)
 
@@ -1384,7 +1384,7 @@ class App
         }
     }
     
-    private let baseAssetTemplate = [keySchemaVersion :SchemaVersion,
+    let baseAssetTemplate = [keySchemaVersion :SchemaVersion,
                                     keyFonts: [],
                                     keyLocale: ["enUS":""],
                                     keyImages: [],
@@ -1397,7 +1397,7 @@ class App
                                     keyAndroidAppIcon: ""
                                 ]
 
-    private func createAssetTemplate(base: String) -> Void {
+    func createAssetTemplate(base: String) -> Void {
         var temp = baseAssetTemplate as! Dictionary<String,AnyObject>
         temp[keyJava] = ["package" : "one.two", "base": base]
         temp[keySwift] = ["base": base]
@@ -1411,13 +1411,13 @@ class App
         }
     }
     
-    private let baseConfigTemplate = ["inputs": ["example/base.json","example/brand_1.json"],
+    let baseConfigTemplate = ["inputs": ["example/base.json","example/brand_1.json"],
                                      "input_assets": "../path/to/depot",
                                      "out_source": "path/to/app/source",
                                      "out_assets": "path/to/app/resources",
                                      "type": "swift or java"
     ]
-    private func createConfigTemplate(file: String) -> Void {
+    func createConfigTemplate(file: String) -> Void {
         let jsonString = Utils.toJSON(baseConfigTemplate)
         if (jsonString != nil) {
             if (saveString(jsonString!, file: file)) {

@@ -11,7 +11,7 @@
 import Foundation
 import CoreFoundation
 
-func findOption(args:[String], option:String) -> Bool
+public func findOption(args:[String], option:String) -> Bool
 {
     var found = false
     for argument in args {
@@ -22,7 +22,7 @@ func findOption(args:[String], option:String) -> Bool
     return found
 }
 
-func getOption(args:[String], option:String) -> String?
+public func getOption(args:[String], option:String) -> String?
 {
     var found:String? = nil
     for argument in args {
@@ -40,7 +40,7 @@ func getOption(args:[String], option:String) -> String?
     return found
 }
 
-func getOptions(args:[String], option:String) -> [String]?
+public func getOptions(args:[String], option:String) -> [String]?
 {
     var found:[String]? = nil
     for argument in args {
@@ -66,8 +66,8 @@ func getOptions(args:[String], option:String) -> [String]?
 }
 
 // MARK: main
-private let env = NSProcessInfo.processInfo().environment
-private var args = Process.arguments
+let env = NSProcessInfo.processInfo().environment
+var args = Process.arguments
 args.removeFirst()
 
 Utils.setVerbose(findOption(args, option: "-verbose"))
