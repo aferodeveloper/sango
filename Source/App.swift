@@ -487,7 +487,7 @@ class App
                         else {
                             print("Error: Constant '\(name).\(keyB)' can't be the same as an enum type '\(keyA)'")
                             results.error = true
-                            break
+                            return results
                         }
                     }
                 }
@@ -546,7 +546,7 @@ class App
         let strValue = String(value)
 
         if (enums.valid && (key == enums.origType)) {
-            let lineValue = "\(enums.enumType).\(strValue)".snakeCaseToCamelCase()
+            let lineValue = "\(enums.enumType.snakeCaseToCamelCase()).\(strValue)"
             outputString.appendContentsOf(lineValue + ";\n");
             type = ValueType.CustomEnum
         }
