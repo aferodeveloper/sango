@@ -109,6 +109,8 @@ let optLocaleOnly = "-locale_only"
 
 class App
 {
+    static let copyrightNotice = "Sango © 2016 Afero, Inc - Build \(BUILD_REVISION)"
+
     var package:String = ""
     var baseClass:String = ""
     var appIconName:String = "ic_launcher.png"
@@ -126,13 +128,14 @@ class App
     var globalTint:NSColor? = nil
     var globalIosTint:NSColor? = nil
     var globalAndroidTint:NSColor? = nil
-    static let copyrightNotice = "Sango © 2016 Afero, Inc - Build \(BUILD_REVISION)"
     var gitEnabled = false
 
     // because Android colors are stored as an xml file, we collect them when walking through the constants,
     // and write them out last
-    var androidColors:[String:AnyObject]? = [:]
-    
+    var androidColors:[String:AnyObject] = [:]
+
+    var enumsFound: [String:AnyObject] = [:]
+
     func usage() -> Void {
         let details = [
             optAssetTemplates: ["[basename]", "creates a json template, specifically for the assets"],
@@ -368,7 +371,7 @@ class App
         else if (type == .Java) {
             for (key, value) in sorted {
                 let list:[String] = value as! [String]
-                outputString.appendContentsOf("public enum \(key) {\n\t")
+                outputString.appendContentsOf("public enum \(key.snakeCaseToCamelCase()) {\n\t")
                 var firstComma = false
                 for itm in list {
                     if (firstComma) {
@@ -429,15 +432,15 @@ class App
     }
 
     func writeAndroidColors() -> Void {
-        if (androidColors?.count > 0) {
+        if (androidColors.count > 0) {
             var destPath = outputAssetFolder! + "/res/values"
             Utils.createFolder(destPath)
             destPath.appendContentsOf("/colors.xml")
             var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
             outputStr.appendContentsOf("<resources>\n")
-            let sorted = androidColors!.keys.sort()
+            let sorted = androidColors.keys.sort()
             for key in sorted {
-                let color = parseColor(androidColors![key] as! String)
+                let color = parseColor(androidColors[key] as! String)
                 if (color != nil) {
                     //    <color name="medium_gray">#939597</color>
                     // RGB
@@ -451,83 +454,144 @@ class App
         }
     }
     
+    struct EnumResults {
+        var error = false
+        var valid = false
+        var enumType = ""
+        var origType = ""
+    }
+    func validateEnum(name: String, value: AnyObject) -> EnumResults {
+        var results = EnumResults()
+
+        if let constantsDictionary = value as? Dictionary<String, AnyObject> {
+            // we need to look up our enum by value
+            // if the name is the same as the enum name, that's considered an error
+            for (keyA, valueA) in enumsFound {
+                let keyAlpha = keyA.snakeCaseToCamelCase()
+                let list = valueA as! Array<String>
+                for enumItm in list {
+                    let valueAlpha = enumItm.snakeCaseToCamelCase()
+                    for (keyB, valueB) in constantsDictionary {
+                        let keyBeta = keyB.snakeCaseToCamelCase()
+                        if (keyAlpha != keyBeta) {
+                            if (valueB is String) {
+                                let valueBeta = (valueB as! String).snakeCaseToCamelCase()
+                                if (valueAlpha == valueBeta) {
+                                    results.enumType = keyA
+                                    results.origType = keyB
+                                    results.valid = true
+                                    break
+                                }
+                            }
+                        }
+                        else {
+                            print("Error: Constant '\(name).\(keyB)' can't be the same as an enum type '\(keyA)'")
+                            results.error = true
+                            break
+                        }
+                    }
+                }
+            }
+        }
+        return results
+    }
+
     enum ValueType :String {
         case Color = "Color"
         case Int = "int"
         case String = "String"
         case Float = "float"
         case Boolean = "Boolean"
+        case CustomEnum = "CustomEnum"
     }
-    
 
-    func parseSwiftConstant(value: AnyObject) -> String {
+    func parseSwiftConstant(key: String, value: AnyObject, enums: EnumResults) -> String {
         var outputString = ""
         let strValue = String(value)
 
-        if (value.className == "__NSCFBoolean") {
-            outputString.appendContentsOf(value.boolValue.description)
-        }
-        else if (value is String) {
-            if (strValue.isInteger() == true) {
-                outputString.appendContentsOf(String(value));
-            }
-            else {
-                let color = parseColor(strValue)
-                if (color != nil) {
-                    let line = "UIColor(red: \(color!.r.roundTo3f), green: \(color!.g.roundTo3f), blue: \(color!.b.roundTo3f), alpha: \(color!.a.roundTo3f))"
-                    outputString.appendContentsOf(line + " /* \(value) */")
-                }
-                else {
-                    outputString.appendContentsOf("\"\(String(value))\"")
-                }
-            }
+        if (enums.valid && (key == enums.origType)) {
+            let lineValue = "\(enums.enumType).\(String(value))".snakeCaseToCamelCase()
+            outputString.appendContentsOf(lineValue + "\n");
         }
         else {
-            outputString.appendContentsOf(strValue);
+            if (value.className == "__NSCFBoolean") {
+                outputString.appendContentsOf(value.boolValue.description)
+            }
+            else if (value is String) {
+                if (strValue.isInteger() == true) {
+                    outputString.appendContentsOf(String(value));
+                }
+                else {
+                    let color = parseColor(strValue)
+                    if (color != nil) {
+                        let line = "UIColor(red: \(color!.r.roundTo3f), green: \(color!.g.roundTo3f), blue: \(color!.b.roundTo3f), alpha: \(color!.a.roundTo3f))"
+                        outputString.appendContentsOf(line + " /* \(value) */")
+                    }
+                    else {
+                        outputString.appendContentsOf("\"\(String(value))\"")
+                    }
+                }
+            }
+            else {
+                outputString.appendContentsOf(strValue);
+            }
         }
+
         return outputString
     }
     
-    func parseJavaConstant(value: AnyObject) -> (type:ValueType, output:String) {
+    func parseJavaConstant(key: String, value: AnyObject, enums: EnumResults) -> (type:ValueType, output:String) {
         var outputString = ""
         var type = ValueType.Int
         let strValue = String(value)
 
-        if (value.className == "__NSCFBoolean") {
-            type = ValueType.Boolean
-            outputString.appendContentsOf(value.boolValue.description)
-        }
-        else if (strValue.isFloat()) {
-            type = ValueType.Float
-            outputString.appendContentsOf(strValue)
-        }
-        else if (value is String) {
-            if (strValue.isInteger() == true) {
-                outputString.appendContentsOf(strValue)
-            }
-            else {
-                type = ValueType.String
-                
-                let color = parseColor(strValue)
-                if (color != nil) {
-                    type = ValueType.Color
-                }
-                else {
-                    let line = "\"" + strValue + "\""
-                    outputString.appendContentsOf(line)
-                }
-            }
+        if (enums.valid && (key == enums.origType)) {
+            let lineValue = "\(enums.enumType).\(strValue)".snakeCaseToCamelCase()
+            outputString.appendContentsOf(lineValue + ";\n");
+            type = ValueType.CustomEnum
         }
         else {
-            if (strValue.isFloat()) {
-                type = .Float
+            if (value.className == "__NSCFBoolean") {
+                type = ValueType.Boolean
+                outputString.appendContentsOf(value.boolValue.description)
             }
-            outputString.appendContentsOf(strValue);
+            else if (strValue.isFloat()) {
+                type = ValueType.Float
+                outputString.appendContentsOf(strValue)
+            }
+            else if (value is String) {
+                if (strValue.isInteger() == true) {
+                    outputString.appendContentsOf(strValue)
+                }
+                else {
+                    type = ValueType.String
+                    
+                    let color = parseColor(strValue)
+                    if (color != nil) {
+                        type = ValueType.Color
+                    }
+                    else {
+                        let line = "\"" + strValue + "\""
+                        outputString.appendContentsOf(line)
+                    }
+                }
+            }
+            else {
+                if (strValue.isFloat()) {
+                    type = .Float
+                }
+                outputString.appendContentsOf(strValue);
+            }
         }
         return (type:type, output:outputString)
     }
-    
+
     func writeConstants(name: String, value: AnyObject, type: LangType) -> String {
+        let enums = validateEnum(name, value: value)
+        if (enums.error) {
+            exit(-1)
+        }
+
         var outputString = "\n"
         if (type == .Swift) {
             if let constantsDictionary = value as? Dictionary<String, AnyObject> {
@@ -537,7 +601,7 @@ class App
                     let line = "\tstatic let " + key.snakeCaseToCamelCase() + " = "
                     outputString.appendContentsOf(line)
                     
-                    let lineValue = parseSwiftConstant(value)
+                    let lineValue = parseSwiftConstant(key, value: value, enums: enums)
                     outputString.appendContentsOf(lineValue + "\n");
                 }
                 outputString.appendContentsOf("}")
@@ -546,7 +610,7 @@ class App
                 outputString.appendContentsOf("public let \(name) = [\n\t\t")
                 let lastItm = constantsArray.count - 1
                 for (index, itm) in constantsArray.enumerate() {
-                    let lineValue = parseSwiftConstant(itm)
+                    let lineValue = parseSwiftConstant(String(index), value: itm, enums: enums)
                     outputString.appendContentsOf(lineValue);
                     if (index < lastItm) {
                         outputString.appendContentsOf(",\n\t\t")
@@ -562,11 +626,17 @@ class App
             if let constantsDictionary = value as? Dictionary<String, AnyObject> {
                 for (key, value) in Array(constantsDictionary).sort({$0.0 < $1.0}) {
                     let strValue = String(value)
-                    let lineValue = parseJavaConstant(value)
+                    let lineValue = parseJavaConstant(key, value: value, enums: enums)
                     if (lineValue.type == .Color) {
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(key)"
-                        androidColors![colorKey.lowercaseString] = strValue
+                        androidColors[colorKey.lowercaseString] = strValue
+                    }
+                    else if (lineValue.type == .CustomEnum) {
+                        let line = "\tpublic static final " + enums.enumType.snakeCaseToCamelCase() + " " +
+                            key.uppercaseString + " = \(lineValue.output);\n"
+                        outputClassString.appendContentsOf(line)
+                        skipClass = false
                     }
                     else {
                         let line = "\tpublic static final " + lineValue.type.rawValue + " " +
@@ -590,11 +660,11 @@ class App
                 outputString.appendContentsOf("public static final \(type.rawValue) \(name)[] = {\n\t")
 
                 for (index, itm) in constantsArray.enumerate() {
-                    let lineValue = parseJavaConstant(itm)
+                    let lineValue = parseJavaConstant(String(index), value: itm, enums: enums)
                     if (lineValue.type == .Color) {
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(index)"
-                        androidColors![colorKey.lowercaseString] = String(itm)
+                        androidColors[colorKey.lowercaseString] = String(itm)
                     }
                     else {
                         ending = true
@@ -617,7 +687,7 @@ class App
             }
         }
         else {
-            print("Error: invalide output type")
+            print("Error: invalid output type")
             exit(-1)
         }
         return outputString
@@ -1230,6 +1300,12 @@ class App
                     globalAndroidTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
                 }
             }
+            else if (key == keyEnums) {
+                let enums = value as? [String:AnyObject]
+                if (enums != nil) {
+                    enumsFound = enums!
+                }
+            }
         }
         
         // everything else is converted to Java, Swift classes
@@ -1315,13 +1391,6 @@ class App
                         copyAssets(value as! Array, type: type, assetType: .Layout, destLocation: .Root)
                     }
                 }
-                else if (key == keyEnums) {
-                    let enums = value as? [String:AnyObject]
-                    if (enums != nil) {
-                        let line = writeEnums(enums!, type: type)
-                        genString.appendContentsOf(line)
-                    }
-                }
             }
             else {
                 completeOutput = false
@@ -1329,6 +1398,10 @@ class App
         }
         
         if (completeOutput) {
+            if (enumsFound.isEmpty == false) {
+                let line = writeEnums(enumsFound, type: type)
+                genString.appendContentsOf(line)
+            }
             if (genString.isEmpty == false) {
                 var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
                 if (type == .Swift) {
