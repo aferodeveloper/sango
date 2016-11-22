@@ -48,7 +48,6 @@ let keyImagesScaledIosUp = "imagesScaledIosUp"
 let keyImagesScaledAndroidUp = "imagesScaledAndroidUp"
 let keyImagesIos = "imagesIos"
 let keyImagesAndroid = "imagesAndroid"
-let keyImagesTinted = "imagesTinted"
 let keyGlobalTint = "globalTint"
 let keyGlobalIosTint = "globalTintIos"
 let keyGlobalAndroidTint = "globalTintAndroid"
@@ -66,7 +65,7 @@ let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppI
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
                                     keyImagesScaledUp, keyImagesScaledIosUp, keyImagesScaledAndroidUp,
                                     keyImages, keyImagesIos, keyImagesAndroid, keyLocale,
-                                    keyImagesTinted, keyJava, keySwift, keyGlobalTint,
+                                    keyJava, keySwift, keyGlobalTint,
                                     keyGlobalIosTint, keyGlobalAndroidTint]
 
 enum LangType {
