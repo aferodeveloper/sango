@@ -653,7 +653,19 @@ class App
                 else if (hasArrayInts(value)) {
                     type = .Int
                 }
-                outputString.appendContentsOf("public static final \(type.rawValue) \(name)[] = {\n\t")
+                else {
+                    for (index, itm) in constantsArray.enumerate() {
+                        let lineValue = parseJavaConstant(String(index), value: itm)
+                        if (lineValue.type == .Color) {
+                            type = .Color
+                            ending = false
+                            break
+                        }
+                    }
+                }
+                if (type != .Color) {
+                    outputString.appendContentsOf("public static final \(type.rawValue) \(name)[] = {\n\t")
+                }
 
                 for (index, itm) in constantsArray.enumerate() {
                     let lineValue = parseJavaConstant(String(index), value: itm)
