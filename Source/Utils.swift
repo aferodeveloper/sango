@@ -23,7 +23,11 @@ public class Utils
             print(message)
         }
     }
-    
+    public static func error(message: String) -> Void
+    {
+        print(message)
+    }
+
     public static func toJSON(dictionary:Dictionary<String, AnyObject>) -> String?
     {
         do {
@@ -47,11 +51,11 @@ public class Utils
         if (fileContent != nil) {
             result = fromJSON(fileContent!)
             if (result == nil) {
-                print("Error: Can't parse \(location) as JSON")
+                Utils.error("Error: Can't parse \(location) as JSON")
             }
         }
         else {
-            print("Error: can't find file \(location)")
+            Utils.error("Error: can't find file \(location)")
         }
         return result
     }
@@ -77,7 +81,7 @@ public class Utils
                 try NSFileManager.defaultManager().createDirectoryAtPath(file, withIntermediateDirectories: true, attributes: nil)
             }
             catch {
-                print("Error: creating folder \(file)")
+                Utils.error("Error: creating folder \(file)")
                 exit(-1)
             }
         }
@@ -95,7 +99,7 @@ public class Utils
             try NSFileManager.defaultManager().createDirectoryAtPath(src, withIntermediateDirectories: true, attributes: nil)
         }
         catch {
-            print("Error: creating folder \(src)")
+            Utils.error("Error: creating folder \(src)")
             ok = false
         }
         
@@ -122,7 +126,7 @@ public class Utils
             Utils.debug("Copy \(src) -> \(dest)")
         }
         catch {
-            print("Error: copying file \(src) to \(dest)")
+            Utils.error("Error: copying file \(src) to \(dest)")
             ok = false
         }
         

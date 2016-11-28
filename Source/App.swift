@@ -245,7 +245,7 @@ class App
             try data.writeToFile(file, atomically: true, encoding: NSUTF8StringEncoding)
         }
         catch {
-            print("Error: writing to \(file)")
+            Utils.error("Error: writing to \(file)")
             exit(-1)
         }
         return true
@@ -270,7 +270,7 @@ class App
             }
         }
         else {
-            print("Error: invalide output type")
+            Utils.error("Error: invalid output type")
             exit(-1)
         }
         return outputString
@@ -323,7 +323,7 @@ class App
             alpha = 1
             
             if (hexStr.characters.count < 6) {
-                print("Error: not enough characters for hex color definition. Needs 6.")
+                Utils.error("Error: not enough characters for hex color definition. Needs 6.")
                 exit(-1)
             }
             
@@ -386,7 +386,7 @@ class App
             }
         }
         else {
-            print("Error: invalide output type")
+            Utils.error("Error: invalid output type")
             exit(-1)
         }
         return outputString
@@ -460,36 +460,28 @@ class App
         var enumType = ""
         var origType = ""
     }
-    func validateEnum(name: String, value: AnyObject) -> EnumResults {
+    func validateEnum(name: String, value: String) -> EnumResults {
         var results = EnumResults()
 
-        if let constantsDictionary = value as? Dictionary<String, AnyObject> {
-            // we need to look up our enum by value
-            // if the name is the same as the enum name, that's considered an error
-            for (keyA, valueA) in enumsFound {
-                let keyAlpha = keyA.snakeCaseToCamelCase()
-                let list = valueA as! Array<String>
-                for enumItm in list {
-                    let valueAlpha = enumItm.snakeCaseToCamelCase()
-                    for (keyB, valueB) in constantsDictionary {
-                        let keyBeta = keyB.snakeCaseToCamelCase()
-                        if (keyAlpha != keyBeta) {
-                            if (valueB is String) {
-                                let valueBeta = (valueB as! String).snakeCaseToCamelCase()
-                                if (valueAlpha == valueBeta) {
-                                    results.enumType = keyA
-                                    results.origType = keyB
-                                    results.valid = true
-                                    break
-                                }
-                            }
-                        }
-                        else {
-                            print("Error: Constant '\(name).\(keyB)' can't be the same as an enum type '\(keyA)'")
-                            results.error = true
-                            return results
-                        }
+        let valueBeta = value.snakeCaseToCamelCase()
+        let keyBeta = name.snakeCaseToCamelCase()
+        for (keyA, valueA) in enumsFound {
+            let keyAlpha = keyA.snakeCaseToCamelCase()
+            let list = valueA as! Array<String>
+            for enumItm in list {
+                let valueAlpha = enumItm.snakeCaseToCamelCase()
+                if (keyAlpha != keyBeta) {
+                    if (valueAlpha == valueBeta) {
+                        results.enumType = keyA
+                        results.origType = name
+                        results.valid = true
+                        break
                     }
+                }
+                else {
+                    Utils.error("Error: Constant '\(name).\(value)' can't be the same as an enum type '\(keyA)'")
+                    results.error = true
+                    return results
                 }
             }
         }
@@ -505,10 +497,15 @@ class App
         case CustomEnum = "CustomEnum"
     }
 
-    func parseSwiftConstant(key: String, value: AnyObject, enums: EnumResults) -> String {
+    func parseSwiftConstant(key: String, value: AnyObject) -> String {
         var outputString = ""
         let strValue = String(value)
 
+        let enums = validateEnum(key, value: strValue)
+        if (enums.error) {
+            exit(-1)
+        }
+        
         if (enums.valid && (key == enums.origType)) {
             let lineValue = "\(enums.enumType).\(String(value))".snakeCaseToCamelCase()
             outputString.appendContentsOf(lineValue + "\n");
@@ -540,14 +537,19 @@ class App
         return outputString
     }
     
-    func parseJavaConstant(key: String, value: AnyObject, enums: EnumResults) -> (type:ValueType, output:String) {
+    func parseJavaConstant(key: String, value: AnyObject) -> (type:ValueType, output:String, results:EnumResults) {
         var outputString = ""
         var type = ValueType.Int
         let strValue = String(value)
 
+        let enums = validateEnum(key, value: strValue)
+        if (enums.error) {
+            exit(-1)
+        }
+        
         if (enums.valid && (key == enums.origType)) {
             let lineValue = "\(enums.enumType.snakeCaseToCamelCase()).\(strValue)"
-            outputString.appendContentsOf(lineValue + ";\n");
+            outputString.appendContentsOf(lineValue);
             type = ValueType.CustomEnum
         }
         else {
@@ -583,15 +585,10 @@ class App
                 outputString.appendContentsOf(strValue);
             }
         }
-        return (type:type, output:outputString)
+        return (type:type, output:outputString, results:enums)
     }
 
     func writeConstants(name: String, value: AnyObject, type: LangType) -> String {
-        let enums = validateEnum(name, value: value)
-        if (enums.error) {
-            exit(-1)
-        }
-
         var outputString = "\n"
         if (type == .Swift) {
             if let constantsDictionary = value as? Dictionary<String, AnyObject> {
@@ -600,8 +597,7 @@ class App
                 for (key, value) in Array(constantsDictionary).sort({$0.0 < $1.0}) {
                     let line = "\tstatic let " + key.snakeCaseToCamelCase() + " = "
                     outputString.appendContentsOf(line)
-                    
-                    let lineValue = parseSwiftConstant(key, value: value, enums: enums)
+                    let lineValue = parseSwiftConstant(key, value: value)
                     outputString.appendContentsOf(lineValue + "\n");
                 }
                 outputString.appendContentsOf("}")
@@ -610,7 +606,7 @@ class App
                 outputString.appendContentsOf("public let \(name) = [\n\t\t")
                 let lastItm = constantsArray.count - 1
                 for (index, itm) in constantsArray.enumerate() {
-                    let lineValue = parseSwiftConstant(String(index), value: itm, enums: enums)
+                    let lineValue = parseSwiftConstant(String(index), value: itm)
                     outputString.appendContentsOf(lineValue);
                     if (index < lastItm) {
                         outputString.appendContentsOf(",\n\t\t")
@@ -626,14 +622,14 @@ class App
             if let constantsDictionary = value as? Dictionary<String, AnyObject> {
                 for (key, value) in Array(constantsDictionary).sort({$0.0 < $1.0}) {
                     let strValue = String(value)
-                    let lineValue = parseJavaConstant(key, value: value, enums: enums)
+                    let lineValue = parseJavaConstant(key, value: value)
                     if (lineValue.type == .Color) {
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(key)"
                         androidColors[colorKey.lowercaseString] = strValue
                     }
                     else if (lineValue.type == .CustomEnum) {
-                        let line = "\tpublic static final " + enums.enumType.snakeCaseToCamelCase() + " " +
+                        let line = "\tpublic static final " + lineValue.results.enumType.snakeCaseToCamelCase() + " " +
                             key.uppercaseString + " = \(lineValue.output);\n"
                         outputClassString.appendContentsOf(line)
                         skipClass = false
@@ -660,7 +656,7 @@ class App
                 outputString.appendContentsOf("public static final \(type.rawValue) \(name)[] = {\n\t")
 
                 for (index, itm) in constantsArray.enumerate() {
-                    let lineValue = parseJavaConstant(String(index), value: itm, enums: enums)
+                    let lineValue = parseJavaConstant(String(index), value: itm)
                     if (lineValue.type == .Color) {
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(index)"
@@ -687,7 +683,7 @@ class App
             }
         }
         else {
-            print("Error: invalid output type")
+            Utils.error("Error: invalid output type")
             exit(-1)
         }
         return outputString
@@ -699,7 +695,7 @@ class App
         for file in files {
             if (type == .Java) {
                 if (file.isAndroidCompatible() == false) {
-                    print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                    Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                     exit(-1)
                 }
             }
@@ -719,7 +715,7 @@ class App
 
             let baseImage = NSImage.loadFrom(filePath)
             if (baseImage == nil) {
-                print("Error: missing file \(filePath)")
+                Utils.error("Error: missing file \(filePath)")
                 exit(-1)
             }
             if (type == .Swift) {
@@ -770,7 +766,7 @@ class App
                 }
             }
             else {
-                print("Error: wrong type")
+                Utils.error("Error: wrong type")
                 exit(-1)
             }
         }
@@ -816,7 +812,7 @@ class App
             destFile = destPath + result.file + ".\(fileExt)"
         }
         else {
-            print("Error: Wrong type")
+            Utils.error("Error: Wrong type")
             exit(-1)
         }
         return (sourceFile: filePath, destFile: destFile, destPath: destPath)
@@ -826,7 +822,7 @@ class App
     {
         if (type == .Java) {
             if (file.isAndroidCompatible() == false) {
-                print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                 exit(-1)
             }
         }
@@ -842,7 +838,7 @@ class App
                 saveImage(image, file: roots.destFile)
             }
             else {
-                print("Error: Can't find source image \(roots.sourceFile)")
+                Utils.error("Error: Can't find source image \(roots.sourceFile)")
                 exit(-1)
             }
         }
@@ -893,14 +889,14 @@ class App
     func copyAppIcon(file: String, type: LangType) -> Void {
         if (type == .Java) {
             if (file.isAndroidCompatible() == false) {
-                print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                 exit(-1)
             }
         }
         let filePath = sourceAssetFolder! + "/" + file
         let iconImage = NSImage.loadFrom(filePath)
         if (iconImage == nil) {
-            print("Error: missing file \(iconImage)")
+            Utils.error("Error: missing file \(iconImage)")
             exit(-1)
         }
         if (type == .Swift) {
@@ -928,7 +924,7 @@ class App
             }
         }
         else {
-            print("Error: wrong type")
+            Utils.error("Error: wrong type")
             exit(-1)
         }
     }
@@ -952,7 +948,7 @@ class App
             }
         }
         else {
-            print("Error: incorrect type")
+            Utils.error("Error: incorrect type")
             exit(-1)
         }
         return newString
@@ -1052,7 +1048,7 @@ class App
                     prop = prop + newProps!
                 }
                 else {
-                    print("Error: Can't find \(file)")
+                    Utils.error("Error: Can't find \(file)")
                     exit(-1)
                 }
             }
@@ -1079,7 +1075,7 @@ class App
                     fileName = "strings.xml"
                 }
                 else {
-                    print("Error: wrong type")
+                    Utils.error("Error: wrong type")
                     exit(-1)
                 }
                 Utils.createFolder(destPath)
@@ -1135,7 +1131,7 @@ class App
                 Utils.copyFile(filePath, dest: defaultLoc + fileName)
             }
             else {
-                print("Error: wrong type")
+                Utils.error("Error: wrong type")
                 exit(-1)
             }
         }
@@ -1203,13 +1199,13 @@ class App
                         let file = value as! String
                         if ((type == .Java) && (testAndroid == true)) {
                             if (file.isAndroidCompatible() == false) {
-                                print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                                Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                                 exit(-1)
                             }
                         }
                         let filePath = sourceAssetFolder! + "/" + file
                         if (NSFileManager.defaultManager().fileExistsAtPath(filePath) == false) {
-                            print("Error: missing file \(filePath)")
+                            Utils.error("Error: missing file \(filePath)")
                             exit(-1)
                         }
                         else {
@@ -1221,13 +1217,13 @@ class App
                         for file in list {
                             if ((type == .Java) && (testAndroid == true)) {
                                 if (file.isAndroidCompatible() == false) {
-                                    print("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
+                                    Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                                     exit(-1)
                                 }
                             }
                             let filePath = sourceAssetFolder! + "/" + file
                             if (NSFileManager.defaultManager().fileExistsAtPath(filePath) == false) {
-                                print("Error: missing file \(filePath)")
+                                Utils.error("Error: missing file \(filePath)")
                                 exit(-1)
                             }
                             else {
@@ -1264,7 +1260,7 @@ class App
             if (key == keySchemaVersion) {
                 let version = value as! Int
                 if (version != SchemaVersion) {
-                    print("Error: mismatched schema. Got \(version), expected \(SchemaVersion)")
+                    Utils.error("Error: mismatched schema. Got \(version), expected \(SchemaVersion)")
                     exit(-1)
                 }
             }
@@ -1301,9 +1297,8 @@ class App
                 }
             }
             else if (key == keyEnums) {
-                let enums = value as? [String:AnyObject]
-                if (enums != nil) {
-                    enumsFound = enums!
+                if let enums = value as? [String:AnyObject] {
+                    enumsFound = enumsFound + enums     // merge
                 }
             }
         }
@@ -1443,13 +1438,13 @@ class App
             }
             else if (tag!.lowercaseString.containsString(assetTagHead)) {
                 if (Shell.gitResetHead(folder, branch: currentBranch) == false) {
-                    print("Error: Can't reset asset repo to HEAD")
+                    Utils.error("Error: Can't reset asset repo to HEAD")
                     exit(-1)
                 }
             }
             else {
                 if (Shell.gitCheckoutAtTag(folder, tag: tag!) == false) {
-                    print("Error: Can't set asset repo to \(tag) tag")
+                    Utils.error("Error: Can't set asset repo to \(tag) tag")
                     exit(-1)
                 }
             }
@@ -1556,7 +1551,7 @@ class App
                 }
             }
             else {
-                print("Error: missing source asset folder")
+                Utils.error("Error: missing source asset folder")
                 exit(-1)
             }
             exit(0)
@@ -1593,7 +1588,7 @@ class App
                 compileType = .Swift
             }
             else {
-                print("Error: need either -swift or -java")
+                Utils.error("Error: need either -swift or -java")
                 exit(-1)
             }
         }
@@ -1609,7 +1604,7 @@ class App
             outputClassFile = NSString(string: outputClassFile!).stringByExpandingTildeInPath
         }
         else {
-            print("Error: missing output file")
+            Utils.error("Error: missing output file")
             exit(-1)
         }
 
@@ -1621,7 +1616,7 @@ class App
             sourceAssetFolder = NSString(string: sourceAssetFolder!).stringByExpandingTildeInPath
         }
         else {
-            print("Error: missing source asset folder")
+            Utils.error("Error: missing source asset folder")
             exit(-1)
         }
         
@@ -1632,7 +1627,7 @@ class App
             outputAssetFolder = NSString(string: outputAssetFolder!).stringByExpandingTildeInPath
         }
         else {
-            print("Error: missing output asset folder")
+            Utils.error("Error: missing output asset folder")
             exit(-1)
         }
 
@@ -1682,7 +1677,7 @@ class App
             consume(result!, type: compileType, langOutputFile: outputClassFile!)
         }
         else {
-            print("Error: missing input file")
+            Utils.error("Error: missing input file")
             exit(-1)
         }
     }

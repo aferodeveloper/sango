@@ -67,6 +67,8 @@
 	],
 	"Service": {
         "TYPE": "ASSURELINK",
+        "BROWSE_TYPE": "CARDS",
+        "MENU_VIEW": "SETTINGS",
 		"BASE_URL_PROD_USW2": "api.afero.io",
 		"BASE_URL_STAGE": "api.dev.afero.io"
 	},
@@ -94,6 +96,8 @@
 	},
     "enums": {
         "AUTH_TYPE": ["AFERO", "ASSURELINK"],
+        "MENU_VIEW_TYPE": ["CLASSIC", "SETTINGS"],
+        "DEVICE_BROWSER_TYPE": ["HEX", "CARDS"],
         "DAY": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"],
         "TIME_OF_DAY": ["BREAKFAST", "LUNCH", "SNACK", "DINNER"],
 		"SAFE_IMAGES": ["asr_1", "ac_icon_large"]

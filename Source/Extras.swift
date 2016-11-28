@@ -90,7 +90,7 @@ public extension NSImage
             ok = imageData!.writeToFile((file as NSString).stringByStandardizingPath, atomically: true)
         }
         if (ok == false) {
-            print("Error: Can't save image to \(file)")
+            Utils.error("Error: Can't save image to \(file)")
         }
         return ok
     }

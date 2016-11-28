@@ -58,7 +58,7 @@ public class Shell
     
     public static func gitInstalledPath() -> String {
         if gitInstalled() == false {
-            print("Error: git not installed")
+            Utils.error("Error: git not installed")
         }
         return gitPath
     }
