@@ -159,29 +159,29 @@ public struct Constants {
 		static let White01 = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0) /* #FFFFFF */
 		static let White01_50 = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0) /* #FFFFFF */
 	}
-	public let Empty = [
+	public static let Empty = [
 			""
 		]
-	public let FloatyNumbers = [
+	public static let FloatyNumbers = [
 			1,
 			2,
 			3.15,
 			23,
 			415.03
 		]
-	public let Hello = [
+	public static let Hello = [
 			"one",
 			"two",
 			"three"
 		]
-	public let InteryNumbers = [
+	public static let InteryNumbers = [
 			5,
 			23,
 			54,
 			120,
 			100
 		]
-	public let RainbowColors = [
+	public static let RainbowColors = [
 			UIColor(red: 0.325, green: 0.333, blue: 0.341, alpha: 1.0) /* #535557 */,
 			UIColor(red: 0.616, green: 0.612, blue: 0.596, alpha: 1.0) /* #9D9C98 */,
 			UIColor(red: 0.949, green: 0.518, blue: 0.357, alpha: 1.0) /* #F2845B */,
