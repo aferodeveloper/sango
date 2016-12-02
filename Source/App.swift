@@ -598,7 +598,7 @@ class App
                 outputString.appendContentsOf("}")
             }
             else if let constantsArray = value as? Array<AnyObject> {
-                outputString.appendContentsOf("public let \(name) = [\n\t\t")
+                outputString.appendContentsOf("public static let \(name) = [\n\t\t")
                 let lastItm = constantsArray.count - 1
                 for (index, itm) in constantsArray.enumerate() {
                     let lineValue = parseSwiftConstant(String(index), value: itm)
