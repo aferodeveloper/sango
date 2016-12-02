@@ -10,11 +10,6 @@ import Foundation
 import AppKit
 import CoreGraphics
 
-// See:
-// https://docs.google.com/document/d/1X-pHtwzB6Qbkh0uuhmqtG98o2_Dv_okDUim6Ohxhd8U/edit
-// for more details
-
-
 /* enums
  
  java
@@ -842,7 +837,9 @@ class App
         Utils.createFolder(roots.destPath)
         if ((globalTint == nil) && (globalIosTint == nil) && (globalAndroidTint == nil)) {
             // just copy the image file raw, no tinting
-            Utils.copyFile(roots.sourceFile, dest: roots.destFile)
+            if (Utils.copyFile(roots.sourceFile, dest: roots.destFile) == false) {
+                exit(-1)
+            }
         }
         else {
             let image = NSImage.loadFrom(roots.sourceFile)
@@ -908,7 +905,7 @@ class App
         let filePath = sourceAssetFolder! + "/" + file
         let iconImage = NSImage.loadFrom(filePath)
         if (iconImage == nil) {
-            Utils.error("Error: missing file \(iconImage)")
+            Utils.error("Error: missing file \(filePath)")
             exit(-1)
         }
         if (type == .Swift) {
@@ -1135,12 +1132,16 @@ class App
             let fileName = file.lastPathComponent()
             
             if (type == .Swift) {
-                Utils.copyFile(filePath, dest: destFile)
+                if (Utils.copyFile(filePath, dest: destFile) == false) {
+                    exit(-1)
+                }
             }
             else if (type == .Java) {
                 let defaultLoc = destPath + androidAssetLocations[assetType]!
                 Utils.createFolder(defaultLoc)
-                Utils.copyFile(filePath, dest: defaultLoc + fileName)
+                if (Utils.copyFile(filePath, dest: defaultLoc + fileName) == false) {
+                    exit(-1)
+                }
             }
             else {
                 Utils.error("Error: wrong type")

@@ -1,0 +1,10 @@
+{
+	"input_assets": "simple",
+	"inputs": [
+		"base.json"
+	],
+	"out_source": "temp_android/main/java/Constants.java",
+	"out_assets": "temp_android/main",
+	"type": "java",
+	"input_assets_tag": "~"
+}

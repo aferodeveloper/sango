@@ -1,0 +1,10 @@
+"app_name" = "Afero";
+"primary_account_name" = "Hauptkonto";
+"no_network_warning" = "Konnte nicht kontaktieren Afero. Bitte überprüfen Sie die Verbindung.";
+"device_offline" = "Gerät offline";
+"button_title_cancel" = "Abbrechen";
+"button_title_cancel_all_caps" = "ABBRECHEN";
+"button_title_ok" = "O";
+"dialog_title_schedule_time" = "Zeit einstellen";
+"dialog_title_remove_device" = "Gerät Entfernen";
+"dialog_message_remove_device" = "Sind Sie sicher, dass Sie dieses Gerät von Ihrem Konto zu entfernen?";

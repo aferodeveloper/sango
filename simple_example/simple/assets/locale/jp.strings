@@ -1,0 +1,10 @@
+"app_name" = "Afero";
+"primary_account_name" = "主要口座";
+"no_network_warning" = "Aferoにご連絡できませんでした。あなたの接続を確認してください。";
+"device_offline" = "デバイスのオフライン";
+"button_title_cancel" = "キャンセル";
+"button_title_cancel_all_caps" = "キャンセル";
+"button_title_ok" = "良し";
+"dialog_title_schedule_time" = "時刻の設定";
+"dialog_title_remove_device" = "デバイスを削除しますか？";
+"dialog_message_remove_device" = "あなたは、あなたのアカウントからこのデバイスを削除してもよろしいですか？";
