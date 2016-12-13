@@ -100,6 +100,9 @@
         "DEVICE_BROWSER_TYPE": ["HEX", "CARDS"],
         "DAY": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"],
         "TIME_OF_DAY": ["BREAKFAST", "LUNCH", "SNACK", "DINNER"],
-		"SAFE_IMAGES": ["asr_1", "ac_icon_large"]
-    }
+		"SAFE_IMAGES": ["asr_1", "ac_icon_large"],
+        "TEMPERATURE_UNIT": ["CELSIUS", "FAHRENHEIT", "KELVIN"]
+    },
+    "TemperatureUnits": ["FAHRENHEIT", "CELSIUS", "KELVIN"]
+
 }
