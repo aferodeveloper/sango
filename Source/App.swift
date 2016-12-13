@@ -653,12 +653,16 @@ class App
                         let lineValue = parseJavaConstant(String(index), value: itm)
                         if (lineValue.type == .Color) {
                             type = .Color
-                            ending = false
+                            break
+                        }
+                        if (lineValue.type == .CustomEnum) {
+                            type = .CustomEnum
+                            outputString.appendContentsOf("public static final \(lineValue.results.enumType.snakeCaseToCamelCase()) \(name)[] = {\n\t")
                             break
                         }
                     }
                 }
-                if (type != .Color) {
+                if (type != .Color && type != .CustomEnum) {
                     outputString.appendContentsOf("public static final \(type.rawValue) \(name)[] = {\n\t")
                 }
 
