@@ -655,9 +655,14 @@ class App
                             type = .Color
                             break
                         }
+                        if (lineValue.type == .CustomEnum) {
+                            type = .CustomEnum
+                            outputString.appendContentsOf("public static final \(lineValue.results.enumType.snakeCaseToCamelCase()) \(name)[] = {\n\t")
+                            break
+                        }
                     }
                 }
-                if (type != .Color) {
+                if (type != .Color && type != .CustomEnum) {
                     outputString.appendContentsOf("public static final \(type.rawValue) \(name)[] = {\n\t")
                 }
 
