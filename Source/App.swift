@@ -653,7 +653,6 @@ class App
                         let lineValue = parseJavaConstant(String(index), value: itm)
                         if (lineValue.type == .Color) {
                             type = .Color
-                            ending = false
                             break
                         }
                     }
