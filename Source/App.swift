@@ -487,7 +487,7 @@ class App
         case Color = "Color"
         case Int = "int"
         case String = "String"
-        case Float = "float"
+        case Float = "double"
         case Boolean = "Boolean"
         case CustomEnum = "CustomEnum"
     }
