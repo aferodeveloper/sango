@@ -408,7 +408,13 @@ class App
             outputStr.appendContentsOf("\tinit(locKey key: String, value: String) {\n")
             outputStr.appendContentsOf("\t\tlet v = NSBundle.mainBundle().localizedStringForKey(key, value: value, table: nil)\n")
             outputStr.appendContentsOf("\t\tself.init(v)\n")
+            outputStr.appendContentsOf("\t}\n\n")
+            
+            outputStr.appendContentsOf("\tinit(locKey key: String) {\n")
+            outputStr.appendContentsOf("\t\tlet v = NSBundle.mainBundle().localizedStringForKey(key, value: nil, table: nil)\n")
+            outputStr.appendContentsOf("\t\tself.init(v)\n")
             outputStr.appendContentsOf("\t}\n")
+            
             outputStr.appendContentsOf("}\n")
         }
         else if (type == .Java) {
