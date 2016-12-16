@@ -45,7 +45,7 @@ open class Shell
         return (output: output, status: task.terminationStatus)
     }
     
-    open static func gitInstalled() -> Bool
+    @discardableResult open static func gitInstalled() -> Bool
     {
         if (isGitInstalled == .unset) {
             let output = _shell(["which git"])
@@ -71,7 +71,7 @@ open class Shell
         return (output.status == 0)
     }
     
-    open static func gitDropChanges(_ path: String) -> Bool
+    @discardableResult open static func gitDropChanges(_ path: String) -> Bool
     {
         let output = _shell(["cd \(path)",
             "\(gitPath) stash -u", "\(gitPath) stash drop"])

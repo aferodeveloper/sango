@@ -218,9 +218,10 @@ class App
     }
     
     // Save image, tinted
-    func saveImage(_ image: NSImage, file: String) -> Bool {
+    @discardableResult func saveImage(_ image: NSImage, file: String) -> Bool {
         var tint:NSColor? = globalTint
-        
+        var result: Bool = false
+    
         if ((compileType == .java) && (globalAndroidTint != nil)) {
             tint = globalAndroidTint
         }
@@ -230,14 +231,19 @@ class App
         
         if (tint != nil) {
             let tintedImage = image.tint(globalTint!)
-            return tintedImage.saveTo(file)
+            result = tintedImage.saveTo(file)
         }
         else {
-            return image.saveTo(file)
+            result = image.saveTo(file)
         }
+        if (result == false) {
+            // an error was printed, just exit
+            exit(-1)
+        }
+        return true
     }
     
-    func saveString(_ data:String, file: String) -> Bool
+    @discardableResult func saveString(_ data:String, file: String) -> Bool
     {
         do {
             try data.write(toFile: file, atomically: true, encoding: String.Encoding.utf8)
@@ -1467,7 +1473,7 @@ class App
                     genString.append("\n}")
                 }
                 outputStr.append(genString + "\n")
-                saveString(outputStr, file: langOutputFile)
+                _ = saveString(outputStr, file: langOutputFile)
             }
             writeSangoExtras(type, filePath: langOutputFile.pathOnlyComponent())
             if (type == .java) {

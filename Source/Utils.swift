@@ -88,12 +88,12 @@ open class Utils
         return true
     }
     
-    open static func createFolderForFile(_ srcFile: String) -> Bool {
+    @discardableResult open static func createFolderForFile(_ srcFile: String) -> Bool {
         let destPath = (srcFile as NSString).deletingLastPathComponent
         return createFolder(destPath)
     }
     
-    open static func createFolder(_ src: String) -> Bool {
+    @discardableResult open static func createFolder(_ src: String) -> Bool {
         var ok = true
         do {
             try FileManager.default.createDirectory(atPath: src, withIntermediateDirectories: true, attributes: nil)
@@ -106,7 +106,7 @@ open class Utils
         return ok
     }
 
-    open static func deleteFolder(_ src: String) -> Bool {
+    @discardableResult open static func deleteFolder(_ src: String) -> Bool {
         var ok = true
         do {
             try FileManager.default.removeItem(atPath: src)
@@ -152,7 +152,7 @@ open class Utils
         }
     }
 
-    open static func deleteFile(_ src: String) -> Bool {
+    @discardableResult open static func deleteFile(_ src: String) -> Bool {
         var ok = true
         do {
             try FileManager.default.removeItem(atPath: src)

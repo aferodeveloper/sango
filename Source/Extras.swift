@@ -194,7 +194,7 @@ public extension NSImage
     }
 }
 
-public func + (left: [String: [String: Any]]?, right: [String: [String: Any]]) -> [String: [String: Any]]? {
+public func + (left: [String: [String: Any]]?, right: [String: [String: Any]]?) -> [String: [String: Any]]? {
 
     let localLeft: [String: [String: Any]] = left ?? [:]
     let localRight: [String: [String: Any]] = right ?? [:]
