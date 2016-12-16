@@ -89,6 +89,8 @@ let optAssetTemplates = "-asset_template"
 let optConfigTemplate = "-config_template"
 let optConfig = "-config"
 let optValidate = "-validate"
+let optValidateIos = "-validate_ios"
+let optValidateAndroid = "-validate_android"
 let optInput = "-input"
 let optInputs = "-inputs"
 let optInputAssets = "-input_assets"
@@ -102,6 +104,42 @@ let optHelpKeys = "-help_keys"
 let optVersion = "-version"
 let optLocaleOnly = "-locale_only"
 let optSwift3 = "-swift3"
+
+
+// The Sango additions for swift are different for swift3 and swift 2.3
+
+let swiftCommon =
+"import UIKit\n" +
+"public struct Sango {\n" +
+"    public static let Version = \"\(App.copyrightNotice)\"\n" +
+"}\n"
+
+let swift23Additions =
+"extension String {\n" +
+"    init(locKey key: String, value: String) {\n" +
+"        let v = NSBundle.mainBundle().localizedStringForKey(key, value: value, table: nil)\n" +
+"        self.init(v)\n" +
+"    }\n" +
+"\n" +
+"    init(locKey key: String) {\n" +
+"        let v = NSBundle.mainBundle().localizedStringForKey(key, value: nil, table: nil)\n" +
+"        self.init(v)\n" +
+"    }\n" +
+"}\n"
+
+let swift3Additions =
+"extension String {\n" +
+"    init(locKey key: String, value: String) {\n" +
+"        self = Bundle.main.localizedString(forKey: key, value: value, table: nil)\n" +
+"    }\n" +
+"\n" +
+"    init(locKey key: String) {\n" +
+"        self = Bundle.main.localizedString(forKey: key, value: nil, table: nil)\n" +
+"    }\n" +
+"}\n"
+
+
+
 
 class App
 {
@@ -140,6 +178,8 @@ class App
             optConfigTemplate: ["[file.json]", "creates a json template, specifically for the app"],
             optConfig: ["[file.json]", "use config file for options, instead of command line"],
             optValidate: ["[asset_file.json, ...]", "validates asset JSON file(s), requires \(optInputAssets)"],
+            optValidateIos: ["[asset_file.json, ...]", "validates iOS asset JSON file(s), requires \(optInputAssets)"],
+            optValidateAndroid: ["[asset_file.json, ...]", "validates Android asset JSON file(s), requires \(optInputAssets)"],            
             optInput: ["[file.json]", "asset json file"],
             optInputs: ["[file1.json file2.json ...]", "merges asset files and process"],
             optInputAssets: ["[folder]", "asset source folder (read)"],
@@ -399,7 +439,13 @@ class App
     func writeSangoExtras(_ type: LangType, filePath: String) -> Void {
         var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
         if (type == .swift) {
-            outputStr.append("import UIKit\n")
+            outputStr.append(swiftCommon)
+            if (self.swift3Output) {
+                outputStr.append(swift3Additions)
+            }
+            else {
+                outputStr.append(swift23Additions)
+            }
         }
         else if (type == .java) {
             if (package.isEmpty) {
@@ -408,25 +454,6 @@ class App
             else {
                 outputStr.append("package \(package);\n")
             }
-        }
-        if (type == .swift) {
-            outputStr.append("public struct Sango {\n")
-            outputStr.append("\tpublic static let Version = \"\(App.copyrightNotice)\"\n")
-            outputStr.append("}\n\n")
-            outputStr.append("extension String {\n")
-            outputStr.append("\tinit(locKey key: String, value: String) {\n")
-            outputStr.append("\t\tlet v = NSBundle.mainBundle().localizedStringForKey(key, value: value, table: nil)\n")
-            outputStr.append("\t\tself.init(v)\n")
-            outputStr.append("\t}\n\n")
-            
-            outputStr.append("\tinit(locKey key: String) {\n")
-            outputStr.append("\t\tlet v = NSBundle.mainBundle().localizedStringForKey(key, value: nil, table: nil)\n")
-            outputStr.append("\t\tself.init(v)\n")
-            outputStr.append("\t}\n")
-            
-            outputStr.append("}\n")
-        }
-        else if (type == .java) {
             outputStr.append("public final class Sango {\n")
             outputStr.append("\tpublic static final String VERSION = \"\(App.copyrightNotice)\";\n")
             outputStr.append("}\n")
@@ -1580,16 +1607,15 @@ class App
         
         self.localeOnly = findOption(args, option: optLocaleOnly)
         self.swift3Output = findOption(args, option: optSwift3)
-        self.swift3Output = true
         var validateInputs:[String]? = nil
         var validateLang:LangType = .unset
         validateInputs = getOptions(args, option: optValidate)
         if (validateInputs == nil) {
-            validateInputs = getOptions(args, option: "-validate_ios")
+            validateInputs = getOptions(args, option: optValidateIos)
             validateLang = .swift
         }
         if (validateInputs == nil) {
-            validateInputs = getOptions(args, option: "-validate_android")
+            validateInputs = getOptions(args, option: optValidateAndroid)
             validateLang = .java
         }
         if (validateInputs != nil) {
