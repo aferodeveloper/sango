@@ -30,8 +30,8 @@ Basic data spec:
 		"assets/GT-Walsheim-Black-Oblique.ttf",
 		"assets/GT-Walsheim-Black.ttf"
 	],
-    "appIconAndroid" : "assets/app_icons/android/release_app_icon.png",
-    "appIconIos" : "assets/app_icons/ios/release_app_icon.png",
+	"appIconAndroid": "assets/app_icons/android/release_app_icon.png",
+	"appIconIos": "assets/app_icons/ios/release_app_icon.png",
 	"imagesIos": [
 		"assets/account_avatar2.png"
 	],
@@ -42,18 +42,11 @@ Basic data spec:
 		"assets/account_avatar1.png"
 	],
 	"images": [
-		"assets/ASR-1/asr_1@2x.png",
-		"assets/ASR-1/asr_1@3x.png",
-		"assets/splash_logo/splash_logo.png",
-		"assets/splash_logo/splash_logo@2x.png",
-		"assets/splash_logo/splash_logo@3x.png"
+		"assets/asr_1.png"
 	],
 	"copied": [
 		"assets/file_data1",
 		"assets/file_data2"
-	],
-	"images": [
-		"assets/asr_1.png"
 	],
 	"imagesScaled": [
 		"assets/vector_avatar.pdf",
@@ -74,25 +67,39 @@ Basic data spec:
 		"DEBUG_ENABLED": true,
 		"SHOW_UI": false
 	},
-	"Empty": [""],
+	"Empty": [
+		""
+	],
 	"Hello": [
 		"one",
 		"two",
 		"three"
 	],
 	"FloatyNumbers": [
-		1, 2, 3.15, 23, 415.03
+		1,
+		2,
+		3.15,
+		23,
+		415.03
 	],
 	"InteryNumbers": [
-		5, 23, 54, 120, 100
+		5,
+		23,
+		54,
+		120,
+		100
 	],
-	"RainbowColors" :[
-		"#535557", "#9D9C98", "#F2845B", "#F67D4B", "#EDAC93"
+	"RainbowColors": [
+		"#535557",
+		"#9D9C98",
+		"#F2845B",
+		"#F67D4B",
+		"#EDAC93"
 	],
 	"Service": {
-        "TYPE": "OAUTH2",
-        "BROWSE_TYPE": "CARDS",
-        "MENU_VIEW": "SETTINGS",
+		"TYPE": "OAUTH2",
+		"BROWSE_TYPE": "CARDS",
+		"MENU_VIEW": "SETTINGS",
 		"BASE_URL_PROD_USW2": "api.afero.io",
 		"BASE_URL_STAGE": "api.dev.afero.io"
 	},
@@ -118,14 +125,39 @@ Basic data spec:
 		"ORANGE01": "#EDAC93",
 		"WHITE01": "#FFFFFF"
 	},
-    "enums": {
-        "AUTH_TYPE": ["AFERO", "OAUTH2"],
-        "MENU_VIEW_TYPE": ["CLASSIC", "SETTINGS"],
-        "DEVICE_BROWSER_TYPE": ["HEX", "CARDS"],
-        "DAY": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"],
-        "TIME_OF_DAY": ["BREAKFAST", "LUNCH", "SNACK", "DINNER"],
-		"SAFE_IMAGES": ["asr_1", "ac_icon_large"]
-    }
+	"enums": {
+		"AUTH_TYPE": [
+			"AFERO",
+			"OAUTH2"
+		],
+		"MENU_VIEW_TYPE": [
+			"CLASSIC",
+			"SETTINGS"
+		],
+		"DEVICE_BROWSER_TYPE": [
+			"HEX",
+			"CARDS"
+		],
+		"DAY": [
+			"MONDAY",
+			"TUESDAY",
+			"WEDNESDAY",
+			"THURSDAY",
+			"FRIDAY",
+			"SATURDAY",
+			"SUNDAY"
+		],
+		"TIME_OF_DAY": [
+			"BREAKFAST",
+			"LUNCH",
+			"SNACK",
+			"DINNER"
+		],
+		"SAFE_IMAGES": [
+			"asr_1",
+			"ac_icon_large"
+		]
+	}
 }
 ```
 
@@ -254,7 +286,7 @@ public final class Constants {
 	public static final String Empty[] = {
 		""
 	};
-	public static final float FloatyNumbers[] = {
+	public static final double FloatyNumbers[] = {
 		1,
 		2,
 		3.15,
@@ -287,7 +319,7 @@ public final class Constants {
 		public static final String DEFAULT_UI_FONT = "GT-Walsheim-Black.ttf";
 		public static final String PREF_ACCOUNT_NAME = "pref_account_display_name";
 		public static final String PREF_SERVICE = "pref_service_name";
-		public static final float SCALE = 1.5;
+		public static final double SCALE = 1.5;
 		public static final Boolean SHOW_UI = false;
 	}
 	public enum AuthType {
@@ -315,35 +347,35 @@ And for Android a colors.xml file is generated:
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generated with Sango, by Afero.io -->
 <resources>
-	<color name="colors_gray01">#E1DFDC</color>
-	<color name="colors_gray01_50">#F2EDEB</color>
-	<color name="colors_gray02">#BFBCB7</color>
-	<color name="colors_gray02_50">#D0CBC7</color>
-	<color name="colors_gray03">#9D9C98</color>
-	<color name="colors_gray03_50">#A4A099</color>
-	<color name="colors_gray04">#85878A</color>
-	<color name="colors_gray04_50">#7E7B77</color>
-	<color name="colors_gray05">#717375</color>
-	<color name="colors_gray06">#616264</color>
-	<color name="colors_gray07">#535557</color>
-	<color name="colors_orange01">#EDAC93</color>
-	<color name="colors_orange01_50">#F67D4B</color>
-	<color name="colors_orange02">#EBA485</color>
-	<color name="colors_orange03">#EF9471</color>
-	<color name="colors_orange04">#F2845B</color>
-	<color name="colors_orange05">#F47344</color>
-	<color name="colors_orange06">#F67D4B</color>
-	<color name="colors_white01">#FFFFFF</color>
-	<color name="colors_white01_50">#FFFFFF</color>
-	<color name="rainbowcolors_0">#535557</color>
-	<color name="rainbowcolors_1">#9D9C98</color>
-	<color name="rainbowcolors_2">#F2845B</color>
-	<color name="rainbowcolors_3">#F67D4B</color>
-	<color name="rainbowcolors_4">#EDAC93</color>
-	<color name="settings_ui_base_color">#FF43A3C7</color>
-	<color name="settings_ui_base_color2">#1443A3C7</color>
-	<color name="settings_ui_secondary_color">#431298</color>
-	<color name="settings_ui_secondary_color_low">#80431298</color>
+	<color name="colors_gray01">Optional("#E1DFDC")</color>
+	<color name="colors_gray01_50">Optional("#F2EDEB")</color>
+	<color name="colors_gray02">Optional("#BFBCB7")</color>
+	<color name="colors_gray02_50">Optional("#D0CBC7")</color>
+	<color name="colors_gray03">Optional("#9D9C98")</color>
+	<color name="colors_gray03_50">Optional("#A4A099")</color>
+	<color name="colors_gray04">Optional("#85878A")</color>
+	<color name="colors_gray04_50">Optional("#7E7B77")</color>
+	<color name="colors_gray05">Optional("#717375")</color>
+	<color name="colors_gray06">Optional("#616264")</color>
+	<color name="colors_gray07">Optional("#535557")</color>
+	<color name="colors_orange01">Optional("#EDAC93")</color>
+	<color name="colors_orange01_50">Optional("#F67D4B")</color>
+	<color name="colors_orange02">Optional("#EBA485")</color>
+	<color name="colors_orange03">Optional("#EF9471")</color>
+	<color name="colors_orange04">Optional("#F2845B")</color>
+	<color name="colors_orange05">Optional("#F47344")</color>
+	<color name="colors_orange06">Optional("#F67D4B")</color>
+	<color name="colors_white01">Optional("#FFFFFF")</color>
+	<color name="colors_white01_50">Optional("#FFFFFF")</color>
+	<color name="rainbowcolors_0">Optional("#535557")</color>
+	<color name="rainbowcolors_1">Optional("#9D9C98")</color>
+	<color name="rainbowcolors_2">Optional("#F2845B")</color>
+	<color name="rainbowcolors_3">Optional("#F67D4B")</color>
+	<color name="rainbowcolors_4">Optional("#EDAC93")</color>
+	<color name="settings_ui_base_color">Optional("#FF43A3C7")</color>
+	<color name="settings_ui_base_color2">Optional("#1443A3C7")</color>
+	<color name="settings_ui_secondary_color">Optional("#431298")</color>
+	<color name="settings_ui_secondary_color_low">Optional("#80431298")</color>
 </resources>
 ```
 
@@ -387,7 +419,7 @@ swift                   dictionary. keys are base:class name
 ```
 A complete example is located in this depot at:
 ```bash
-cd simple_example
+cd test_example
 $ ls
 Makefile
 config_android.json
@@ -395,7 +427,7 @@ config_ios.json
 simple
 
 $ make
-Example to build sango data for iOS and Android
+Example to build sango data for iOS and Android, used for testing.
  build_android
  build_ios
  build_both
