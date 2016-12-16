@@ -101,6 +101,7 @@ let optVerbose = "-verbose"
 let optHelpKeys = "-help_keys"
 let optVersion = "-version"
 let optLocaleOnly = "-locale_only"
+let optSwift3 = "-swift3"
 
 class App
 {
@@ -124,6 +125,8 @@ class App
     var globalIosTint:NSColor? = nil
     var globalAndroidTint:NSColor? = nil
     var gitEnabled = false
+
+    var swift3Output = false
 
     // because Android colors are stored as an xml file, we collect them when walking through the constants,
     // and write them out last
@@ -1568,7 +1571,8 @@ class App
         }
         
         self.localeOnly = findOption(args, option: optLocaleOnly)
-
+        self.swift3Output = findOption(args, option: optSwift3)
+        self.swift3Output = true
         var validateInputs:[String]? = nil
         var validateLang:LangType = .unset
         validateInputs = getOptions(args, option: optValidate)
