@@ -16,12 +16,11 @@ public extension NSImage
      */
     public static func loadFrom(_ file: String) -> NSImage! {
         // Loading directly with NSImage, doesn't take in account of scale
-        let imageReps = NSBitmapImageRep.imageReps(withContentsOfFile: file)
-        if (imageReps != nil) {
+        if let imageReps = NSBitmapImageRep.imageReps(withContentsOfFile: file) {
             var width = 0
             var height = 0
             
-            for rep in imageReps! {
+            for rep in imageReps {
                 if (rep.pixelsWide > width) {
                     width = rep.pixelsWide
                 }
@@ -31,7 +30,7 @@ public extension NSImage
             }
             let newImage = NSImage(size: NSMakeSize(CGFloat(width), CGFloat(height)))
             newImage.setName(file.lastPathComponent())
-            newImage.addRepresentations(imageReps!)
+            newImage.addRepresentations(imageReps)
             return newImage
         }
         return nil
@@ -84,10 +83,9 @@ public extension NSImage
         NSGraphicsContext.restoreGraphicsState()
         
         var ok = false
-        let imageData = bitmap.representation(using: NSBitmapImageFileType.PNG,
-                                                       properties: [NSImageCompressionFactor: 1.0])
-        if (imageData != nil) {
-            ok = (try? imageData!.write(to: URL(fileURLWithPath: (file as NSString).standardizingPath), options: [.atomic])) != nil
+        if let imageData = bitmap.representation(using: NSBitmapImageFileType.PNG,
+                                                 properties: [NSImageCompressionFactor: 1.0]) {
+            ok = (try? imageData.write(to: URL(fileURLWithPath: (file as NSString).standardizingPath), options: [.atomic])) != nil
         }
         if (ok == false) {
             Utils.error("Error: Can't save image to \(file)")
