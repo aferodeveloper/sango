@@ -518,9 +518,10 @@ class App
         
         if (enums.valid && (key == enums.origType)) {
             let lineValue = "\(enums.enumType).\(String(describing: value))".snakeCaseToCamelCase()
-            outputString.append(lineValue + "\n");
+            outputString.append(lineValue)
         }
         else {
+            //if (value is Bool) {
             if ((value as AnyObject).className == "__NSCFBoolean") {
                 outputString.append((value as AnyObject).boolValue.description)
             }
@@ -563,6 +564,7 @@ class App
             type = ValueType.CustomEnum
         }
         else {
+            //if (value is Bool) {
             if ((value as AnyObject).className == "__NSCFBoolean") {
                 type = ValueType.Boolean
                 outputString.append((value as AnyObject).boolValue.description)
