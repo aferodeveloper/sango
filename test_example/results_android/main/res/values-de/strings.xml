@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated with Sango, by Afero.io -->
+<resources>
+	<string name="app_name">Afero</string>
+	<string name="button_title_cancel">Abbrechen</string>
+	<string name="button_title_cancel_all_caps">ABBRECHEN</string>
+	<string name="button_title_ok">O</string>
+	<string name="device_offline">Gerät offline</string>
+	<string name="dialog_message_remove_device">Sind Sie sicher, dass Sie dieses Gerät von Ihrem Konto zu entfernen?</string>
+	<string name="dialog_title_remove_device">Gerät Entfernen</string>
+	<string name="dialog_title_schedule_time">Zeit einstellen</string>
+	<string name="no_network_warning">Konnte nicht kontaktieren Afero. Bitte überprüfen Sie die Verbindung.</string>
+	<string name="primary_account_name">Hauptkonto</string>
+</resources>

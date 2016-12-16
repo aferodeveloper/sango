@@ -3,8 +3,8 @@
 	"inputs": [
 		"base.json"
 	],
-	"out_source": "temp_ios/Constants.swift",
-	"out_assets": "temp_ios/Resources",
+	"out_source": "results_ios/Constants.swift",
+	"out_assets": "results_ios/Resources",
 	"type": "swift",
 	"input_assets_tag": "~"
 }

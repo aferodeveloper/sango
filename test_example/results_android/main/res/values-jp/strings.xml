@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated with Sango, by Afero.io -->
+<resources>
+	<string name="app_name">Afero</string>
+	<string name="button_title_cancel">キャンセル</string>
+	<string name="button_title_cancel_all_caps">キャンセル</string>
+	<string name="button_title_ok">良し</string>
+	<string name="device_offline">デバイスのオフライン</string>
+	<string name="dialog_message_remove_device">あなたは、あなたのアカウントからこのデバイスを削除してもよろしいですか？</string>
+	<string name="dialog_title_remove_device">デバイスを削除しますか？</string>
+	<string name="dialog_title_schedule_time">時刻の設定</string>
+	<string name="no_network_warning">Aferoにご連絡できませんでした。あなたの接続を確認してください。</string>
+	<string name="primary_account_name">主要口座</string>
+</resources>

@@ -18,8 +18,8 @@
 		"assets/GT-Walsheim-Black-Oblique.ttf",
 		"assets/GT-Walsheim-Black.ttf"
 	],
-    "appIconAndroid" : "assets/app_icons/android/release_app_icon.png",
-    "appIconIos" : "assets/app_icons/ios/release_app_icon.png",
+	"appIconAndroid": "assets/app_icons/android/release_app_icon.png",
+	"appIconIos": "assets/app_icons/ios/release_app_icon.png",
 	"imagesIos": [
 		"assets/account_avatar2.png"
 	],
@@ -30,18 +30,11 @@
 		"assets/account_avatar1.png"
 	],
 	"images": [
-		"assets/ASR-1/asr_1@2x.png",
-		"assets/ASR-1/asr_1@3x.png",
-		"assets/splash_logo/splash_logo.png",
-		"assets/splash_logo/splash_logo@2x.png",
-		"assets/splash_logo/splash_logo@3x.png"
+		"assets/asr_1.png"
 	],
 	"copied": [
 		"assets/file_data1",
 		"assets/file_data2"
-	],
-	"images": [
-		"assets/asr_1.png"
 	],
 	"imagesScaled": [
 		"assets/vector_avatar.pdf",
@@ -62,25 +55,39 @@
 		"DEBUG_ENABLED": true,
 		"SHOW_UI": false
 	},
-	"Empty": [""],
+	"Empty": [
+		""
+	],
 	"Hello": [
 		"one",
 		"two",
 		"three"
 	],
 	"FloatyNumbers": [
-		1, 2, 3.15, 23, 415.03
+		1,
+		2,
+		3.15,
+		23,
+		415.03
 	],
 	"InteryNumbers": [
-		5, 23, 54, 120, 100
+		5,
+		23,
+		54,
+		120,
+		100
 	],
-	"RainbowColors" :[
-		"#535557", "#9D9C98", "#F2845B", "#F67D4B", "#EDAC93"
+	"RainbowColors": [
+		"#535557",
+		"#9D9C98",
+		"#F2845B",
+		"#F67D4B",
+		"#EDAC93"
 	],
 	"Service": {
-        "TYPE": "OAUTH2",
-        "BROWSE_TYPE": "CARDS",
-        "MENU_VIEW": "SETTINGS",
+		"TYPE": "OAUTH2",
+		"BROWSE_TYPE": "CARDS",
+		"MENU_VIEW": "SETTINGS",
 		"BASE_URL_PROD_USW2": "api.afero.io",
 		"BASE_URL_STAGE": "api.dev.afero.io"
 	},
@@ -106,12 +113,38 @@
 		"ORANGE01": "#EDAC93",
 		"WHITE01": "#FFFFFF"
 	},
-    "enums": {
-        "AUTH_TYPE": ["AFERO", "OAUTH2"],
-        "MENU_VIEW_TYPE": ["CLASSIC", "SETTINGS"],
-        "DEVICE_BROWSER_TYPE": ["HEX", "CARDS"],
-        "DAY": ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"],
-        "TIME_OF_DAY": ["BREAKFAST", "LUNCH", "SNACK", "DINNER"],
-		"SAFE_IMAGES": ["asr_1", "ac_icon_large"]
-    }
+	"enums": {
+		"AUTH_TYPE": [
+			"AFERO",
+			"OAUTH2"
+		],
+		"MENU_VIEW_TYPE": [
+			"CLASSIC",
+			"SETTINGS"
+		],
+		"DEVICE_BROWSER_TYPE": [
+			"HEX",
+			"CARDS"
+		],
+		"DAY": [
+			"MONDAY",
+			"TUESDAY",
+			"WEDNESDAY",
+			"THURSDAY",
+			"FRIDAY",
+			"SATURDAY",
+			"SUNDAY"
+		],
+		"TIME_OF_DAY": [
+			"BREAKFAST",
+			"LUNCH",
+			"SNACK",
+			"DINNER"
+		],
+		"SAFE_IMAGES": [
+			"asr_1",
+			"ac_icon_large"
+		]
+	}
 }
+

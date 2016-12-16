@@ -1,0 +1,11 @@
+/* Generated with Sango, by Afero.io */
+"app_name" = "Afero";
+"button_title_cancel" = "Cancel";
+"button_title_cancel_all_caps" = "CANCEL";
+"button_title_ok" = "OK";
+"device_offline" = "Device Offline";
+"dialog_message_remove_device" = "Are you sure you want to remove this device from your account?";
+"dialog_title_remove_device" = "Remove Device?";
+"dialog_title_schedule_time" = "Set Time";
+"no_network_warning" = "Couldn’t contact Afero.\nPlease check your connection.";
+"primary_account_name" = "Primary Account";
