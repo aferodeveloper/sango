@@ -41,6 +41,11 @@ public final class Constants {
 		public static final double SCALE = 1.5;
 		public static final Boolean SHOW_UI = false;
 	}
+	public static final TemperatureUnit TemperatureUnits[] = {
+		TemperatureUnit.FAHRENHEIT,
+		TemperatureUnit.CELSIUS,
+		TemperatureUnit.KELVIN
+	};
 	public enum AuthType {
 		AFERO, OAUTH2
 	}
@@ -55,6 +60,9 @@ public final class Constants {
 	}
 	public enum SafeImages {
 		ASR_1, AC_ICON_LARGE
+	}
+	public enum TemperatureUnit {
+		CELSIUS, FAHRENHEIT, KELVIN
 	}
 	public enum TimeOfDay {
 		BREAKFAST, LUNCH, SNACK, DINNER

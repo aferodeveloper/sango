@@ -74,6 +74,11 @@ public struct Constants {
 		static let UiSecondaryColor = UIColor(red: 0.263, green: 0.071, blue: 0.596, alpha: 1.0) /* #431298 */
 		static let UiSecondaryColorLow = UIColor(red: 0.263, green: 0.071, blue: 0.596, alpha: 0.502) /* #80431298 */
 	}
+	public static let TemperatureUnits = [
+			TemperatureUnit.Fahrenheit,
+			TemperatureUnit.Celsius,
+			TemperatureUnit.Kelvin
+		]
 	public enum AuthType {
 		case Afero
 		case Oauth2
@@ -98,6 +103,11 @@ public struct Constants {
 	public enum SafeImages {
 		case Asr_1
 		case AcIconLarge
+	}
+	public enum TemperatureUnit {
+		case Celsius
+		case Fahrenheit
+		case Kelvin
 	}
 	public enum TimeOfDay {
 		case Breakfast

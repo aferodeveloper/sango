@@ -15,16 +15,16 @@ clean:
 
 build_android:
 	@rm -rdf $(RESULTS_ANDROID)
-	sango -config config_android.json -verbose
+	$(SANGO) -config config_android.json -verbose
 	
 build_ios:
 	@rm -rdf $(RESULTS_IOS)
-	sango -config config_ios.json -verbose
-
-build_both: clean
-	set -e
-	$(SANGO) -config config_android.json -verbose
 	$(SANGO) -config config_ios.json -verbose
+
+build_both:
+	set -e
+	@$(MAKE) build_android
+	@$(MAKE) build_ios
 
 validate:
 	$(SANGO) -verbose -input_assets simple -validate simple/*.json
