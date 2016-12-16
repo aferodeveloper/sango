@@ -64,21 +64,21 @@ let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppI
                                     keyGlobalIosTint, keyGlobalAndroidTint]
 
 enum LangType {
-    case Unset
-    case Java
-    case Swift
+    case unset
+    case java
+    case swift
 }
 
 enum AssetType {
-    case Font
-    case Layout
-    case Image
-    case Raw
+    case font
+    case layout
+    case image
+    case raw
 }
 
 enum ScaleType {
-    case Up
-    case Down
+    case up
+    case down
 }
 
 let assetTagIgnore = "~"
@@ -117,7 +117,7 @@ class App
     var outputClassFile:String? = nil
     var assetTag:String? = nil
 
-    var compileType:LangType = .Unset
+    var compileType:LangType = .unset
     var localeOnly:Bool = false
 
     var globalTint:NSColor? = nil
@@ -127,9 +127,9 @@ class App
 
     // because Android colors are stored as an xml file, we collect them when walking through the constants,
     // and write them out last
-    var androidColors:[String:AnyObject] = [:]
+    var androidColors:[String:Any] = [:]
 
-    var enumsFound: [String:AnyObject] = [:]
+    var enumsFound: [String:Any] = [:]
 
     func usage() -> Void {
         let details = [
@@ -163,11 +163,11 @@ class App
         
         print(App.copyrightNotice)
         print("Usage:")
-        for (key, value) in Array(details).sort({$0.0 < $1.0}) {
+        for (key, value) in Array(details).sorted(by: {$0.0 < $1.0}) {
             let item1 = value[0]
             let item2 = value[1]
-            let output = key.stringByPaddingToLength(keyLength + 3, withString: " ", startingAtIndex: 0) +
-                        item1.stringByPaddingToLength(parmLength + 3, withString: " ", startingAtIndex: 0) +
+            let output = key.padding(toLength: keyLength + 3, withPad: " ", startingAt: 0) +
+                        item1.padding(toLength: parmLength + 3, withPad: " ", startingAt: 0) +
                         "  " + item2
             print(output)
         }
@@ -208,20 +208,20 @@ class App
             }
         }
         print("JSON keys and their meaning:")
-        for (key, value) in Array(details).sort({$0.0 < $1.0}) {
-            let keyPad = key.stringByPaddingToLength(keyLength + 3, withString: " ", startingAtIndex: 0)
+        for (key, value) in Array(details).sorted(by: {$0.0 < $1.0}) {
+            let keyPad = key.padding(toLength: keyLength + 3, withPad: " ", startingAt: 0)
             print(keyPad + value)
         }
     }
     
     // Save image, tinted
-    func saveImage(image: NSImage, file: String) -> Bool {
+    func saveImage(_ image: NSImage, file: String) -> Bool {
         var tint:NSColor? = globalTint
         
-        if ((compileType == .Java) && (globalAndroidTint != nil)) {
+        if ((compileType == .java) && (globalAndroidTint != nil)) {
             tint = globalAndroidTint
         }
-        else if ((compileType == .Swift) && (globalIosTint != nil)) {
+        else if ((compileType == .swift) && (globalIosTint != nil)) {
             tint = globalIosTint
         }
         
@@ -234,10 +234,10 @@ class App
         }
     }
     
-    func saveString(data:String, file: String) -> Bool
+    func saveString(_ data:String, file: String) -> Bool
     {
         do {
-            try data.writeToFile(file, atomically: true, encoding: NSUTF8StringEncoding)
+            try data.write(toFile: file, atomically: true, encoding: String.Encoding.utf8)
         }
         catch {
             Utils.error("Error: writing to \(file)")
@@ -246,22 +246,22 @@ class App
         return true
     }
     
-    func writeImageStringArray(stringArray: Dictionary<String, AnyObject>, type: LangType) -> String {
+    func writeImageStringArray(_ stringArray: Dictionary<String, Any>, type: LangType) -> String {
         var outputString = "\n"
-        if (type == .Swift) {
+        if (type == .swift) {
             // public static let UiSecondaryColorTinted = ["account_avatar1", "account_avatar2"]
-            for (key, value) in Array(stringArray).sort({$0.0 < $1.0}) {
-                outputString.appendContentsOf("\tpublic static let \(key) = [\"")
-                let strValue = String(value)
-                outputString.appendContentsOf(strValue + "\"]\n")
+            for (key, value) in Array(stringArray).sorted(by: {$0.0 < $1.0}) {
+                outputString.append("\tpublic static let \(key) = [\"")
+                let strValue = String(describing: value)
+                outputString.append(strValue + "\"]\n")
             }
         }
-        else if (type == .Java) {
+        else if (type == .java) {
             // public static final String[] UI_SECONDARY_COLOR_TINTED = {"account_avatar1", "account_avatar2"};
-            for (key, value) in Array(stringArray).sort({$0.0 < $1.0}) {
-                outputString.appendContentsOf("\tpublic static final String[] \(key) = {\"")
-                let strValue = String(value)
-                outputString.appendContentsOf(strValue + "\"};\n")
+            for (key, value) in Array(stringArray).sorted(by: {$0.0 < $1.0}) {
+                outputString.append("\tpublic static final String[] \(key) = {\"")
+                let strValue = String(describing: value)
+                outputString.append(strValue + "\"};\n")
             }
         }
         else {
@@ -271,7 +271,7 @@ class App
         return outputString
     }
 
-    func parseColor(color: String) -> (r:Double, g:Double, b:Double, a:Double, s:Int,
+    func parseColor(_ color: String) -> (r:Double, g:Double, b:Double, a:Double, s:Int,
                                             rgb:UInt32, hexRgb:String)?
     {
         var red:Double = 0.0
@@ -282,7 +282,7 @@ class App
         var isColor = false
         var size = 0
         var hexRgb = ""
-        let parts = color.componentsSeparatedByString(",")
+        let parts = color.components(separatedBy: ",")
         if (parts.count == 3 || parts.count == 4) {
             // color
             red = Double(parts[0])! / 255.0
@@ -308,10 +308,10 @@ class App
             }
         }
         else if (color.hasPrefix("#")) {
-            var hexStr = color.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet() as NSCharacterSet).uppercaseString
-            hexStr = hexStr.substringFromIndex(hexStr.startIndex.advancedBy(1))
+            var hexStr = color.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+            hexStr = hexStr.substring(from: hexStr.characters.index(hexStr.startIndex, offsetBy: 1))
             
-            NSScanner(string: hexStr).scanHexInt(&rgbValue)
+            Scanner(string: hexStr).scanHexInt32(&rgbValue)
             red = 1
             green = 1
             blue = 1
@@ -350,34 +350,34 @@ class App
         return nil
     }
     
-    func writeEnums(enums: Dictionary<String, AnyObject>, type: LangType) -> String {
+    func writeEnums(_ enums: Dictionary<String, Any>, type: LangType) -> String {
         var outputString = "\n"
-        let sorted = Array(enums).sort({$0.0 < $1.0})
-        if (type == .Swift) {
+        let sorted = Array(enums).sorted(by: {$0.0 < $1.0})
+        if (type == .swift) {
             for (key, value) in sorted {
                 let list:[String] = value as! [String]
-                outputString.appendContentsOf("public enum \(key.snakeCaseToCamelCase()) {\n")
+                outputString.append("public enum \(key.snakeCaseToCamelCase()) {\n")
                 for itm in list {
-                    outputString.appendContentsOf("\tcase \(itm.snakeCaseToCamelCase())\n")
+                    outputString.append("\tcase \(itm.snakeCaseToCamelCase())\n")
                 }
-                outputString.appendContentsOf("}\n")
+                outputString.append("}\n")
             }
         }
-        else if (type == .Java) {
+        else if (type == .java) {
             for (key, value) in sorted {
                 let list:[String] = value as! [String]
-                outputString.appendContentsOf("public enum \(key.snakeCaseToCamelCase()) {\n\t")
+                outputString.append("public enum \(key.snakeCaseToCamelCase()) {\n\t")
                 var firstComma = false
                 for itm in list {
                     if (firstComma) {
-                        outputString.appendContentsOf(", ")
+                        outputString.append(", ")
                     }
                     else {
                         firstComma = true
                     }
-                    outputString.appendContentsOf(itm.uppercaseString)
+                    outputString.append(itm.uppercased())
                 }
-                outputString.appendContentsOf("\n}\n")
+                outputString.append("\n}\n")
             }
         }
         else {
@@ -387,46 +387,46 @@ class App
         return outputString
     }
 
-    func writeSangoExtras(type: LangType, filePath: String) -> Void {
+    func writeSangoExtras(_ type: LangType, filePath: String) -> Void {
         var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
-        if (type == .Swift) {
-            outputStr.appendContentsOf("import UIKit\n")
+        if (type == .swift) {
+            outputStr.append("import UIKit\n")
         }
-        else if (type == .Java) {
+        else if (type == .java) {
             if (package.isEmpty) {
-                outputStr.appendContentsOf("package java.lang;\n")
+                outputStr.append("package java.lang;\n")
             }
             else {
-                outputStr.appendContentsOf("package \(package);\n")
+                outputStr.append("package \(package);\n")
             }
         }
-        if (type == .Swift) {
-            outputStr.appendContentsOf("public struct Sango {\n")
-            outputStr.appendContentsOf("\tpublic static let Version = \"\(App.copyrightNotice)\"\n")
-            outputStr.appendContentsOf("}\n\n")
-            outputStr.appendContentsOf("extension String {\n")
-            outputStr.appendContentsOf("\tinit(locKey key: String, value: String) {\n")
-            outputStr.appendContentsOf("\t\tlet v = NSBundle.mainBundle().localizedStringForKey(key, value: value, table: nil)\n")
-            outputStr.appendContentsOf("\t\tself.init(v)\n")
-            outputStr.appendContentsOf("\t}\n\n")
+        if (type == .swift) {
+            outputStr.append("public struct Sango {\n")
+            outputStr.append("\tpublic static let Version = \"\(App.copyrightNotice)\"\n")
+            outputStr.append("}\n\n")
+            outputStr.append("extension String {\n")
+            outputStr.append("\tinit(locKey key: String, value: String) {\n")
+            outputStr.append("\t\tlet v = NSBundle.mainBundle().localizedStringForKey(key, value: value, table: nil)\n")
+            outputStr.append("\t\tself.init(v)\n")
+            outputStr.append("\t}\n\n")
             
-            outputStr.appendContentsOf("\tinit(locKey key: String) {\n")
-            outputStr.appendContentsOf("\t\tlet v = NSBundle.mainBundle().localizedStringForKey(key, value: nil, table: nil)\n")
-            outputStr.appendContentsOf("\t\tself.init(v)\n")
-            outputStr.appendContentsOf("\t}\n")
+            outputStr.append("\tinit(locKey key: String) {\n")
+            outputStr.append("\t\tlet v = NSBundle.mainBundle().localizedStringForKey(key, value: nil, table: nil)\n")
+            outputStr.append("\t\tself.init(v)\n")
+            outputStr.append("\t}\n")
             
-            outputStr.appendContentsOf("}\n")
+            outputStr.append("}\n")
         }
-        else if (type == .Java) {
-            outputStr.appendContentsOf("public final class Sango {\n")
-            outputStr.appendContentsOf("\tpublic static final String VERSION = \"\(App.copyrightNotice)\";\n")
-            outputStr.appendContentsOf("}\n")
+        else if (type == .java) {
+            outputStr.append("public final class Sango {\n")
+            outputStr.append("\tpublic static final String VERSION = \"\(App.copyrightNotice)\";\n")
+            outputStr.append("}\n")
         }
         var sangoFile = filePath
-        if (type == .Swift) {
+        if (type == .swift) {
             sangoFile += "/Sango.swift"
         }
-        else if (type == .Java) {
+        else if (type == .java) {
             sangoFile += "/Sango.java"
         }
         saveString(outputStr, file: sangoFile)
@@ -436,10 +436,10 @@ class App
         if (androidColors.count > 0) {
             var destPath = outputAssetFolder! + "/res/values"
             Utils.createFolder(destPath)
-            destPath.appendContentsOf("/colors.xml")
+            destPath.append("/colors.xml")
             var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
-            outputStr.appendContentsOf("<resources>\n")
-            let sorted = androidColors.keys.sort()
+            outputStr.append("<resources>\n")
+            let sorted = androidColors.keys.sorted()
             for key in sorted {
                 let color = parseColor(androidColors[key] as! String)
                 if (color != nil) {
@@ -447,10 +447,10 @@ class App
                     // RGB
                     // ARGB
                     let hex = String(color!.hexRgb)
-                    outputStr.appendContentsOf("\t<color name=\"\(key)\">\(hex)</color>\n")
+                    outputStr.append("\t<color name=\"\(key)\">\(hex)</color>\n")
                 }
             }
-            outputStr.appendContentsOf("</resources>\n")
+            outputStr.append("</resources>\n")
             saveString(outputStr, file: destPath)
         }
     }
@@ -461,7 +461,7 @@ class App
         var enumType = ""
         var origType = ""
     }
-    func validateEnum(name: String, value: String) -> EnumResults {
+    func validateEnum(_ name: String, value: String) -> EnumResults {
         var results = EnumResults()
 
         let valueBeta = value.snakeCaseToCamelCase()
@@ -498,9 +498,9 @@ class App
         case CustomEnum = "CustomEnum"
     }
 
-    func parseSwiftConstant(key: String, value: AnyObject) -> String {
+    func parseSwiftConstant(_ key: String, value: Any) -> String {
         var outputString = ""
-        let strValue = String(value)
+        let strValue = String(describing: value)
 
         let enums = validateEnum(key, value: strValue)
         if (enums.error) {
@@ -508,40 +508,40 @@ class App
         }
         
         if (enums.valid && (key == enums.origType)) {
-            let lineValue = "\(enums.enumType).\(String(value))".snakeCaseToCamelCase()
-            outputString.appendContentsOf(lineValue + "\n");
+            let lineValue = "\(enums.enumType).\(String(describing: value))".snakeCaseToCamelCase()
+            outputString.append(lineValue + "\n");
         }
         else {
-            if (value.className == "__NSCFBoolean") {
-                outputString.appendContentsOf(value.boolValue.description)
+            if ((value as AnyObject).className == "__NSCFBoolean") {
+                outputString.append((value as AnyObject).boolValue.description)
             }
             else if (value is String) {
                 if (strValue.isInteger() == true) {
-                    outputString.appendContentsOf(String(value));
+                    outputString.append(String(describing: value));
                 }
                 else {
                     let color = parseColor(strValue)
                     if (color != nil) {
-                        let line = "UIColor(red: \(color!.r.roundTo3f), green: \(color!.g.roundTo3f), blue: \(color!.b.roundTo3f), alpha: \(color!.a.roundTo3f))"
-                        outputString.appendContentsOf(line + " /* \(value) */")
+                        let line = "UIColor(red: \(roundTo3f(value: color!.r)), green: \(roundTo3f(value: color!.g)), blue: \(roundTo3f(value: color!.b)), alpha: \(roundTo3f(value: color!.a)))"
+                        outputString.append(line + " /* \(value) */")
                     }
                     else {
-                        outputString.appendContentsOf("\"\(String(value))\"")
+                        outputString.append("\"\(String(describing: value))\"")
                     }
                 }
             }
             else {
-                outputString.appendContentsOf(strValue);
+                outputString.append(strValue);
             }
         }
 
         return outputString
     }
     
-    func parseJavaConstant(key: String, value: AnyObject) -> (type:ValueType, output:String, results:EnumResults) {
+    func parseJavaConstant(_ key: String, value: Any) -> (type:ValueType, output:String, results:EnumResults) {
         var outputString = ""
         var type = ValueType.Int
-        let strValue = String(value)
+        let strValue = String(describing: value)
 
         let enums = validateEnum(key, value: strValue)
         if (enums.error) {
@@ -550,21 +550,21 @@ class App
         
         if (enums.valid && (key == enums.origType)) {
             let lineValue = "\(enums.enumType.snakeCaseToCamelCase()).\(strValue)"
-            outputString.appendContentsOf(lineValue);
+            outputString.append(lineValue);
             type = ValueType.CustomEnum
         }
         else {
-            if (value.className == "__NSCFBoolean") {
+            if ((value as AnyObject).className == "__NSCFBoolean") {
                 type = ValueType.Boolean
-                outputString.appendContentsOf(value.boolValue.description)
+                outputString.append((value as AnyObject).boolValue.description)
             }
             else if (strValue.isFloat()) {
                 type = ValueType.Float
-                outputString.appendContentsOf(strValue)
+                outputString.append(strValue)
             }
             else if (value is String) {
                 if (strValue.isInteger() == true) {
-                    outputString.appendContentsOf(strValue)
+                    outputString.append(strValue)
                 }
                 else {
                     type = ValueType.String
@@ -575,7 +575,7 @@ class App
                     }
                     else {
                         let line = "\"" + strValue + "\""
-                        outputString.appendContentsOf(line)
+                        outputString.append(line)
                     }
                 }
             }
@@ -583,67 +583,67 @@ class App
                 if (strValue.isFloat()) {
                     type = .Float
                 }
-                outputString.appendContentsOf(strValue);
+                outputString.append(strValue);
             }
         }
         return (type:type, output:outputString, results:enums)
     }
 
-    func writeConstants(name: String, value: AnyObject, type: LangType) -> String {
+    func writeConstants(_ name: String, value: Any, type: LangType) -> String {
         var outputString = "\n"
-        if (type == .Swift) {
-            if let constantsDictionary = value as? Dictionary<String, AnyObject> {
-                outputString.appendContentsOf("public struct ")
-                outputString.appendContentsOf(name + " {\n")
-                for (key, value) in Array(constantsDictionary).sort({$0.0 < $1.0}) {
+        if (type == .swift) {
+            if let constantsDictionary = value as? Dictionary<String, Any> {
+                outputString.append("public struct ")
+                outputString.append(name + " {\n")
+                for (key, value) in Array(constantsDictionary).sorted(by: {$0.0 < $1.0}) {
                     let line = "\tstatic let " + key.snakeCaseToCamelCase() + " = "
-                    outputString.appendContentsOf(line)
+                    outputString.append(line)
                     let lineValue = parseSwiftConstant(key, value: value)
-                    outputString.appendContentsOf(lineValue + "\n");
+                    outputString.append(lineValue + "\n");
                 }
-                outputString.appendContentsOf("}")
+                outputString.append("}")
             }
-            else if let constantsArray = value as? Array<AnyObject> {
-                outputString.appendContentsOf("public static let \(name) = [\n\t\t")
+            else if let constantsArray = value as? Array<Any> {
+                outputString.append("public static let \(name) = [\n\t\t")
                 let lastItm = constantsArray.count - 1
-                for (index, itm) in constantsArray.enumerate() {
+                for (index, itm) in constantsArray.enumerated() {
                     let lineValue = parseSwiftConstant(String(index), value: itm)
-                    outputString.appendContentsOf(lineValue);
+                    outputString.append(lineValue);
                     if (index < lastItm) {
-                        outputString.appendContentsOf(",\n\t\t")
+                        outputString.append(",\n\t\t")
                     }
                 }
-                outputString.appendContentsOf("\n\t]");
+                outputString.append("\n\t]");
             }
         }
-        else if (type == .Java) {
+        else if (type == .java) {
             var skipClass = true
             var outputClassString = ""
             
-            if let constantsDictionary = value as? Dictionary<String, AnyObject> {
-                for (key, value) in Array(constantsDictionary).sort({$0.0 < $1.0}) {
-                    let strValue = String(value)
+            if let constantsDictionary = value as? Dictionary<String, Any> {
+                for (key, value) in Array(constantsDictionary).sorted(by: {$0.0 < $1.0}) {
+                    let strValue = String(describing: value)
                     let lineValue = parseJavaConstant(key, value: value)
                     if (lineValue.type == .Color) {
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(key)"
-                        androidColors[colorKey.lowercaseString] = strValue
+                        androidColors[colorKey.lowercased()] = strValue as Any?
                     }
                     else if (lineValue.type == .CustomEnum) {
                         let line = "\tpublic static final " + lineValue.results.enumType.snakeCaseToCamelCase() + " " +
-                            key.uppercaseString + " = \(lineValue.output);\n"
-                        outputClassString.appendContentsOf(line)
+                            key.uppercased() + " = \(lineValue.output);\n"
+                        outputClassString.append(line)
                         skipClass = false
                     }
                     else {
                         let line = "\tpublic static final " + lineValue.type.rawValue + " " +
-                                key.uppercaseString + " = \(lineValue.output);\n"
-                        outputClassString.appendContentsOf(line)
+                                key.uppercased() + " = \(lineValue.output);\n"
+                        outputClassString.append(line)
                         skipClass = false
                     }
                 }
             }
-            else if let constantsArray = value as? Array<AnyObject> {
+            else if let constantsArray = value as? Array<Any> {
                 let lastItm = constantsArray.count - 1
                 var ending = false
                 // ok we have an array of strings, int, floats, we have to figure out a type before hand for Java
@@ -655,7 +655,7 @@ class App
                     type = .Int
                 }
                 else {
-                    for (index, itm) in constantsArray.enumerate() {
+                    for (index, itm) in constantsArray.enumerated() {
                         let lineValue = parseJavaConstant(String(index), value: itm)
                         if (lineValue.type == .Color) {
                             type = .Color
@@ -663,40 +663,40 @@ class App
                         }
                         if (lineValue.type == .CustomEnum) {
                             type = .CustomEnum
-                            outputString.appendContentsOf("public static final \(lineValue.results.enumType.snakeCaseToCamelCase()) \(name)[] = {\n\t")
+                            outputString.append("public static final \(lineValue.results.enumType.snakeCaseToCamelCase()) \(name)[] = {\n\t")
                             break
                         }
                     }
                 }
                 if (type != .Color && type != .CustomEnum) {
-                    outputString.appendContentsOf("public static final \(type.rawValue) \(name)[] = {\n\t")
+                    outputString.append("public static final \(type.rawValue) \(name)[] = {\n\t")
                 }
 
-                for (index, itm) in constantsArray.enumerate() {
+                for (index, itm) in constantsArray.enumerated() {
                     let lineValue = parseJavaConstant(String(index), value: itm)
                     if (lineValue.type == .Color) {
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(index)"
-                        androidColors[colorKey.lowercaseString] = String(itm)
+                        androidColors[colorKey.lowercased()] = String(describing: itm)
                     }
                     else {
                         ending = true
-                        outputString.appendContentsOf(lineValue.output);
+                        outputString.append(lineValue.output);
                         if (index < lastItm) {
-                            outputString.appendContentsOf(",\n\t")
+                            outputString.append(",\n\t")
                         }
                     }
                 }
                 if (ending) {
-                    outputString.appendContentsOf("\n};");
+                    outputString.append("\n};");
                 }
             }
 
             if (skipClass == false) {
-                outputString.appendContentsOf("public static final class ")
-                outputString.appendContentsOf(name + " {\n")
-                outputString.appendContentsOf(outputClassString)
-                outputString.appendContentsOf("}")
+                outputString.append("public static final class ")
+                outputString.append(name + " {\n")
+                outputString.append(outputClassString)
+                outputString.append("}")
             }
         }
         else {
@@ -708,9 +708,9 @@ class App
 
     // http://petrnohejl.github.io/Android-Cheatsheet-For-Graphic-Designers/
     
-    func scaleAndCopyImages(files: [String], type: LangType, useRoot: Bool, scale: ScaleType) -> Void {
+    func scaleAndCopyImages(_ files: [String], type: LangType, useRoot: Bool, scale: ScaleType) -> Void {
         for file in files {
-            if (type == .Java) {
+            if (type == .java) {
                 if (file.isAndroidCompatible() == false) {
                     Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                     exit(-1)
@@ -724,7 +724,7 @@ class App
             else {
                 destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
             }
-            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
+            let destPath = (destFile as NSString).deletingLastPathComponent
             Utils.createFolder(destPath)
 
             let imageScale = NSImage.getScaleFrom(file)
@@ -735,7 +735,7 @@ class App
                 Utils.error("Error: missing file \(filePath)")
                 exit(-1)
             }
-            if (type == .Swift) {
+            if (type == .swift) {
                 let iosScales: [CGFloat:String] = [
                     100:   "@3x.png",
                     66.67: "@2x.png",
@@ -746,17 +746,22 @@ class App
                     200: "@2x.png",
                     100: ".png"
                 ]
-                let scales = (scale == .Down) ? iosScales : iosScalesUp
-                for (key, value) in Array(scales).sort({$0.0 < $1.0}) {
-                    let image = baseImage.scale(key)
-                    let imageFile = destPath + "/" + fileName + value
-                    Utils.debug("Image scale and copy \(filePath) -> \(imageFile)")
-                    if (saveImage(image, file: imageFile) == false) {
+                let scales = (scale == .down) ? iosScales : iosScalesUp
+                for (key, value) in Array(scales).sorted(by: {$0.0 < $1.0}) {
+                    if let image = baseImage?.scale(key) {
+                        let imageFile = destPath + "/" + fileName + value
+                        Utils.debug("Image scale and copy \(filePath) -> \(imageFile)")
+                        if (saveImage(image, file: imageFile) == false) {
+                            exit(-1)
+                        }
+                    }
+                    else {
+                        Utils.error("Error: Failed to scale \(filePath)")
                         exit(-1)
                     }
                 }
             }
-            else if (type == .Java) {
+            else if (type == .java) {
                 let androidScales: [CGFloat:String] = [
                     100:   "/res/drawable-xxhdpi/", // 3x
                     66.67: "/res/drawable-xhdpi/",  // 2x
@@ -769,16 +774,21 @@ class App
                     150:   "/res/drawable-hdpi/",   // 1.5x
                     100:   "/res/drawable-mdpi/"    // 1x
                 ]
-                let scales = (scale == .Down) ? androidScales : androidScalesUp
-                for (key, value) in Array(scales).sort({$0.0 < $1.0}) {
-                    let image = baseImage.scale(key)
+                let scales = (scale == .down) ? androidScales : androidScalesUp
+                for (key, value) in Array(scales).sorted(by: {$0.0 < $1.0}) {
                     let folderPath = destPath + value
                     let imageFile = folderPath + fileName + ".png"
-                    if (Utils.createFolders([folderPath])) {
-                        Utils.debug("Image scale and copy \(filePath) -> \(imageFile)")
-                        if (saveImage(image, file: imageFile) == false) {
-                            exit(-1)
+                    if let image = baseImage?.scale(key) {
+                        if (Utils.createFolders([folderPath])) {
+                            Utils.debug("Image scale and copy \(filePath) -> \(imageFile)")
+                            if (saveImage(image, file: imageFile) == false) {
+                                exit(-1)
+                            }
                         }
+                    }
+                    else {
+                        Utils.error("Error: Failed to scale \(imageFile)")
+                        exit(-1)
                     }
                 }
             }
@@ -797,7 +807,7 @@ class App
     ]
 
     
-    func imageResourcePath(file: String, type: LangType, useRoot: Bool) -> (sourceFile: String,
+    func imageResourcePath(_ file: String, type: LangType, useRoot: Bool) -> (sourceFile: String,
                                                                                     destFile: String,
                                                                                     destPath: String)
     {
@@ -809,20 +819,20 @@ class App
         else {
             destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
         }
-        var destPath = (destFile as NSString).stringByDeletingLastPathComponent
+        var destPath = (destFile as NSString).deletingLastPathComponent
         
         var fileName = file.lastPathComponent()
         let fileExt = file.fileExtention()
-        fileName = (fileName as NSString).stringByDeletingPathExtension
+        fileName = (fileName as NSString).deletingPathExtension
         
-        if (type == .Swift) {
+        if (type == .swift) {
             // do nothing
         }
-        else if (type == .Java) {
+        else if (type == .java) {
             let result = NSImage.getScaleFrom(fileName)
             var drawable = iOStoAndroid[result.scale]!
             // if our image is a jpg, just place it into the xxhdpi folder
-            if ((fileExt.containsString("jpg")) && (result.scale == 1)) {
+            if ((fileExt.contains("jpg")) && (result.scale == 1)) {
                 drawable = "xxhdpi"
             }
             destPath = destPath + "/res/drawable-" + drawable + "/"
@@ -835,9 +845,9 @@ class App
         return (sourceFile: filePath, destFile: destFile, destPath: destPath)
     }
     
-    func copyImage(file: String, type: LangType, useRoot: Bool) -> Void
+    func copyImage(_ file: String, type: LangType, useRoot: Bool) -> Void
     {
-        if (type == .Java) {
+        if (type == .java) {
             if (file.isAndroidCompatible() == false) {
                 Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                 exit(-1)
@@ -854,7 +864,7 @@ class App
         else {
             let image = NSImage.loadFrom(roots.sourceFile)
             if (image != nil) {
-                saveImage(image, file: roots.destFile)
+                saveImage(image!, file: roots.destFile)
             }
             else {
                 Utils.error("Error: Can't find source image \(roots.sourceFile)")
@@ -863,7 +873,7 @@ class App
         }
     }
 
-    func copyImages(files: [String], type: LangType, useRoot: Bool) -> Void {
+    func copyImages(_ files: [String], type: LangType, useRoot: Bool) -> Void {
         for file in files {
             copyImage(file, type: type, useRoot: useRoot)
         }
@@ -905,8 +915,8 @@ class App
 
     // http://iconhandbook.co.uk/reference/chart/android/
     // https://developer.apple.com/library/ios/qa/qa1686/_index.html
-    func copyAppIcon(file: String, type: LangType) -> Void {
-        if (type == .Java) {
+    func copyAppIcon(_ file: String, type: LangType) -> Void {
+        if (type == .java) {
             if (file.isAndroidCompatible() == false) {
                 Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                 exit(-1)
@@ -918,28 +928,38 @@ class App
             Utils.error("Error: missing file \(filePath)")
             exit(-1)
         }
-        if (type == .Swift) {
+        if (type == .swift) {
             let destPath = outputAssetFolder! + "/icons"
             Utils.createFolder(destPath)
             for (key, value) in iOSAppIconSizes {
                 let width = CGFloat(value)
                 let height = CGFloat(value)
-                let newImage = iconImage.resize(width, height: height)
-                let destFile = destPath + "/" + key
-                saveImage(newImage, file: destFile)
-                Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
+                if let newImage = iconImage?.resize(width, height: height) {
+                    let destFile = destPath + "/" + key
+                    saveImage(newImage, file: destFile)
+                    Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
+                }
+                else {
+                    Utils.error("Error: Failed to resize \(filePath)")
+                    exit(-1)
+                }
             }
         }
-        else if (type == .Java) {
+        else if (type == .java) {
             for (key, value) in AndroidIconSizes {
                 let width = CGFloat(value)
                 let height = CGFloat(value)
-                let newImage = iconImage.resize(width, height: height)
-                let destPath = outputAssetFolder! + "/res/drawable-" + key
-                Utils.createFolder(destPath)
-                let destFile = destPath + "/" + appIconName
-                saveImage(newImage, file: destFile)
-                Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
+                if let newImage = iconImage?.resize(width, height: height) {
+                    let destPath = outputAssetFolder! + "/res/drawable-" + key
+                    Utils.createFolder(destPath)
+                    let destFile = destPath + "/" + appIconName
+                    saveImage(newImage, file: destFile)
+                    Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
+                }
+                else {
+                    Utils.error("Error: Failed to resize \(filePath)")
+                    exit(-1)
+                }
             }
         }
         else {
@@ -953,17 +973,17 @@ class App
      * ie $@ is converted to $s on android, and left along for iOS, and $s is converted to
      * @ on iOS
      */
-    func updateStringParameters(string:String, type: LangType) -> String
+    func updateStringParameters(_ string:String, type: LangType) -> String
     {
         var newString = string
-        if (type == .Swift) {
-            if (string.containsString("$s")) {
-                newString = string.stringByReplacingOccurrencesOfString("$s", withString: "$@")
+        if (type == .swift) {
+            if (string.contains("$s")) {
+                newString = string.replacingOccurrences(of: "$s", with: "$@")
             }
         }
-        else if (type == .Java) {
-            if (string.containsString("$@")) {
-                newString = string.stringByReplacingOccurrencesOfString("$@", withString: "$s")
+        else if (type == .java) {
+            if (string.contains("$@")) {
+                newString = string.replacingOccurrences(of: "$@", with: "$s")
             }
         }
         else {
@@ -973,37 +993,37 @@ class App
         return newString
     }
     
-    func writeLocale(localePath:String, properties:Dictionary<String, String>, type: LangType) -> Void
+    func writeLocale(_ localePath:String, properties:Dictionary<String, String>, type: LangType) -> Void
     {
         var genString = ""
-        if (type == .Swift) {
-            genString.appendContentsOf("/* Generated with Sango, by Afero.io */\n")
+        if (type == .swift) {
+            genString.append("/* Generated with Sango, by Afero.io */\n")
         }
-        else if (type == .Java) {
-            genString.appendContentsOf("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
-            genString.appendContentsOf("<!-- Generated with Sango, by Afero.io -->\n")
-            genString.appendContentsOf("<resources>\n")
+        else if (type == .java) {
+            genString.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
+            genString.append("<!-- Generated with Sango, by Afero.io -->\n")
+            genString.append("<resources>\n")
         }
-        for (key, value) in Array(properties).sort({$0.0 < $1.0}) {
+        for (key, value) in Array(properties).sorted(by: {$0.0 < $1.0}) {
             var newString = updateStringParameters(value, type: type)
-            newString = newString.stringByReplacingOccurrencesOfString("\n", withString: "\\n");
+            newString = newString.replacingOccurrences(of: "\n", with: "\\n");
             
-            if (type == .Swift) {
+            if (type == .swift) {
                 newString = newString.escapeStr()
                 let newKey = key.escapeStr()
-                genString.appendContentsOf("\"" + newKey + "\" = \"" + newString + "\";\n")
+                genString.append("\"" + newKey + "\" = \"" + newString + "\";\n")
             }
-            else if (type == .Java) {
-                newString = newString.stringByEscapingForAndroid();
-                let newKey = key.stringByEscapingForAndroid()
-                genString.appendContentsOf("\t<string name=\"" + newKey + "\">" + newString + "</string>\n")
+            else if (type == .java) {
+                newString = newString.escapingForAndroid();
+                let newKey = key.escapingForAndroid()
+                genString.append("\t<string name=\"" + newKey! + "\">" + newString + "</string>\n")
             }
         }
         Utils.debug("Generate locale \(localePath)")
-        if (type == .Swift) {
+        if (type == .swift) {
         }
-        else if (type == .Java) {
-            genString.appendContentsOf("</resources>\n")
+        else if (type == .java) {
+            genString.append("</resources>\n")
         }
         saveString(genString, file: localePath)
     }
@@ -1027,14 +1047,14 @@ class App
          "de" : ["file2/path1, "file2/path2"]
      }
      */
-    func mergeLocales(src: Dictionary<String, AnyObject>, newInput : Dictionary<String, AnyObject>) -> Dictionary<String, AnyObject> {
+    func mergeLocales(_ src: Dictionary<String, Any>, newInput : Dictionary<String, Any>) -> Dictionary<String, Any> {
         var mergedLocales = src
         
         for (key, value) in newInput {
             var list = mergedLocales[key] as? [String]
             if (list != nil) {
                 list?.append(value as! String)
-                mergedLocales[key] = list
+                mergedLocales[key] = list as Any?
             }
             else {
                 mergedLocales[key] = [value]
@@ -1051,7 +1071,7 @@ class App
         "de" : ["file2/path1, "file2/path2"]
      }
      */
-    func copyLocales(locales: Dictionary <String, AnyObject>, type: LangType) -> Void
+    func copyLocales(_ locales: Dictionary <String, Any>, type: LangType) -> Void
     {
         // for iOS, path name is:
         // Resources/en.lproj/Localizable.strings
@@ -1059,10 +1079,10 @@ class App
         // res/values/strings.xml
         // res/values-fr/strings.xml
         for (lang, fileList) in locales {
-            var prop:[String:AnyObject] = [:]
+            var prop:[String:Any] = [:]
             for file in fileList as! [String] {
                 let filePath = sourceAssetFolder! + "/" + file
-                let newProps = NSDictionary.init(contentsOfFile: filePath) as? [String:AnyObject]
+                let newProps = NSDictionary.init(contentsOfFile: filePath) as? [String:Any]
                 if (newProps != nil) {
                     prop = prop + newProps!
                 }
@@ -1074,22 +1094,22 @@ class App
             if (prop.count > 0) {
                 var destPath = outputAssetFolder!
                 let fileName:String
-                if (type == .Swift) {
-                    if (lang.lowercaseString == "default") {
-                        destPath.appendContentsOf("/Base.lproj")
+                if (type == .swift) {
+                    if (lang.lowercased() == "default") {
+                        destPath.append("/Base.lproj")
                     }
                     else {
-                        let folderName = lang.stringByReplacingOccurrencesOfString("-", withString: "")
-                        destPath.appendContentsOf("/\(folderName).lproj")
+                        let folderName = lang.replacingOccurrences(of: "-", with: "")
+                        destPath.append("/\(folderName).lproj")
                     }
                     fileName = "Localizable.strings"
                 }
-                else if (type == .Java) {
-                    if ((lang.lowercaseString == "en") || (lang.lowercaseString == "en-us") || (lang.lowercaseString == "enus") || (lang.lowercaseString == "default")) {
-                        destPath.appendContentsOf("/res/values")
+                else if (type == .java) {
+                    if ((lang.lowercased() == "en") || (lang.lowercased() == "en-us") || (lang.lowercased() == "enus") || (lang.lowercased() == "default")) {
+                        destPath.append("/res/values")
                     }
                     else {
-                        destPath.appendContentsOf("/res/values-\(lang)")
+                        destPath.append("/res/values-\(lang)")
                     }
                     fileName = "strings.xml"
                 }
@@ -1098,55 +1118,55 @@ class App
                     exit(-1)
                 }
                 Utils.createFolder(destPath)
-                destPath.appendContentsOf("/" + fileName)
+                destPath.append("/" + fileName)
                 writeLocale(destPath, properties: prop as! Dictionary<String, String>, type: type)
             }
         }
     }
 
     enum AssetLocation {
-        case Root
-        case Relative
-        case Custom
+        case root
+        case relative
+        case custom
     }
     
-    func copyAssets(files: [String], type: LangType,
+    func copyAssets(_ files: [String], type: LangType,
                             assetType: AssetType,
                             destLocation: AssetLocation,
                             root: String = "") -> Void {
         let androidAssetLocations = [
-            AssetType.Font:"/assets/fonts/",
-            AssetType.Raw:"/assets/",
-            AssetType.Layout:"/res/layouts/"
+            AssetType.font:"/assets/fonts/",
+            AssetType.raw:"/assets/",
+            AssetType.layout:"/res/layouts/"
         ]
-        if ((assetType == .Font) && (type == .Java)) {
+        if ((assetType == .font) && (type == .java)) {
             let defaultLoc = outputAssetFolder! + androidAssetLocations[assetType]!
             Utils.deleteFolder(defaultLoc)
         }
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
-            if (destLocation == .Root) {
+            if (destLocation == .root) {
                 destFile = outputAssetFolder! + "/" + file.lastPathComponent()
             }
-            else if (destLocation == .Relative) {
+            else if (destLocation == .relative) {
                 destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
             }
             else {
                 // Custom
                 destFile = outputAssetFolder! + "/" + root + "/" + file.lastPathComponent()
             }
-            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
+            let destPath = (destFile as NSString).deletingLastPathComponent
             Utils.createFolder(destPath)
             
             let fileName = file.lastPathComponent()
             
-            if (type == .Swift) {
+            if (type == .swift) {
                 if (Utils.copyFile(filePath, dest: destFile) == false) {
                     exit(-1)
                 }
             }
-            else if (type == .Java) {
+            else if (type == .java) {
                 let defaultLoc = destPath + androidAssetLocations[assetType]!
                 Utils.createFolder(defaultLoc)
                 if (Utils.copyFile(filePath, dest: defaultLoc + fileName) == false) {
@@ -1160,7 +1180,7 @@ class App
         }
     }
 
-    func validate(files:[String], type: LangType) -> Void
+    func validate(_ files:[String], type: LangType) -> Void
     {
         for file in files {
             Utils.debug("Validating \(file)")
@@ -1220,14 +1240,14 @@ class App
                     
                     if (testFile) {
                         let file = value as! String
-                        if ((type == .Java) && (testAndroid == true)) {
+                        if ((type == .java) && (testAndroid == true)) {
                             if (file.isAndroidCompatible() == false) {
                                 Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                                 exit(-1)
                             }
                         }
                         let filePath = sourceAssetFolder! + "/" + file
-                        if (NSFileManager.defaultManager().fileExistsAtPath(filePath) == false) {
+                        if (FileManager.default.fileExists(atPath: filePath) == false) {
                             Utils.error("Error: missing file \(filePath)")
                             exit(-1)
                         }
@@ -1238,14 +1258,14 @@ class App
                     if (testArray) {
                         let list = testingArray as! [String]
                         for file in list {
-                            if ((type == .Java) && (testAndroid == true)) {
+                            if ((type == .java) && (testAndroid == true)) {
                                 if (file.isAndroidCompatible() == false) {
                                     Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                                     exit(-1)
                                 }
                             }
                             let filePath = sourceAssetFolder! + "/" + file
-                            if (NSFileManager.defaultManager().fileExistsAtPath(filePath) == false) {
+                            if (FileManager.default.fileExists(atPath: filePath) == false) {
                                 Utils.error("Error: missing file \(filePath)")
                                 exit(-1)
                             }
@@ -1262,19 +1282,19 @@ class App
         }
     }
     
-    func insertTabPerLine(text: String) -> String {
+    func insertTabPerLine(_ text: String) -> String {
         var output = ""
-        let lines = text.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet())
+        let lines = text.components(separatedBy: CharacterSet.newlines)
         for line in lines {
             if (line.characters.count > 0) {
-                output.appendContentsOf("\n\t")
+                output.append("\n\t")
             }
-            output.appendContentsOf(line)
+            output.append(line)
         }
         return output
     }
     
-    func consume(data: Dictionary <String, AnyObject>, type: LangType, langOutputFile: String) -> Void
+    func consume(_ data: Dictionary <String, Any>, type: LangType, langOutputFile: String) -> Void
     {
         Utils.createFolderForFile(langOutputFile)
 
@@ -1288,19 +1308,19 @@ class App
                 }
             }
             else if (key == keyJava) {
-                let options = value as! Dictionary<String, AnyObject>
+                let options = value as! Dictionary<String, Any>
                 baseClass = options["base"] as! String
                 package = options["package"] as! String
                 var name = options["launcher_icon_name"] as? String
                 if (name != nil) {
                     if (name!.hasSuffix(".png") == false) {
-                        name!.appendContentsOf(".png")
+                        name!.append(".png")
                     }
                     appIconName = name!
                 }
             }
             else if (key == keySwift) {
-                let options = value as! Dictionary<String, AnyObject>
+                let options = value as! Dictionary<String, Any>
                 baseClass = options["base"] as! String
             }
             else if (key == keyGlobalTint) {
@@ -1308,19 +1328,19 @@ class App
                 globalTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
             }
             else if (key == keyGlobalIosTint) {
-                if (type == .Swift) {
+                if (type == .swift) {
                     let color = parseColor(value as! String)
                     globalIosTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
                 }
             }
             else if (key == keyGlobalAndroidTint) {
-                if (type == .Java) {
+                if (type == .java) {
                     let color = parseColor(value as! String)
                     globalAndroidTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
                 }
             }
             else if (key == keyEnums) {
-                if let enums = value as? [String:AnyObject] {
+                if let enums = value as? [String:Any] {
                     enumsFound = enumsFound + enums     // merge
                 }
             }
@@ -1328,10 +1348,10 @@ class App
         
         // everything else is converted to Java, Swift classes
         var genString = ""
-        for (key, value) in Array(data).sort({$0.0 < $1.0}) {
+        for (key, value) in Array(data).sorted(by: {$0.0 < $1.0}) {
             if (firstPassIgnoredKeys.contains(key) == false) {
                 let line = writeConstants(key, value:value, type: type)
-                genString.appendContentsOf(line)
+                genString.append(line)
             }
         }
         var fontRoot = ""
@@ -1347,66 +1367,66 @@ class App
             }
             if (self.localeOnly == false) {
                 if (key == keyCopied) {
-                    copyAssets(value as! Array, type: type, assetType: .Raw, destLocation: .Relative)
+                    copyAssets(value as! Array, type: type, assetType: .raw, destLocation: .relative)
                 }
                 else if (key == keyAppIcon) {
                     copyAppIcon(value as! String, type: type)
                 }
                 else if (key == keyAndroidAppIcon) {
-                    if (type == .Java) {
+                    if (type == .java) {
                         copyAppIcon(value as! String, type: type)
                     }
                 }
                 else if (key == keyIOSAppIcon) {
-                    if (type == .Swift) {
+                    if (type == .swift) {
                         copyAppIcon(value as! String, type: type)
                     }
                 }
                 else if (key == keyFonts) {
-                    copyAssets(value as! Array, type: type, assetType: .Font, destLocation: .Custom, root: fontRoot)
+                    copyAssets(value as! Array, type: type, assetType: .font, destLocation: .custom, root: fontRoot)
                 }
                 else if (key == keyImages) {
                     copyImages(value as! Array, type: type, useRoot: true)
                 }
                 else if (key == keyImagesScaled) {
-                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
+                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .down)
                 }
                 else if (key == keyImagesScaledIos) {
-                    if (type == .Swift) {
-                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
+                    if (type == .swift) {
+                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .down)
                     }
                 }
                 else if (key == keyImagesScaledAndroid) {
-                    if (type == .Java) {
-                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Down)
+                    if (type == .java) {
+                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .down)
                     }
                 }
                 else if (key == keyImagesScaledUp) {
-                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .up)
                 }
                 else if (key == keyImagesScaledIosUp) {
-                    if (type == .Swift) {
-                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+                    if (type == .swift) {
+                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .up)
                     }
                 }
                 else if (key == keyImagesScaledAndroidUp) {
-                    if (type == .Java) {
-                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .Up)
+                    if (type == .java) {
+                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .up)
                     }
                 }
                 else if (key == keyImagesIos) {
-                    if (type == .Swift) {
+                    if (type == .swift) {
                         copyImages(value as! Array, type: type, useRoot: true)
                     }
                 }
                 else if (key == keyImagesAndroid) {
-                    if (type == .Java) {
+                    if (type == .java) {
                         copyImages(value as! Array, type: type, useRoot: true)
                     }
                 }
                 else if (key == keyAndroidLayout) {
-                    if (type == .Java) {
-                        copyAssets(value as! Array, type: type, assetType: .Layout, destLocation: .Root)
+                    if (type == .java) {
+                        copyAssets(value as! Array, type: type, assetType: .layout, destLocation: .root)
                     }
                 }
             }
@@ -1418,48 +1438,48 @@ class App
         if (completeOutput) {
             if (enumsFound.isEmpty == false) {
                 let line = writeEnums(enumsFound, type: type)
-                genString.appendContentsOf(line)
+                genString.append(line)
             }
             if (genString.isEmpty == false) {
                 var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
-                if (type == .Swift) {
-                    outputStr.appendContentsOf("import UIKit\n")
+                if (type == .swift) {
+                    outputStr.append("import UIKit\n")
                 }
-                else if (type == .Java) {
+                else if (type == .java) {
                     if (package.isEmpty) {
-                        outputStr.appendContentsOf("package java.lang;\n")
+                        outputStr.append("package java.lang;\n")
                     }
                     else {
-                        outputStr.appendContentsOf("package \(package);\n")
+                        outputStr.append("package \(package);\n")
                     }
                 }
                 if (baseClass.isEmpty == false) {
                     genString = insertTabPerLine(genString)
-                    if (type == .Swift) {
-                        outputStr.appendContentsOf("public struct \(baseClass) {")
+                    if (type == .swift) {
+                        outputStr.append("public struct \(baseClass) {")
                     }
-                    else if (type == .Java) {
-                        outputStr.appendContentsOf("public final class \(baseClass) {")
+                    else if (type == .java) {
+                        outputStr.append("public final class \(baseClass) {")
                     }
-                    genString.appendContentsOf("\n}")
+                    genString.append("\n}")
                 }
-                outputStr.appendContentsOf(genString + "\n")
+                outputStr.append(genString + "\n")
                 saveString(outputStr, file: langOutputFile)
             }
             writeSangoExtras(type, filePath: langOutputFile.pathOnlyComponent())
-            if (type == .Java) {
+            if (type == .java) {
                 writeAndroidColors()
             }
         }
     }
     
-    func prepareGitRepro(folder:String, tag:String?) -> Void {
+    func prepareGitRepro(_ folder:String, tag:String?) -> Void {
         let currentBranch = Shell.gitCurrentBranch(folder)
         if (tag != nil) {
-            if (tag!.containsString(assetTagIgnore)) {
+            if (tag!.contains(assetTagIgnore)) {
                 return
             }
-            else if (tag!.lowercaseString.containsString(assetTagHead)) {
+            else if (tag!.lowercased().contains(assetTagHead)) {
                 if (Shell.gitResetHead(folder, branch: currentBranch) == false) {
                     Utils.error("Error: Can't reset asset repo to HEAD")
                     exit(-1)
@@ -1485,10 +1505,10 @@ class App
                                     keyAppIcon: "",
                                     keyIOSAppIcon: "",
                                     keyAndroidAppIcon: ""
-                                ]
+                                ] as [String : Any]
 
-    func createAssetTemplate(base: String) -> Void {
-        var temp = baseAssetTemplate as! Dictionary<String,AnyObject>
+    func createAssetTemplate(_ base: String) -> Void {
+        var temp = baseAssetTemplate as Dictionary<String,Any>
         temp[keyJava] = ["package" : "one.two", "base": base]
         temp[keySwift] = ["base": base]
         temp["Example"] = ["EXAMPLE_CONSTANT": 1]
@@ -1506,8 +1526,8 @@ class App
                                      "out_source": "path/to/app/source",
                                      "out_assets": "path/to/app/resources",
                                      "type": "swift or java"
-    ]
-    func createConfigTemplate(file: String) -> Void {
+    ] as [String : Any]
+    func createConfigTemplate(_ file: String) -> Void {
         let jsonString = Utils.toJSON(baseConfigTemplate)
         if (jsonString != nil) {
             if (saveString(jsonString!, file: file)) {
@@ -1516,7 +1536,7 @@ class App
         }
     }
     
-    func start(args: [String]) -> Void {
+    func start(_ args: [String]) -> Void {
         if (findOption(args, option: "-h") || args.count == 0) {
             usage()
             exit(0)
@@ -1550,24 +1570,24 @@ class App
         self.localeOnly = findOption(args, option: optLocaleOnly)
 
         var validateInputs:[String]? = nil
-        var validateLang:LangType = .Unset
+        var validateLang:LangType = .unset
         validateInputs = getOptions(args, option: optValidate)
         if (validateInputs == nil) {
             validateInputs = getOptions(args, option: "-validate_ios")
-            validateLang = .Swift
+            validateLang = .swift
         }
         if (validateInputs == nil) {
             validateInputs = getOptions(args, option: "-validate_android")
-            validateLang = .Java
+            validateLang = .java
         }
         if (validateInputs != nil) {
             sourceAssetFolder = getOption(args, option: optInputAssets)
             if (sourceAssetFolder != nil) {
-                sourceAssetFolder = NSString(string: sourceAssetFolder!).stringByExpandingTildeInPath
+                sourceAssetFolder = NSString(string: sourceAssetFolder!).expandingTildeInPath
 
-                if (validateLang == .Unset) {
-                    validate(validateInputs!, type: .Swift)
-                    validate(validateInputs!, type: .Java)
+                if (validateLang == .unset) {
+                    validate(validateInputs!, type: .swift)
+                    validate(validateInputs!, type: .java)
                 }
                 else {
                     validate(validateInputs!, type: validateLang)
@@ -1592,10 +1612,10 @@ class App
                 assetTag = result!["input_assets_tag"] as? String
                 let type = result!["type"] as? String
                 if (type == "java") {
-                    compileType = .Java
+                    compileType = .java
                 }
                 else if (type == "swift") {
-                    compileType = .Swift
+                    compileType = .swift
                 }
             }
             else {
@@ -1603,12 +1623,12 @@ class App
             }
         }
         
-        if (compileType == .Unset) {
+        if (compileType == .unset) {
             if (findOption(args, option: optJava)) {
-                compileType = .Java
+                compileType = .java
             }
             else if (findOption(args, option: optSwift)) {
-                compileType = .Swift
+                compileType = .swift
             }
             else {
                 Utils.error("Error: need either -swift or -java")
@@ -1624,7 +1644,7 @@ class App
             outputClassFile = getOption(args, option: optOutSource)
         }
         if (outputClassFile != nil) {
-            outputClassFile = NSString(string: outputClassFile!).stringByExpandingTildeInPath
+            outputClassFile = NSString(string: outputClassFile!).expandingTildeInPath
         }
         else {
             Utils.error("Error: missing output file")
@@ -1636,7 +1656,7 @@ class App
             sourceAssetFolder = overrideSourceAssets
         }
         if (sourceAssetFolder != nil) {
-            sourceAssetFolder = NSString(string: sourceAssetFolder!).stringByExpandingTildeInPath
+            sourceAssetFolder = NSString(string: sourceAssetFolder!).expandingTildeInPath
         }
         else {
             Utils.error("Error: missing source asset folder")
@@ -1647,15 +1667,15 @@ class App
             outputAssetFolder = getOption(args, option: optOutAssets)
         }
         if (outputAssetFolder != nil) {
-            outputAssetFolder = NSString(string: outputAssetFolder!).stringByExpandingTildeInPath
+            outputAssetFolder = NSString(string: outputAssetFolder!).expandingTildeInPath
         }
         else {
             Utils.error("Error: missing output asset folder")
             exit(-1)
         }
 
-        var locales:[String:AnyObject] = [:]
-        var result:[String:AnyObject]? = nil
+        var locales:[String:Any] = [:]
+        var result:[String:Any]? = nil
         if (inputFiles == nil) {
             inputFiles = getOptions(args, option: optInputs)
         }
@@ -1666,8 +1686,8 @@ class App
                 if var d = Utils.fromJSONFile(filePath) {
                     let locale: [String: String]? = d[keyLocale] as? [String:String]
                     if (locale != nil) {
-                        d.removeValueForKey(keyLocale)
-                        locales = mergeLocales(locales, newInput:locale!)
+                        d.removeValue(forKey: keyLocale)
+                        locales = mergeLocales(locales, newInput:locale! as Dictionary<String, Any>)
                     }
                     result = result! + d
                 }
@@ -1678,7 +1698,7 @@ class App
         }
 
         if (locales.count > 0) {
-            result![keyLocale] = locales
+            result![keyLocale] = locales as Any?
         }
 
         if (inputFile == nil) {

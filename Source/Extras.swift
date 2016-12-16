@@ -14,9 +14,9 @@ public extension NSImage
     /**
      *  Given a file path, load and return an NSImage
      */
-    public static func loadFrom(file: String) -> NSImage! {
+    public static func loadFrom(_ file: String) -> NSImage! {
         // Loading directly with NSImage, doesn't take in account of scale
-        let imageReps = NSBitmapImageRep.imageRepsWithContentsOfFile(file)
+        let imageReps = NSBitmapImageRep.imageReps(withContentsOfFile: file)
         if (imageReps != nil) {
             var width = 0
             var height = 0
@@ -41,26 +41,26 @@ public extension NSImage
      *  Given a file, image.png, image@2.png, image@3.png, return the scaling factor
      *  1, 2, 3
      */
-    public static func getScaleFrom(file :String) -> (scale: Int, file: String) {
+    public static func getScaleFrom(_ file :String) -> (scale: Int, file: String) {
         var scale = 1
         var fileName = file.lastPathComponent()
-        fileName = (fileName as NSString).stringByDeletingPathExtension
+        fileName = (fileName as NSString).deletingPathExtension
         if (fileName.hasSuffix("@1x")) {
             scale = 1
-            fileName = fileName.stringByReplacingOccurrencesOfString("@1x", withString: "")
+            fileName = fileName.replacingOccurrences(of: "@1x", with: "")
         }
         else if (fileName.hasSuffix("@2x")) {
             scale = 2
-            fileName = fileName.stringByReplacingOccurrencesOfString("@2x", withString: "")
+            fileName = fileName.replacingOccurrences(of: "@2x", with: "")
         }
         else if (fileName.hasSuffix("@3x")) {
             scale = 3
-            fileName = fileName.stringByReplacingOccurrencesOfString("@3x", withString: "")
+            fileName = fileName.replacingOccurrences(of: "@3x", with: "")
         }
         return (scale: scale, file: fileName)
     }
     
-    public func saveTo(file: String) -> Bool {
+    public func saveTo(_ file: String) -> Bool {
         let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
                                       pixelsWide: Int(self.size.width),
                                       pixelsHigh: Int(self.size.height),
@@ -75,19 +75,19 @@ public extension NSImage
         
         NSGraphicsContext.saveGraphicsState()
         
-        NSGraphicsContext.setCurrentContext(NSGraphicsContext(bitmapImageRep: bitmap))
-        self.drawAtPoint(NSPoint.zero,
-                         fromRect: NSRect.zero,
-                         operation: .SourceOver,
+        NSGraphicsContext.setCurrent(NSGraphicsContext(bitmapImageRep: bitmap))
+        self.draw(at: NSPoint.zero,
+                         from: NSRect.zero,
+                         operation: .sourceOver,
                          fraction: 1.0)
         
         NSGraphicsContext.restoreGraphicsState()
         
         var ok = false
-        let imageData = bitmap.representationUsingType(NSBitmapImageFileType.PNG,
+        let imageData = bitmap.representation(using: NSBitmapImageFileType.PNG,
                                                        properties: [NSImageCompressionFactor: 1.0])
         if (imageData != nil) {
-            ok = imageData!.writeToFile((file as NSString).stringByStandardizingPath, atomically: true)
+            ok = (try? imageData!.write(to: URL(fileURLWithPath: (file as NSString).standardizingPath), options: [.atomic])) != nil
         }
         if (ok == false) {
             Utils.error("Error: Can't save image to \(file)")
@@ -95,14 +95,14 @@ public extension NSImage
         return ok
     }
     
-    public func scale(percent: CGFloat) -> NSImage {
+    public func scale(_ percent: CGFloat) -> NSImage {
         if (percent == 100) {
             return self
         }
         else {
-            var newR = CGRectMake(0, 0, self.size.width, self.size.height)
-            let Width = CGRectGetWidth(newR)
-            let Height = CGRectGetHeight(newR)
+            var newR = CGRect(x: 0, y: 0, width: self.size.width, height: self.size.height)
+            let Width = newR.width
+            let Height = newR.height
             let newWidth = (Width * percent) / 100.0
             let newHeight = (Height * percent) / 100.0
             
@@ -125,7 +125,7 @@ public extension NSImage
         }
     }
     
-    public func tint(color: NSColor) -> NSImage {
+    public func tint(_ color: NSColor) -> NSImage {
         let destSize = self.size
         let rect = NSMakeRect(0, 0, self.size.width, self.size.height)
         let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
@@ -143,26 +143,26 @@ public extension NSImage
         NSGraphicsContext.saveGraphicsState()
         
         let context = NSGraphicsContext(bitmapImageRep: bitmap)
-        context?.imageInterpolation = .High
+        context?.imageInterpolation = .high
         context?.shouldAntialias = true
-        NSGraphicsContext.setCurrentContext(context)
-        self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
-                        fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
-                        operation: .SourceOver,
+        NSGraphicsContext.setCurrent(context)
+        self.draw(in: NSMakeRect(0, 0, destSize.width, destSize.height),
+                        from: NSMakeRect(0, 0, self.size.width, self.size.height),
+                        operation: .sourceOver,
                         fraction: 1.0)
         
         // tint with Source Atop operation, via 
         // http://www.w3.org/TR/2014/CR-compositing-1-20140220/#porterduffcompositingoperators
         color.set()
-        NSRectFillUsingOperation(rect, .SourceAtop)
+        NSRectFillUsingOperation(rect, .sourceAtop)
 
         NSGraphicsContext.restoreGraphicsState()
         let newImage = NSImage(size: destSize)
         newImage.addRepresentation(bitmap)
-        return NSImage(data: newImage.TIFFRepresentation!)!
+        return NSImage(data: newImage.tiffRepresentation!)!
     }
 
-    public func resize(width: CGFloat, height: CGFloat) -> NSImage {
+    public func resize(_ width: CGFloat, height: CGFloat) -> NSImage {
         let destSize = NSMakeSize(width, height)
         let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
                                       pixelsWide: Int(destSize.width),
@@ -179,25 +179,25 @@ public extension NSImage
         NSGraphicsContext.saveGraphicsState()
         
         let context = NSGraphicsContext(bitmapImageRep: bitmap)
-        context?.imageInterpolation = .High
+        context?.imageInterpolation = .high
         context?.shouldAntialias = true
-        NSGraphicsContext.setCurrentContext(context)
-        self.drawInRect(NSMakeRect(0, 0, destSize.width, destSize.height),
-                        fromRect: NSMakeRect(0, 0, self.size.width, self.size.height),
-                        operation: .SourceOver,
+        NSGraphicsContext.setCurrent(context)
+        self.draw(in: NSMakeRect(0, 0, destSize.width, destSize.height),
+                        from: NSMakeRect(0, 0, self.size.width, self.size.height),
+                        operation: .sourceOver,
                         fraction: 1.0)
         
         NSGraphicsContext.restoreGraphicsState()
         let newImage = NSImage(size: destSize)
         newImage.addRepresentation(bitmap)
-        return NSImage(data: newImage.TIFFRepresentation!)!
+        return NSImage(data: newImage.tiffRepresentation!)!
     }
 }
 
-public func + (left: [String: [String: AnyObject]]?, right: [String: [String: AnyObject]]) -> [String: [String: AnyObject]]? {
+public func + (left: [String: [String: Any]]?, right: [String: [String: Any]]) -> [String: [String: Any]]? {
 
-    let localLeft: [String: [String: AnyObject]] = left ?? [:]
-    let localRight: [String: [String: AnyObject]] = right ?? [:]
+    let localLeft: [String: [String: Any]] = left ?? [:]
+    let localRight: [String: [String: Any]] = right ?? [:]
 
     return localRight.reduce(localLeft) {
         curr, next in
@@ -208,10 +208,10 @@ public func + (left: [String: [String: AnyObject]]?, right: [String: [String: An
     
 }
 
-public func + (left: Dictionary<String, Array<AnyObject>>?, right: Dictionary<String, Array<AnyObject>>?) -> Dictionary<String, Array<AnyObject>> {
+public func + (left: Dictionary<String, Array<Any>>?, right: Dictionary<String, Array<Any>>?) -> Dictionary<String, Array<Any>> {
     
-    let localLeft: [String: Array<AnyObject>] = left ?? [:]
-    let localRight: [String: Array<AnyObject>] = right ?? [:]
+    let localLeft: [String: Array<Any>] = left ?? [:]
+    let localRight: [String: Array<Any>] = right ?? [:]
     
     return localRight.reduce(localLeft) {
         curr, next in
@@ -222,15 +222,15 @@ public func + (left: Dictionary<String, Array<AnyObject>>?, right: Dictionary<St
     
 }
 
-public func + (left: Dictionary<String, AnyObject>, right: Dictionary<String, AnyObject>)
-    -> Dictionary<String, AnyObject>
+public func + (left: Dictionary<String, Any>, right: Dictionary<String, Any>)
+    -> Dictionary<String, Any>
 {
     var map = left
     for (k, v) in right {
         
         // merge arrays
-        if let _v = v as? [AnyObject] {
-            if let la = map[k] as? [AnyObject] {
+        if let _v = v as? [Any] {
+            if let la = map[k] as? [Any] {
                 map[k] = la + _v
             }
             else {
@@ -238,8 +238,8 @@ public func + (left: Dictionary<String, AnyObject>, right: Dictionary<String, An
             }
         }
         else if
-            let _v = v as? Dictionary<String, AnyObject>,
-            let la = map[k] as? Dictionary<String, AnyObject> {
+            let _v = v as? Dictionary<String, Any>,
+            let la = map[k] as? Dictionary<String, Any> {
             map[k] = la + _v
         }
         else {
@@ -249,24 +249,25 @@ public func + (left: Dictionary<String, AnyObject>, right: Dictionary<String, An
     return map
 }
 
-public extension Double
-{
-    public var roundTo3f: Double {return Double(round(1000 * self) / 1000) }
-    public var roundTo2f: Double {return Double(round(100 * self) / 100) }
+public func roundTo3f(value: Double) -> Double {
+    return round(1000.0 * value) / 1000.0
+}
+public func roundTo2f(value: Double) -> Double {
+    return round(100.0 * value) / 100.0
 }
 
 public extension String
 {
     public func snakeCaseToCamelCase() -> String {
-        let items = self.componentsSeparatedByString("_")
+        let items = self.components(separatedBy: "_")
         var camelCase = ""
-        items.enumerate().forEach {
+        items.enumerated().forEach {
             if ($1.isInteger()) {
                 // this is a special case, so we can support a label:
                 // Green_50
                 camelCase += "_";
             }
-            camelCase += $1.capitalizedString
+            camelCase += $1.capitalized
         }
         return camelCase
     }
@@ -311,7 +312,7 @@ public extension String
             
         var escaped = self
         for (key, value) in set {
-            escaped = escaped.stringByReplacingOccurrencesOfString(key, withString: value)
+            escaped = escaped.replacingOccurrences(of: key, with: value)
         }
         return escaped
     }
@@ -321,17 +322,17 @@ public extension String
     }
 
     public func pathOnlyComponent() -> String {
-        return (self as NSString).stringByDeletingLastPathComponent
+        return (self as NSString).deletingLastPathComponent
     }
 
     public func fileExtention() -> String {
-        return (self as NSString).pathExtension.lowercaseString
+        return (self as NSString).pathExtension.lowercased()
     }
 
     public func removeScale() -> String {
-        var file = self.stringByReplacingOccurrencesOfString("@1x", withString: "")
-        file = file.stringByReplacingOccurrencesOfString("@2x", withString: "")
-        return file.stringByReplacingOccurrencesOfString("@3x", withString: "")
+        var file = self.replacingOccurrences(of: "@1x", with: "")
+        file = file.replacingOccurrences(of: "@2x", with: "")
+        return file.replacingOccurrences(of: "@3x", with: "")
     }
 
     /**
@@ -339,30 +340,30 @@ public extension String
      */
     public func isAndroidCompatible() -> Bool {
         let set:NSMutableCharacterSet = NSMutableCharacterSet()
-        set.formUnionWithCharacterSet(NSCharacterSet.lowercaseLetterCharacterSet())
-        set.formUnionWithCharacterSet(NSCharacterSet.decimalDigitCharacterSet())
-        set.addCharactersInString("_.")
-        let inverted = set.invertedSet
+        set.formUnion(with: CharacterSet.lowercaseLetters)
+        set.formUnion(with: CharacterSet.decimalDigits)
+        set.addCharacters(in: "_.")
+        let inverted = set.inverted
         let file = self.lastPathComponent().removeScale()
-        if let _ = file.rangeOfCharacterFromSet(inverted, options: .CaseInsensitiveSearch) {
+        if let _ = file.rangeOfCharacter(from: inverted, options: .caseInsensitive) {
             return false
         }
         return true
     }
 
     public func isInteger() -> Bool {
-        let numberCharacters = NSCharacterSet.decimalDigitCharacterSet().invertedSet
-        return !self.isEmpty && self.rangeOfCharacterFromSet(numberCharacters) == nil
+        let numberCharacters = CharacterSet.decimalDigits.inverted
+        return !self.isEmpty && self.rangeOfCharacter(from: numberCharacters) == nil
     }
 
     public func isFloat() -> Bool {
         var floaty = false
         if (!self.isEmpty) {
-            let numberCharacters = NSMutableCharacterSet.decimalDigitCharacterSet()
-            numberCharacters.addCharactersInString(".")
+            let numberCharacters = NSMutableCharacterSet.decimalDigit()
+            numberCharacters.addCharacters(in: ".")
             numberCharacters.invert()
-            if (self.rangeOfCharacterFromSet(numberCharacters) == nil) {
-                if (self.containsString(".")) {
+            if (self.rangeOfCharacter(from: numberCharacters as CharacterSet) == nil) {
+                if (self.contains(".")) {
                     floaty = true
                 }
             }
@@ -371,13 +372,13 @@ public extension String
     }
     
     public func isBoolean() -> Bool {
-        return !self.isEmpty && self.lowercaseString == "true"
+        return !self.isEmpty && self.lowercased() == "true"
     }
 }
 
-public func hasArrayFloats(list: AnyObject) -> Bool {
+public func hasArrayFloats(_ list: Any) -> Bool {
     var valid = false
-    let alist = list as? Array<AnyObject>
+    let alist = list as? Array<Any>
     if (alist != nil) {
         for itm in alist! {
             if let itm = itm as? String {
@@ -387,7 +388,7 @@ public func hasArrayFloats(list: AnyObject) -> Bool {
                 }
             }
             else if ((itm is Double) || (itm is Int)) {
-                let strItm = String(itm)
+                let strItm = String(describing: itm)
                 if (strItm.isFloat()) {
                     valid = true
                     break
@@ -398,9 +399,9 @@ public func hasArrayFloats(list: AnyObject) -> Bool {
     return valid
 }
 
-public func hasArrayInts(list: AnyObject) -> Bool {
+public func hasArrayInts(_ list: Any) -> Bool {
     var valid = false
-    let alist = list as? Array<AnyObject>
+    let alist = list as? Array<Any>
     if (alist != nil) {
         for itm in alist! {
             if let itm = itm as? String {
@@ -410,7 +411,7 @@ public func hasArrayInts(list: AnyObject) -> Bool {
                 }
             }
             else if (itm is Int) {
-                let strItm = String(itm)
+                let strItm = String(describing: itm)
                 if (strItm.isInteger()) {
                     valid = true
                     break

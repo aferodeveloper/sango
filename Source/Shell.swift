@@ -9,61 +9,61 @@
 import Foundation
 import CoreFoundation
 
-public class Shell
+open class Shell
 {
     static var plutilPath = "/usr/bin/plutil"
     static var gitPath = "/usr/bin/git"
     enum GitInstalled {
-        case Unset
-        case Installed
-        case Uninstalled
+        case unset
+        case installed
+        case uninstalled
     }
-    static var isGitInstalled:GitInstalled = .Unset
+    static var isGitInstalled:GitInstalled = .unset
 
-    static func _shell(arguments: [String]) -> (output: String, status: Int32)
+    static func _shell(_ arguments: [String]) -> (output: String, status: Int32)
     {
-        let task = NSTask()
+        let task = Process()
         task.launchPath = "/bin/bash"
         var arg = ""
-        for (index, value) in arguments.enumerate() {
-            arg = arg.stringByAppendingString(value)
+        for (index, value) in arguments.enumerated() {
+            arg = arg + value
             if (index < (arguments.count - 1)) {
-                arg = arg.stringByAppendingString(" && ")
+                arg = arg + " && "
             }
         }
         task.arguments = ["-c", arg]
 //        Utils.debug("$ \(arg)")
         
-        let pipe = NSPipe()
+        let pipe = Pipe()
         task.standardOutput = pipe
         task.launch()
         task.waitUntilExit()
         
         let data = pipe.fileHandleForReading.readDataToEndOfFile()
-        let output: String = NSString(data: data, encoding: NSUTF8StringEncoding)! as String
+        let output: String = NSString(data: data, encoding: String.Encoding.utf8.rawValue)! as String
         
         return (output: output, status: task.terminationStatus)
     }
     
-    public static func gitInstalled() -> Bool
+    open static func gitInstalled() -> Bool
     {
-        if (isGitInstalled == .Unset) {
+        if (isGitInstalled == .unset) {
             let output = _shell(["which git"])
-            isGitInstalled = (output.status == 0) ? .Installed : .Uninstalled
+            isGitInstalled = (output.status == 0) ? .installed : .uninstalled
 
-            gitPath = output.output.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            gitPath = output.output.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
         }
-        return isGitInstalled == .Installed
+        return isGitInstalled == .installed
     }
     
-    public static func gitInstalledPath() -> String {
+    open static func gitInstalledPath() -> String {
         if gitInstalled() == false {
             Utils.error("Error: git not installed")
         }
         return gitPath
     }
     
-    public static func gitCheckoutAtTag(path: String, tag: String) -> Bool
+    open static func gitCheckoutAtTag(_ path: String, tag: String) -> Bool
     {
         let output = _shell(["cd \(path)",
             "\(gitPath) checkout tags/\(tag)"])
@@ -71,27 +71,27 @@ public class Shell
         return (output.status == 0)
     }
     
-    public static func gitDropChanges(path: String) -> Bool
+    open static func gitDropChanges(_ path: String) -> Bool
     {
         let output = _shell(["cd \(path)",
             "\(gitPath) stash -u", "\(gitPath) stash drop"])
         return (output.status == 0)
     }
     
-    public static func gitResetHead(path: String, branch: String) -> Bool {
+    open static func gitResetHead(_ path: String, branch: String) -> Bool {
         let output = _shell(["cd \(path)",
             "\(gitPath) reset --hard origin/\(branch)"])
         return (output.status == 0)
     }
     
-    public static func gitCurrentBranch(path: String) -> String
+    open static func gitCurrentBranch(_ path: String) -> String
     {
         let output = _shell(["cd \(path)",
             "\(gitPath) rev-parse --abbrev-ref HEAD"])
-        return output.output.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        return output.output.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
     
-    public static func gitSetBranch(path: String, branch: String) -> Bool
+    open static func gitSetBranch(_ path: String, branch: String) -> Bool
     {
         gitDropChanges(path)
         let output = _shell(["cd \(path)",
@@ -100,12 +100,12 @@ public class Shell
         return (output.status == 0)
     }
 
-    public static func plint(file: String) -> Bool {
+    open static func plint(_ file: String) -> Bool {
         let output = _shell(["\(plutilPath) -lint \(file)"])
         return (output.status == 0)
     }
     
-    public static func setup() -> Void
+    open static func setup() -> Void
     {
         gitInstalled()
     }

@@ -8,32 +8,32 @@
 
 import Foundation
 
-public class Utils
+open class Utils
 {
     static var verbose = false
 
-    public static func setVerbose(state: Bool) -> Void
+    open static func setVerbose(_ state: Bool) -> Void
     {
         verbose = state
     }
 
-    public static func debug(message: String) -> Void
+    open static func debug(_ message: String) -> Void
     {
         if (verbose) {
             print(message)
         }
     }
-    public static func error(message: String) -> Void
+    open static func error(_ message: String) -> Void
     {
         print(message)
     }
 
-    public static func toJSON(dictionary:Dictionary<String, AnyObject>) -> String?
+    open static func toJSON(_ dictionary:Dictionary<String, Any>) -> String?
     {
         do {
-            let data: NSData = try NSJSONSerialization.dataWithJSONObject(dictionary, options: .PrettyPrinted)
-            let jsonString = NSString(data: data, encoding: NSUTF8StringEncoding) as! String
-            return jsonString.stringByReplacingOccurrencesOfString("\\/", withString: "/")
+            let data: Data = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
+            let jsonString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as! String
+            return jsonString.replacingOccurrences(of: "\\/", with: "/")
         }
         catch let error as NSError {
             let message:String = error.userInfo["NSDebugDescription"] as! String
@@ -42,12 +42,12 @@ public class Utils
         }
     }
     
-    public static func fromJSONFile(file:String) -> [String:AnyObject]?
+    open static func fromJSONFile(_ file:String) -> [String:Any]?
     {
-        var result:[String: AnyObject]?
+        var result:[String: Any]?
         
-        let location = NSString(string: file).stringByExpandingTildeInPath
-        let fileContent = NSData(contentsOfFile: location)
+        let location = NSString(string: file).expandingTildeInPath
+        let fileContent = try? Data(contentsOf: URL(fileURLWithPath: location))
         if (fileContent != nil) {
             result = fromJSON(fileContent!)
             if (result == nil) {
@@ -60,11 +60,11 @@ public class Utils
         return result
     }
     
-    public static func fromJSON(data:NSData) -> [String: AnyObject]?
+    open static func fromJSON(_ data:Data) -> [String: Any]?
     {
-        var dict: AnyObject?
+        var dict: Any?
         do {
-            dict = try NSJSONSerialization.JSONObjectWithData(data, options: .AllowFragments)
+            dict = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
         }
         catch let error as NSError {
             let message:String = error.userInfo["NSDebugDescription"] as! String
@@ -72,13 +72,13 @@ public class Utils
             dict = nil
         }
         
-        return dict as? [String: AnyObject]
+        return dict as? [String: Any]
     }
 
-    public static func createFolders(folders: [String]) -> Bool {
+    open static func createFolders(_ folders: [String]) -> Bool {
         for file in folders {
             do {
-                try NSFileManager.defaultManager().createDirectoryAtPath(file, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: file, withIntermediateDirectories: true, attributes: nil)
             }
             catch {
                 Utils.error("Error: creating folder \(file)")
@@ -88,15 +88,15 @@ public class Utils
         return true
     }
     
-    public static func createFolderForFile(srcFile: String) -> Bool {
-        let destPath = (srcFile as NSString).stringByDeletingLastPathComponent
+    open static func createFolderForFile(_ srcFile: String) -> Bool {
+        let destPath = (srcFile as NSString).deletingLastPathComponent
         return createFolder(destPath)
     }
     
-    public static func createFolder(src: String) -> Bool {
+    open static func createFolder(_ src: String) -> Bool {
         var ok = true
         do {
-            try NSFileManager.defaultManager().createDirectoryAtPath(src, withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.createDirectory(atPath: src, withIntermediateDirectories: true, attributes: nil)
         }
         catch {
             Utils.error("Error: creating folder \(src)")
@@ -106,10 +106,10 @@ public class Utils
         return ok
     }
 
-    public static func deleteFolder(src: String) -> Bool {
+    open static func deleteFolder(_ src: String) -> Bool {
         var ok = true
         do {
-            try NSFileManager.defaultManager().removeItemAtPath(src)
+            try FileManager.default.removeItem(atPath: src)
         }
         catch {
             ok = false
@@ -118,11 +118,11 @@ public class Utils
         return ok
     }
 
-    public static func copyFile(src: String, dest: String) -> Bool {
+    open static func copyFile(_ src: String, dest: String) -> Bool {
         deleteFile(dest)
         var ok = true
         do {
-            try NSFileManager.defaultManager().copyItemAtPath(src, toPath: dest)
+            try FileManager.default.copyItem(atPath: src, toPath: dest)
             Utils.debug("Copy \(src) -> \(dest)")
         }
         catch {
@@ -133,7 +133,7 @@ public class Utils
         return ok
     }
     
-    public static func copyFiles(files: [String], useRoot: Bool,
+    open static func copyFiles(_ files: [String], useRoot: Bool,
                                  srcRootPath: String, dstRootPath: String) -> Void {
         for file in files {
             let filePath = srcRootPath + "/" + file
@@ -144,7 +144,7 @@ public class Utils
             else {
                 destFile = dstRootPath + "/" + file
             }
-            let destPath = (destFile as NSString).stringByDeletingLastPathComponent
+            let destPath = (destFile as NSString).deletingLastPathComponent
             createFolder(destPath)
             if (copyFile(filePath, dest: destFile) == false) {
                 exit(-1)
@@ -152,10 +152,10 @@ public class Utils
         }
     }
 
-    public static func deleteFile(src: String) -> Bool {
+    open static func deleteFile(_ src: String) -> Bool {
         var ok = true
         do {
-            try NSFileManager.defaultManager().removeItemAtPath(src)
+            try FileManager.default.removeItem(atPath: src)
         }
         catch {
             ok = false

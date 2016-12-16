@@ -10,8 +10,21 @@
 
 import Foundation
 import CoreFoundation
+// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
+// Consider refactoring the code to use the non-optional operators.
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+  switch (lhs, rhs) {
+  case let (l?, r?):
+    return l < r
+  case (nil, _?):
+    return true
+  default:
+    return false
+  }
+}
 
-public func findOption(args:[String], option:String) -> Bool
+
+public func findOption(_ args:[String], option:String) -> Bool
 {
     var found = false
     for argument in args {
@@ -22,12 +35,12 @@ public func findOption(args:[String], option:String) -> Bool
     return found
 }
 
-public func getOption(args:[String], option:String) -> String?
+public func getOption(_ args:[String], option:String) -> String?
 {
     var found:String? = nil
     for argument in args {
         if argument == option {
-            var indx = args.indexOf(argument)
+            var indx = args.index(of: argument)
             if (indx != nil) {
                 indx = indx! + 1
                 if indx < args.count {
@@ -40,12 +53,12 @@ public func getOption(args:[String], option:String) -> String?
     return found
 }
 
-public func getOptions(args:[String], option:String) -> [String]?
+public func getOptions(_ args:[String], option:String) -> [String]?
 {
     var found:[String]? = nil
     for argument in args {
         if (argument == option) {
-            var indx = args.indexOf(argument)
+            var indx = args.index(of: argument)
             if (indx != nil) {
                 indx = indx! + 1
                 found = []
@@ -66,8 +79,8 @@ public func getOptions(args:[String], option:String) -> [String]?
 }
 
 // MARK: main
-let env = NSProcessInfo.processInfo().environment
-var args = Process.arguments
+let env = ProcessInfo.processInfo.environment
+var args = CommandLine.arguments
 args.removeFirst()
 
 Utils.setVerbose(findOption(args, option: "-verbose"))
