@@ -477,13 +477,11 @@ class App
             outputStr.append("<resources>\n")
             let sorted = androidColors.keys.sorted()
             for key in sorted {
-                let color = parseColor(androidColors[key] as! String)
-                if (color != nil) {
+                if let color = parseColor(androidColors[key] as! String) {
                     //    <color name="medium_gray">#939597</color>
                     // RGB
                     // ARGB
-                    let hex = String(color!.hexRgb)
-                    outputStr.append("\t<color name=\"\(key)\">\(hex)</color>\n")
+                    outputStr.append("\t<color name=\"\(key)\">\(color.hexRgb)</color>\n")
                 }
             }
             outputStr.append("</resources>\n")
