@@ -254,6 +254,16 @@ public func roundTo2f(value: Double) -> Double {
     return round(100.0 * value) / 100.0
 }
 
+public extension Character
+{
+    public func unicodeScalarCodePoint() -> UnicodeScalar {
+        let characterString = String(self)
+        let scalars = characterString.unicodeScalars
+        
+        return scalars[scalars.startIndex]
+    }
+}
+
 public extension String
 {
     public func snakeCaseToCamelCase() -> String {
@@ -347,6 +357,26 @@ public extension String
             return false
         }
         return true
+    }
+
+    public func removeCharacters(_ set: CharacterSet) -> String {
+        var newString = String()
+        for (_, c) in self.characters.enumerated() {
+            let uc = c.unicodeScalarCodePoint()
+            if set.contains(uc) == false {
+                newString.append(c)
+            }
+        }
+        return newString
+    }
+
+    public func trunc(_ length: Int, trailing: String? = "…") -> String {
+        if self.characters.count > length {
+            return String(self.characters.prefix(length)) + (trailing ?? "")
+        }
+        else {
+            return String(self)
+        }
     }
 
     public func isInteger() -> Bool {

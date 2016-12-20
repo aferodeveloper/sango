@@ -157,7 +157,9 @@ class App
     var assetTag:String? = nil
 
     var compileType:LangType = .unset
+
     var localeOnly:Bool = false
+    var localeKeysFound: [String:Any] = [:]
 
     var globalTint:NSColor? = nil
     var globalIosTint:NSColor? = nil
@@ -222,7 +224,7 @@ class App
                        keyFontRoot: "path. Destination font root. Default is root of resources",
                        keyEnums: "dictionary. keys are enum key:value name",
                        keyImages: "array. path to image files that are common.",
-                       keyLocale: "dictionary. keys are IOS lang. ie, enUS, enES, path to strings file",
+                       keyLocale: "dictionary. keys are IOS lang. Use 'default' for enUS, enES, path to strings file",
                        keyImagesIos: "array. path to image files that are iOS only",
                        keyImagesAndroid: "array. path to image files that are Android only",
                        keyImagesScaled: "array. path to image files that are common and will be scaled. Source is always scaled down",
@@ -255,6 +257,22 @@ class App
             let keyPad = key.padding(toLength: keyLength + 3, withPad: " ", startingAt: 0)
             print(keyPad + value)
         }
+    }
+    
+    private func hasLocaleDefault(_ dict: [String: Any]) -> Bool {
+        for (k, _) in dict {
+            if isLocaleDefault(k) {
+                return true
+            }
+        }
+        return false
+    }
+
+    private func isLocaleDefault(_ locale: String) -> Bool {
+        if ((locale == "en") || (locale == "en-us") || (locale == "enus") || (locale == "default")) {
+            return true
+        }
+        return false
     }
     
     // Save image, tinted
@@ -466,6 +484,26 @@ class App
             sangoFile += "/Sango.java"
         }
         saveString(outputStr, file: sangoFile)
+    }
+
+    func writeLocaleKeysSwift(_ filePath: String) -> Void {
+        if (localeKeysFound.count > 0) {
+            var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
+            outputStr.append("import Foundation\n")
+            outputStr.append("public struct R {\n")
+            outputStr.append("\tpublic struct String {\n")
+            
+            let sorted = localeKeysFound.keys.sorted()
+            for key in sorted {
+                if let origKey = localeKeysFound[key] {
+                    outputStr.append("\t\tstatic let \(key) = \"\(origKey)\"\n")
+                }
+            }
+            outputStr.append("\t}\n")
+            outputStr.append("}\n")
+            let localeKeyFile = filePath + "/R.swift"
+            saveString(outputStr, file: localeKeyFile)
+        }
     }
 
     func writeAndroidColors() -> Void {
@@ -1004,6 +1042,17 @@ class App
         }
     }
     
+    func simplifyKey(_ key: String) -> String {
+        var chars = CharacterSet.newlines
+        chars = chars.union(.punctuationCharacters)
+        chars = chars.union(.symbols)
+        var newKey = key.replacingOccurrences(of: " ", with: "_").snakeCaseToCamelCase()
+        newKey = newKey.removeCharacters(chars)
+        newKey = newKey.trimmingCharacters(in: .decimalDigits)
+        newKey = newKey.trunc(100, trailing: "")
+        return newKey
+    }
+    
     /**
      * Covert a string that has parameters, like %1$s, %1$d, %1$@, to be correct per platform.
      * ie $@ is converted to $s on android, and left along for iOS, and $s is converted to
@@ -1114,6 +1163,10 @@ class App
         // for Android, path name is:
         // res/values/strings.xml
         // res/values-fr/strings.xml
+        if (hasLocaleDefault(locales) == false) {
+            Utils.error("Error: Missing 'default' language key")
+            exit(-1)
+        }
         for (lang, fileList) in locales {
             var prop:[String:Any] = [:]
             for file in fileList as! [String] {
@@ -1130,8 +1183,9 @@ class App
             if (prop.count > 0) {
                 var destPath = outputAssetFolder!
                 let fileName:String
+                let langLower = lang.lowercased()
                 if (type == .swift) {
-                    if (lang.lowercased() == "default") {
+                    if isLocaleDefault(langLower) && (langLower == "default") {
                         destPath.append("/Base.lproj")
                     }
                     else {
@@ -1141,7 +1195,7 @@ class App
                     fileName = "Localizable.strings"
                 }
                 else if (type == .java) {
-                    if ((lang.lowercased() == "en") || (lang.lowercased() == "en-us") || (lang.lowercased() == "enus") || (lang.lowercased() == "default")) {
+                    if isLocaleDefault(langLower) {
                         destPath.append("/res/values")
                     }
                     else {
@@ -1156,6 +1210,18 @@ class App
                 Utils.createFolder(destPath)
                 destPath.append("/" + fileName)
                 writeLocale(destPath, properties: prop as! Dictionary<String, String>, type: type)
+                
+                // For swift, we are going to write out the string keys for easy discovery
+                if isLocaleDefault(langLower) {
+                    if (type == .swift) {
+                        for (key, _) in prop {
+                            let newKey = simplifyKey(key)
+                            if (newKey.characters.count > 0) {
+                                localeKeysFound[newKey] = key.escapeStr()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -1502,9 +1568,13 @@ class App
                 outputStr.append(genString + "\n")
                 _ = saveString(outputStr, file: langOutputFile)
             }
-            writeSangoExtras(type, filePath: langOutputFile.pathOnlyComponent())
+            let langOutputFolder = langOutputFile.pathOnlyComponent()
+            writeSangoExtras(type, filePath: langOutputFolder)
             if (type == .java) {
                 writeAndroidColors()
+            }
+            else if (type == .swift) {
+                writeLocaleKeysSwift(langOutputFolder)
             }
         }
     }
