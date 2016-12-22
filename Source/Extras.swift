@@ -266,6 +266,16 @@ public extension Character
 
 public extension String
 {
+    public func lowercasedFirst() -> String {
+        let first = String(characters.prefix(1)).lowercased()
+        return first + String(characters.dropFirst())
+    }
+    
+    public func uppercasedFirst() -> String {
+        let first = String(characters.prefix(1)).uppercased()
+        return first + String(characters.dropFirst())
+    }
+
     public func snakeCaseToCamelCase() -> String {
         let items = self.components(separatedBy: "_")
         var camelCase = ""
