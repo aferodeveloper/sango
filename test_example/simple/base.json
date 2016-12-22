@@ -113,9 +113,17 @@
 		"ORANGE01": "#EDAC93",
 		"WHITE01": "#FFFFFF"
 	},
-    "TemperatureUnits": ["FAHRENHEIT", "CELSIUS", "KELVIN"],
+	"TemperatureUnits": [
+		"FAHRENHEIT",
+		"CELSIUS",
+		"KELVIN"
+	],
 	"enums": {
-        "TEMPERATURE_UNIT": ["CELSIUS", "FAHRENHEIT", "KELVIN"],
+		"TEMPERATURE_UNIT": [
+			"CELSIUS",
+			"FAHRENHEIT",
+			"KELVIN"
+		],
 		"AUTH_TYPE": [
 			"AFERO",
 			"OAUTH2"
@@ -149,4 +157,3 @@
 		]
 	}
 }
-

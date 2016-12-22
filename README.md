@@ -97,7 +97,7 @@ Basic data spec:
 		"#EDAC93"
 	],
 	"Service": {
-		"TYPE": "OAUTH2",
+		"LOGIN_TYPE": "OAUTH2",
 		"BROWSE_TYPE": "CARDS",
 		"MENU_VIEW": "SETTINGS",
 		"BASE_URL_PROD_USW2": "api.afero.io",
@@ -125,7 +125,17 @@ Basic data spec:
 		"ORANGE01": "#EDAC93",
 		"WHITE01": "#FFFFFF"
 	},
+	"TemperatureUnits": [
+		"FAHRENHEIT",
+		"CELSIUS",
+		"KELVIN"
+	],
 	"enums": {
+		"TEMPERATURE_UNIT": [
+			"CELSIUS",
+			"FAHRENHEIT",
+			"KELVIN"
+		],
 		"AUTH_TYPE": [
 			"AFERO",
 			"OAUTH2"
@@ -224,8 +234,8 @@ public struct Constants {
 		static let BaseUrlProdUsw2 = "api.afero.io"
 		static let BaseUrlStage = "api.dev.afero.io"
 		static let BrowseType = DeviceBrowserType.Cards
+		static let LoginType = AuthType.Oauth2
 		static let MenuView = MenuViewType.Settings
-		static let Type = AuthType.Oauth2
 	}
 	public struct Settings {
 		static let DebugEnabled = true
@@ -241,6 +251,11 @@ public struct Constants {
 		static let UiSecondaryColor = UIColor(red: 0.263, green: 0.071, blue: 0.596, alpha: 1.0) /* #431298 */
 		static let UiSecondaryColorLow = UIColor(red: 0.263, green: 0.071, blue: 0.596, alpha: 0.502) /* #80431298 */
 	}
+	public static let TemperatureUnits = [
+			TemperatureUnit.Fahrenheit,
+			TemperatureUnit.Celsius,
+			TemperatureUnit.Kelvin
+		]
 	public enum AuthType {
 		case Afero
 		case Oauth2
@@ -265,6 +280,11 @@ public struct Constants {
 	public enum SafeImages {
 		case Asr_1
 		case AcIconLarge
+	}
+	public enum TemperatureUnit {
+		case Celsius
+		case Fahrenheit
+		case Kelvin
 	}
 	public enum TimeOfDay {
 		case Breakfast
@@ -309,8 +329,8 @@ public final class Constants {
 		public static final String BASE_URL_PROD_USW2 = "api.afero.io";
 		public static final String BASE_URL_STAGE = "api.dev.afero.io";
 		public static final DeviceBrowserType BROWSE_TYPE = DeviceBrowserType.CARDS;
+		public static final AuthType LOGIN_TYPE = AuthType.OAUTH2;
 		public static final MenuViewType MENU_VIEW = MenuViewType.SETTINGS;
-		public static final AuthType TYPE = AuthType.OAUTH2;
 	}
 	public static final class Settings {
 		public static final Boolean DEBUG_ENABLED = true;
@@ -322,6 +342,11 @@ public final class Constants {
 		public static final double SCALE = 1.5;
 		public static final Boolean SHOW_UI = false;
 	}
+	public static final TemperatureUnit TemperatureUnits[] = {
+		TemperatureUnit.FAHRENHEIT,
+		TemperatureUnit.CELSIUS,
+		TemperatureUnit.KELVIN
+	};
 	public enum AuthType {
 		AFERO, OAUTH2
 	}
@@ -337,6 +362,9 @@ public final class Constants {
 	public enum SafeImages {
 		ASR_1, AC_ICON_LARGE
 	}
+	public enum TemperatureUnit {
+		CELSIUS, FAHRENHEIT, KELVIN
+	}
 	public enum TimeOfDay {
 		BREAKFAST, LUNCH, SNACK, DINNER
 	}
@@ -347,35 +375,35 @@ And for Android a colors.xml file is generated:
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generated with Sango, by Afero.io -->
 <resources>
-	<color name="colors_gray01">Optional("#E1DFDC")</color>
-	<color name="colors_gray01_50">Optional("#F2EDEB")</color>
-	<color name="colors_gray02">Optional("#BFBCB7")</color>
-	<color name="colors_gray02_50">Optional("#D0CBC7")</color>
-	<color name="colors_gray03">Optional("#9D9C98")</color>
-	<color name="colors_gray03_50">Optional("#A4A099")</color>
-	<color name="colors_gray04">Optional("#85878A")</color>
-	<color name="colors_gray04_50">Optional("#7E7B77")</color>
-	<color name="colors_gray05">Optional("#717375")</color>
-	<color name="colors_gray06">Optional("#616264")</color>
-	<color name="colors_gray07">Optional("#535557")</color>
-	<color name="colors_orange01">Optional("#EDAC93")</color>
-	<color name="colors_orange01_50">Optional("#F67D4B")</color>
-	<color name="colors_orange02">Optional("#EBA485")</color>
-	<color name="colors_orange03">Optional("#EF9471")</color>
-	<color name="colors_orange04">Optional("#F2845B")</color>
-	<color name="colors_orange05">Optional("#F47344")</color>
-	<color name="colors_orange06">Optional("#F67D4B")</color>
-	<color name="colors_white01">Optional("#FFFFFF")</color>
-	<color name="colors_white01_50">Optional("#FFFFFF")</color>
-	<color name="rainbowcolors_0">Optional("#535557")</color>
-	<color name="rainbowcolors_1">Optional("#9D9C98")</color>
-	<color name="rainbowcolors_2">Optional("#F2845B")</color>
-	<color name="rainbowcolors_3">Optional("#F67D4B")</color>
-	<color name="rainbowcolors_4">Optional("#EDAC93")</color>
-	<color name="settings_ui_base_color">Optional("#FF43A3C7")</color>
-	<color name="settings_ui_base_color2">Optional("#1443A3C7")</color>
-	<color name="settings_ui_secondary_color">Optional("#431298")</color>
-	<color name="settings_ui_secondary_color_low">Optional("#80431298")</color>
+	<color name="colors_gray01">#E1DFDC</color>
+	<color name="colors_gray01_50">#F2EDEB</color>
+	<color name="colors_gray02">#BFBCB7</color>
+	<color name="colors_gray02_50">#D0CBC7</color>
+	<color name="colors_gray03">#9D9C98</color>
+	<color name="colors_gray03_50">#A4A099</color>
+	<color name="colors_gray04">#85878A</color>
+	<color name="colors_gray04_50">#7E7B77</color>
+	<color name="colors_gray05">#717375</color>
+	<color name="colors_gray06">#616264</color>
+	<color name="colors_gray07">#535557</color>
+	<color name="colors_orange01">#EDAC93</color>
+	<color name="colors_orange01_50">#F67D4B</color>
+	<color name="colors_orange02">#EBA485</color>
+	<color name="colors_orange03">#EF9471</color>
+	<color name="colors_orange04">#F2845B</color>
+	<color name="colors_orange05">#F47344</color>
+	<color name="colors_orange06">#F67D4B</color>
+	<color name="colors_white01">#FFFFFF</color>
+	<color name="colors_white01_50">#FFFFFF</color>
+	<color name="rainbowcolors_0">#535557</color>
+	<color name="rainbowcolors_1">#9D9C98</color>
+	<color name="rainbowcolors_2">#F2845B</color>
+	<color name="rainbowcolors_3">#F67D4B</color>
+	<color name="rainbowcolors_4">#EDAC93</color>
+	<color name="settings_ui_base_color">#FF43A3C7</color>
+	<color name="settings_ui_base_color2">#1443A3C7</color>
+	<color name="settings_ui_secondary_color">#431298</color>
+	<color name="settings_ui_secondary_color_low">#80431298</color>
 </resources>
 ```
 
