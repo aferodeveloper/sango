@@ -57,8 +57,8 @@ public struct Constants {
 		static let BaseUrlProdUsw2 = "api.afero.io"
 		static let BaseUrlStage = "api.dev.afero.io"
 		static let BrowseType = DeviceBrowserType.Cards
+		static let LoginType = AuthType.Oauth2
 		static let MenuView = MenuViewType.Settings
-		static let Type = AuthType.Oauth2
 	}
 	public struct Settings {
 		static let DebugEnabled = true

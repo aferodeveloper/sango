@@ -28,8 +28,8 @@ public final class Constants {
 		public static final String BASE_URL_PROD_USW2 = "api.afero.io";
 		public static final String BASE_URL_STAGE = "api.dev.afero.io";
 		public static final DeviceBrowserType BROWSE_TYPE = DeviceBrowserType.CARDS;
+		public static final AuthType LOGIN_TYPE = AuthType.OAUTH2;
 		public static final MenuViewType MENU_VIEW = MenuViewType.SETTINGS;
-		public static final AuthType TYPE = AuthType.OAUTH2;
 	}
 	public static final class Settings {
 		public static final Boolean DEBUG_ENABLED = true;

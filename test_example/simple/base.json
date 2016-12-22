@@ -85,7 +85,7 @@
 		"#EDAC93"
 	],
 	"Service": {
-		"TYPE": "OAUTH2",
+		"LOGIN_TYPE": "OAUTH2",
 		"BROWSE_TYPE": "CARDS",
 		"MENU_VIEW": "SETTINGS",
 		"BASE_URL_PROD_USW2": "api.afero.io",
