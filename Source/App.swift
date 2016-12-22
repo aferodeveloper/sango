@@ -188,6 +188,7 @@ class App
             optOutSource: ["[source.java|swift]", "path to result of language"],
             optJava: ["", "write java source"],
             optSwift: ["", "write swift source"],
+            optSwift3: ["", "write Swift 3 compatible Swift source (requires \(optSwift))"],
             optOutAssets: ["[folder]", "asset root folder (write), typically iOS Resource, or Android app/src/main"],
             optInputAssetsTag: ["[tag]", "optional git tag to pull repro at before processing"],
             optVerbose: ["", "be verbose in details"],
@@ -425,7 +426,11 @@ class App
                 let list:[String] = value as! [String]
                 outputString.append("public enum \(key.snakeCaseToCamelCase()) {\n")
                 for itm in list {
-                    outputString.append("\tcase \(itm.snakeCaseToCamelCase())\n")
+                    var caseName = itm.snakeCaseToCamelCase()
+                    if swift3Output {
+                        caseName = caseName.lowercasedFirst()
+                    }
+                    outputString.append("\tcase \(caseName)\n")
                 }
                 outputString.append("}\n")
             }
@@ -580,7 +585,15 @@ class App
         }
         
         if (enums.valid && (key == enums.origType)) {
-            let lineValue = "\(enums.enumType).\(String(describing: value))".snakeCaseToCamelCase()
+            
+            var lineValue = "\(enums.enumType).".snakeCaseToCamelCase()
+            var caseValue = String(describing: value).snakeCaseToCamelCase()
+            
+            if swift3Output {
+                caseValue = caseValue.lowercasedFirst()
+            }
+            
+            lineValue.append(caseValue)
             outputString.append(lineValue)
         }
         else {
