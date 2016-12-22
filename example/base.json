@@ -66,7 +66,7 @@
 		"#535557", "#9D9C98", "#F2845B", "#F67D4B", "#EDAC93"
 	],
 	"Service": {
-        "TYPE": "ASSURELINK",
+        "TYPEZ": "ASSURELINK",
         "BROWSE_TYPE": "CARDS",
         "MENU_VIEW": "SETTINGS",
 		"BASE_URL_PROD_USW2": "api.afero.io",
@@ -103,6 +103,6 @@
 		"SAFE_IMAGES": ["asr_1", "ac_icon_large"],
         "TEMPERATURE_UNIT": ["CELSIUS", "FAHRENHEIT", "KELVIN"]
     },
-    "TemperatureUnits": ["FAHRENHEIT", "CELSIUS", "KELVIN"]
-
+    "TemperatureUnits": ["FAHRENHEIT", "CELSIUS", "KELVIN"],
+	"TypeDiff": ["CLASSIC"]
 }

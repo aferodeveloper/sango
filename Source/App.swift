@@ -547,6 +547,11 @@ class App
             let keyAlpha = keyA.snakeCaseToCamelCase()
             let list = valueA as! Array<String>
             for enumItm in list {
+                if (reservedWords.contains(enumItm.lowercased())) {
+                    Utils.error("Error: Constant '\(name).\(value)' is a reserved word and has to be changed")
+                    results.error = true
+                    return results
+                }
                 let valueAlpha = enumItm.snakeCaseToCamelCase()
                 if (keyAlpha != keyBeta) {
                     if (valueAlpha == valueBeta) {
@@ -678,11 +683,19 @@ class App
 
     func writeConstants(_ name: String, value: Any, type: LangType) -> String {
         var outputString = "\n"
+        if (reservedWords.contains(name.lowercased())) {
+            Utils.error("Error: Class '\(name)' is a reserved word and has to be changed")
+            exit(-1)
+        }
         if (type == .swift) {
             if let constantsDictionary = value as? Dictionary<String, Any> {
                 outputString.append("public struct ")
                 outputString.append(name + " {\n")
                 for (key, value) in Array(constantsDictionary).sorted(by: {$0.0 < $1.0}) {
+                    if (reservedWords.contains(key.lowercased())) {
+                        Utils.error("Error: Constant '\(name).\(key)' is a reserved word and has to be changed")
+                        exit(-1)
+                    }
                     let line = "\tstatic let " + key.snakeCaseToCamelCase() + " = "
                     outputString.append(line)
                     let lineValue = parseSwiftConstant(key, value: value)
@@ -709,6 +722,10 @@ class App
             
             if let constantsDictionary = value as? Dictionary<String, Any> {
                 for (key, value) in Array(constantsDictionary).sorted(by: {$0.0 < $1.0}) {
+                    if (reservedWords.contains(key.lowercased())) {
+                        Utils.error("Error: Constant '\(name).\(key)' is a reserved word and has to be changed")
+                        exit(-1)
+                    }
                     let strValue = String(describing: value)
                     let lineValue = parseJavaConstant(key, value: value)
                     if (lineValue.type == .Color) {
