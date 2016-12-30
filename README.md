@@ -8,7 +8,7 @@ Today we have basic localization that will transform and copy the standard iOS k
 
 We may migrate to something like Twine, in the future. https://github.com/mobiata/twine.
 
-```JSON
+```json
 Basic data spec:
 {
 	"schemaVersion": 1,
@@ -171,10 +171,10 @@ Basic data spec:
 }
 ```
 
-
 Output:
 Constants.swift
-```Swift
+
+```swift
 /* Generated with Sango, by Afero.io */
 
 import UIKit
@@ -296,9 +296,39 @@ public struct Constants {
 ```
 
 Output
+R.swift
+
+```swift
+/* Generated with Sango, by Afero.io */
+
+import Foundation
+public struct R {
+	public struct String {
+		static let AppName = "app_name"
+		static let ButtonTitleCancel = "button_title_cancel"
+		static let ButtonTitleCancelAllCaps = "button_title_cancel_all_caps"
+		static let ButtonTitleOk = "button_title_ok"
+		static let DeviceOffline = "device_offline"
+		static let DialogMessageRemoveDevice = "dialog_message_remove_device"
+		static let DialogTitleRemoveDevice = "dialog_title_remove_device"
+		static let DialogTitleScheduleTime = "dialog_title_schedule_time"
+		static let NoNetworkWarning = "no_network_warning"
+		static let PrimaryAccountName = "primary_account_name"
+	}
+	public struct Images {
+		static let AccountAvatar = "account_avatar2"
+		static let Asr = "asr_1"
+		static let BusinessMen = "business_men"
+		static let GreenGuy = "green_guy"
+		static let VectorAvatar = "vector_avatar"
+	}
+}
+```
+
+Output
 Constants.java
 
-```Java
+```java
 /* Generated with Sango, by Afero.io */
 
 package io.afero.tokui;
@@ -370,7 +400,9 @@ public final class Constants {
 	}
 }
 ```
+
 And for Android a colors.xml file is generated:
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generated with Sango, by Afero.io -->
@@ -410,9 +442,7 @@ And for Android a colors.xml file is generated:
 
 The parsing tool is run from the source platform depot, and the resulting files are copied or generated and put into the correct place, as defined by the JSON file. Those changes are then verified and checked in.
 
-
 Great thing about this process, is you can branch both the asset depot and the project depot to work on things in sync.
-
 
 The ‘images’ key are tagged with @2, @3, etc that will be copied direct to drawable-hdpi, drawable-xhdpi, drawable-xxhdpi for equivalent. The ‘copied’ key are just copied into the resource tree of the target platform. The ‘fonts’ key are copied into the target platform for the specific place, and for iOS the bundle will be modified via UIAppFonts to add the fonts the application.
 
@@ -445,9 +475,11 @@ locale                  dictionary. keys are IOS lang. ie, enUS, enES, path to s
 schemaVersion           number. Version, which should be 1
 swift                   dictionary. keys are base:class name
 ```
+
 A complete example is located in this depot at:
+
 ```bash
-cd test_example
+$ cd test_example
 $ ls
 Makefile
 config_android.json
