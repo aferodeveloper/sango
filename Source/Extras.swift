@@ -347,6 +347,11 @@ public extension String
         return (self as NSString).pathExtension.lowercased()
     }
 
+    public func fileNameOnly() -> String {
+        let fileName = self.lastPathComponent()
+        return (fileName as NSString).deletingPathExtension
+    }
+
     public func removeScale() -> String {
         var file = self.replacingOccurrences(of: "@1x", with: "")
         file = file.replacingOccurrences(of: "@2x", with: "")

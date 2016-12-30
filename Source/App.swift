@@ -160,6 +160,7 @@ class App
 
     var localeOnly:Bool = false
     var localeKeysFound: [String:Any] = [:]
+    var imageKeysFound: [String:Any] = [:]
 
     var globalTint:NSColor? = nil
     var globalIosTint:NSColor? = nil
@@ -314,31 +315,6 @@ class App
         return true
     }
     
-    func writeImageStringArray(_ stringArray: Dictionary<String, Any>, type: LangType) -> String {
-        var outputString = "\n"
-        if (type == .swift) {
-            // public static let UiSecondaryColorTinted = ["account_avatar1", "account_avatar2"]
-            for (key, value) in Array(stringArray).sorted(by: {$0.0 < $1.0}) {
-                outputString.append("\tpublic static let \(key) = [\"")
-                let strValue = String(describing: value)
-                outputString.append(strValue + "\"]\n")
-            }
-        }
-        else if (type == .java) {
-            // public static final String[] UI_SECONDARY_COLOR_TINTED = {"account_avatar1", "account_avatar2"};
-            for (key, value) in Array(stringArray).sorted(by: {$0.0 < $1.0}) {
-                outputString.append("\tpublic static final String[] \(key) = {\"")
-                let strValue = String(describing: value)
-                outputString.append(strValue + "\"};\n")
-            }
-        }
-        else {
-            Utils.error("Error: invalid output type")
-            exit(-1)
-        }
-        return outputString
-    }
-
     func parseColor(_ color: String) -> (r:Double, g:Double, b:Double, a:Double, s:Int,
                                             rgb:UInt32, hexRgb:String)?
     {
@@ -491,23 +467,37 @@ class App
         saveString(outputStr, file: sangoFile)
     }
 
-    func writeLocaleKeysSwift(_ filePath: String) -> Void {
-        if (localeKeysFound.count > 0) {
+    func writeResourceKeysSwift(_ filePath: String) -> Void {
+        if (localeKeysFound.count > 0) || (imageKeysFound.count > 0) {
             var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
             outputStr.append("import Foundation\n")
             outputStr.append("public struct R {\n")
-            outputStr.append("\tpublic struct String {\n")
             
-            let sorted = localeKeysFound.keys.sorted()
-            for key in sorted {
-                if let origKey = localeKeysFound[key] {
-                    outputStr.append("\t\tstatic let \(key) = \"\(origKey)\"\n")
+            if (localeKeysFound.count > 0) {
+                outputStr.append("\tpublic struct String {\n")
+                
+                let sorted = localeKeysFound.keys.sorted()
+                for key in sorted {
+                    if let origKey = localeKeysFound[key] {
+                        outputStr.append("\t\tstatic let \(key) = \"\(origKey)\"\n")
+                    }
                 }
+                outputStr.append("\t}\n")
             }
-            outputStr.append("\t}\n")
+            if (imageKeysFound.count > 0) {
+                outputStr.append("\tpublic struct Images {\n")
+                
+                let sorted = imageKeysFound.keys.sorted()
+                for key in sorted {
+                    if let origKey = imageKeysFound[key] {
+                        outputStr.append("\t\tstatic let \(key) = \"\(origKey)\"\n")
+                    }
+                }
+                outputStr.append("\t}\n")
+            }
             outputStr.append("}\n")
-            let localeKeyFile = filePath + "/R.swift"
-            saveString(outputStr, file: localeKeyFile)
+            let resourceKeyFile = filePath + "/R.swift"
+            saveString(outputStr, file: resourceKeyFile)
         }
     }
 
@@ -864,6 +854,7 @@ class App
                         exit(-1)
                     }
                 }
+                addImageKey(fileName)
             }
             else if (type == .java) {
                 let androidScales: [CGFloat:String] = [
@@ -910,7 +901,12 @@ class App
         3: "xxhdpi"
     ]
 
-    
+    func addImageKey(_ file: String) {
+        let fileOnly = file.fileNameOnly().removeScale()
+        let key = simplifyKey(fileOnly)
+        imageKeysFound[key] = fileOnly
+    }
+
     func imageResourcePath(_ file: String, type: LangType, useRoot: Bool) -> (sourceFile: String,
                                                                                     destFile: String,
                                                                                     destPath: String)
@@ -925,9 +921,8 @@ class App
         }
         var destPath = (destFile as NSString).deletingLastPathComponent
         
-        var fileName = file.lastPathComponent()
+        let fileName = file.fileNameOnly()
         let fileExt = file.fileExtention()
-        fileName = (fileName as NSString).deletingPathExtension
         
         if (type == .swift) {
             // do nothing
@@ -958,6 +953,9 @@ class App
             }
         }
         let roots = imageResourcePath(file, type: type, useRoot: useRoot)
+        if (type == .swift) {
+            addImageKey(roots.sourceFile)
+        }
         Utils.createFolder(roots.destPath)
         if ((globalTint == nil) && (globalIosTint == nil) && (globalAndroidTint == nil)) {
             // just copy the image file raw, no tinting
@@ -1604,7 +1602,7 @@ class App
                 writeAndroidColors()
             }
             else if (type == .swift) {
-                writeLocaleKeysSwift(langOutputFolder)
+                writeResourceKeysSwift(langOutputFolder)
             }
         }
     }
