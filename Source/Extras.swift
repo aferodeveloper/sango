@@ -374,6 +374,23 @@ public extension String
         return true
     }
 
+    /**
+     *  Remove digits from the start of a string only
+     */
+    public func removeDigitsPrefix() -> String {
+        var newString = String()
+        let numbers = CharacterSet.decimalDigits
+        var finished = false
+        for (_, c) in self.characters.enumerated() {
+            let uc = c.unicodeScalarCodePoint()
+            if (numbers.contains(uc) == false) || finished {
+                newString.append(c)
+                finished = true
+            }
+        }
+        return newString
+    }
+
     public func removeCharacters(_ set: CharacterSet) -> String {
         var newString = String()
         for (_, c) in self.characters.enumerated() {

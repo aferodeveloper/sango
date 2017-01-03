@@ -1076,7 +1076,7 @@ class App
         chars = chars.union(.symbols)
         var newKey = key.replacingOccurrences(of: " ", with: "_").snakeCaseToCamelCase()
         newKey = newKey.removeCharacters(chars)
-        newKey = newKey.trimmingCharacters(in: .decimalDigits)
+        newKey = newKey.removeDigitsPrefix()
         newKey = newKey.trunc(100, trailing: "")
         return newKey
     }

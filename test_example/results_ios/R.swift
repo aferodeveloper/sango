@@ -15,8 +15,8 @@ public struct R {
 		static let PrimaryAccountName = "primary_account_name"
 	}
 	public struct Images {
-		static let AccountAvatar = "account_avatar2"
-		static let Asr = "asr_1"
+		static let AccountAvatar2 = "account_avatar2"
+		static let Asr1 = "asr_1"
 		static let BusinessMen = "business_men"
 		static let GreenGuy = "green_guy"
 		static let VectorAvatar = "vector_avatar"
