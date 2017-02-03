@@ -2,7 +2,7 @@
 
 import UIKit
 public struct Sango {
-    public static let Version = "Sango © 2016 Afero, Inc - Build 195"
+    public static let Version = "Sango © 2016 Afero, Inc - Build 196"
 }
 extension String {
     init(locKey key: String, value: String) {
