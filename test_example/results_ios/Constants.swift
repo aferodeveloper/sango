@@ -24,6 +24,20 @@ public struct Constants {
 		static let White01 = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0) /* #FFFFFF */
 		static let White01_50 = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0) /* #FFFFFF */
 	}
+	public struct Dimen {
+		static let ButtonGroupSpacing = "10dp"
+		static let ButtonRadius = "400dp"
+		static let OfflineScheduleDayEditorRingWidth = "35dp"
+		static let OobeArrowSize = "120dp"
+		static let OobeIconSize = "100dp"
+		static let OobeMadalHline = "40dp"
+		static let OobeModalVline = "80dp"
+		static let ViewOnboardingBoard = "400dp"
+		static let ViewOnboardingBoardMarginTop = "50dp"
+		static let ViewOnboardingBoardWrapper = "600dp"
+		static let ViewOnboardingLabelMarginSide = "20dp"
+		static let ViewOnboardingLabelMarginTop = "75dp"
+	}
 	public static let Empty = [
 			""
 		]

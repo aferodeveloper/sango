@@ -113,6 +113,20 @@
 		"ORANGE01": "#EDAC93",
 		"WHITE01": "#FFFFFF"
 	},
+	"Dimen": {
+		"button_group_spacing": "10dp",
+		"view_onboarding_board": "400dp",
+		"view_onboarding_board_wrapper": "600dp",
+		"view_onboarding_label_margin_top": "75dp",
+		"view_onboarding_label_margin_side": "20dp",
+		"view_onboarding_board_margin_top": "50dp",
+		"oobe_modal_vline": "80dp",
+		"oobe_madal_hline": "40dp",
+		"oobe_icon_size": "100dp",
+		"oobe_arrow_size": "120dp",
+		"button_radius": "400dp",
+		"offline_schedule_day_editor_ring_width": "35dp"
+	},
 	"TemperatureUnits": [
 		"FAHRENHEIT",
 		"CELSIUS",
