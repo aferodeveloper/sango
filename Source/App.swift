@@ -172,7 +172,8 @@ class App
     // because Android colors are stored as an xml file, we collect them when walking through the constants,
     // and write them out last
     var androidColors:[String:Any] = [:]
-
+    var androidDimens:[String:Any] = [:]
+    
     var enumsFound: [String:Any] = [:]
 
     func usage() -> Void {
@@ -522,6 +523,25 @@ class App
         }
     }
     
+    
+    func writeAndroidDimens() -> Void {
+        if (androidDimens.count > 0) {
+            var destPath = outputAssetFolder! + "/res/values"
+            Utils.createFolder(destPath)
+            destPath.append("/dimens.xml")
+            var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
+            outputStr.append("<resources>\n")
+            let sorted = androidDimens.keys.sorted()
+            for key in sorted {
+                if let dimen = androidDimens[key] as? String {
+                    outputStr.append("\t<dimen name=\"\(key)\">\(dimen)</dimen>\n")
+                }
+            }
+            outputStr.append("</resources>\n")
+            saveString(outputStr, file: destPath)
+        }
+    }
+    
     struct EnumResults {
         var error = false
         var valid = false
@@ -563,6 +583,7 @@ class App
 
     enum ValueType :String {
         case Color = "Color"
+        case Dimen = "Dimen"
         case Int = "int"
         case String = "String"
         case Float = "double"
@@ -717,21 +738,27 @@ class App
                         exit(-1)
                     }
                     let strValue = String(describing: value)
-                    let lineValue = parseJavaConstant(key, value: value)
-                    if (lineValue.type == .Color) {
+                    var lineValue = parseJavaConstant(key, value: value)
+                    
+                    if name == "Dimen" {
+                        lineValue.type = .Dimen
+                    }
+                    
+                    switch lineValue.type {
+                    case .Color:
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(key)"
                         androidColors[colorKey.lowercased()] = strValue as Any?
-                    }
-                    else if (lineValue.type == .CustomEnum) {
+                    case .Dimen:
+                        androidDimens[key.lowercased()] = strValue as Any?
+                    case .CustomEnum:
                         let line = "\tpublic static final " + lineValue.results.enumType.snakeCaseToCamelCase() + " " +
                             key.uppercased() + " = \(lineValue.output);\n"
                         outputClassString.append(line)
                         skipClass = false
-                    }
-                    else {
+                    default:
                         let line = "\tpublic static final " + lineValue.type.rawValue + " " +
-                                key.uppercased() + " = \(lineValue.output);\n"
+                            key.uppercased() + " = \(lineValue.output);\n"
                         outputClassString.append(line)
                         skipClass = false
                     }
@@ -768,12 +795,15 @@ class App
 
                 for (index, itm) in constantsArray.enumerated() {
                     let lineValue = parseJavaConstant(String(index), value: itm)
-                    if (lineValue.type == .Color) {
+                    switch lineValue.type {
+                    case .Color:
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(index)"
                         androidColors[colorKey.lowercased()] = String(describing: itm)
-                    }
-                    else {
+                    case .Dimen:
+                        let dimensKey = name + "_\(index)"
+                        androidDimens[dimensKey.lowercased()] = String(describing: itm)
+                    default:
                         ending = true
                         outputString.append(lineValue.output);
                         if (index < lastItm) {
@@ -1600,6 +1630,7 @@ class App
             writeSangoExtras(type, filePath: langOutputFolder)
             if (type == .java) {
                 writeAndroidColors()
+                writeAndroidDimens()
             }
             else if (type == .swift) {
                 writeResourceKeysSwift(langOutputFolder)
