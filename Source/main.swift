@@ -10,19 +10,6 @@
 
 import Foundation
 import CoreFoundation
-// FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
-// Consider refactoring the code to use the non-optional operators.
-fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
-  switch (lhs, rhs) {
-  case let (l?, r?):
-    return l < r
-  case (nil, _?):
-    return true
-  default:
-    return false
-  }
-}
-
 
 public func findOption(_ args:[String], option:String) -> Bool
 {
@@ -40,11 +27,10 @@ public func getOption(_ args:[String], option:String) -> String?
     var found:String? = nil
     for argument in args {
         if argument == option {
-            var indx = args.index(of: argument)
-            if (indx != nil) {
-                indx = indx! + 1
+            if var indx = args.index(of: argument) {
+                indx = indx + 1
                 if indx < args.count {
-                    found = args[indx!]
+                    found = args[indx]
                 }
             }
             break
@@ -58,11 +44,10 @@ public func getOptions(_ args:[String], option:String) -> [String]?
     var found:[String]? = nil
     for argument in args {
         if (argument == option) {
-            var indx = args.index(of: argument)
-            if (indx != nil) {
-                indx = indx! + 1
+            if var indx = args.index(of: argument) {
+                indx = indx + 1
                 found = []
-                for dex in indx!...(args.count - 1) {
+                for dex in indx...(args.count - 1) {
                     let str = args[dex]
                     if (str.hasPrefix("-") == false) {
                         found?.append(str)

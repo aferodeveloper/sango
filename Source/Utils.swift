@@ -12,28 +12,27 @@ open class Utils
 {
     static var verbose = false
 
-    open static func setVerbose(_ state: Bool) -> Void
-    {
+    open static func setVerbose(_ state: Bool) -> Void {
         verbose = state
     }
 
-    open static func debug(_ message: String) -> Void
-    {
+    open static func debug(_ message: String) -> Void {
         if (verbose) {
             print(message)
         }
     }
-    open static func error(_ message: String) -> Void
-    {
+
+    open static func error(_ message: String) -> Void {
         print(message)
     }
 
-    open static func toJSON(_ dictionary:Dictionary<String, Any>) -> String?
-    {
+    open static func toJSON(_ dictionary:Dictionary<String, Any>) -> String? {
         do {
             let data: Data = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
-            let jsonString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) as! String
-            return jsonString.replacingOccurrences(of: "\\/", with: "/")
+            if let jsonString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
+                return jsonString.replacingOccurrences(of: "\\/", with: "/")
+            }
+            return nil
         }
         catch let error as NSError {
             let message:String = error.userInfo["NSDebugDescription"] as! String
@@ -42,8 +41,7 @@ open class Utils
         }
     }
     
-    open static func fromJSONFile(_ file:String) -> [String:Any]?
-    {
+    open static func fromJSONFile(_ file:String) -> [String:Any]? {
         var result:[String: Any]?
         
         let location = NSString(string: file).expandingTildeInPath
@@ -60,8 +58,7 @@ open class Utils
         return result
     }
     
-    open static func fromJSON(_ data:Data) -> [String: Any]?
-    {
+    open static func fromJSON(_ data:Data) -> [String: Any]? {
         var dict: Any?
         do {
             dict = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
@@ -163,5 +160,7 @@ open class Utils
         
         return ok
     }
-    
 }
+
+// EOF
+

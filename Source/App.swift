@@ -143,7 +143,7 @@ let swift3Additions =
 
 class App
 {
-    static let copyrightNotice = "Sango © 2016 Afero, Inc - Build \(BUILD_REVISION)"
+    static let copyrightNotice = "Sango © 2016,2017 Afero, Inc - Build \(BUILD_REVISION)"
 
     var package:String = ""
     var baseClass:String = ""
@@ -1652,7 +1652,7 @@ class App
             }
             else {
                 if (Shell.gitCheckoutAtTag(folder, tag: tag!) == false) {
-                    Utils.error("Error: Can't set asset repo to \(tag) tag")
+                    Utils.error("Error: Can't set asset repo to \(String(describing: tag)) tag")
                     exit(-1)
                 }
             }

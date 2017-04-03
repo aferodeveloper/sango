@@ -76,35 +76,11 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-input example.json"
+            argument = "-asset_template test"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-swift"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-out_source Constants.swift"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-java"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-out_source Constants.java"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-out_assets temp"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-input_assets assets"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-config example1.json"
+            argument = "-config_template test"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>
