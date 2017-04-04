@@ -64,11 +64,11 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-config config_android.json"
+            argument = "-config config_android.json -verbose"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-config config_ios.json"
+            argument = "-config config_ios.json -verbose"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
