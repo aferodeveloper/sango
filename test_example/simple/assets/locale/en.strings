@@ -8,3 +8,8 @@
 "dialog_title_schedule_time" = "Set Time";
 "dialog_title_remove_device" = "Remove Device?";
 "dialog_message_remove_device" = "Are you sure you want to remove this device from your account?";
+"app_html" = "<a href='https:\/\/www.example.com\/privacy-policy'>Privacy Policy<\/a>";
+
+
+
+
