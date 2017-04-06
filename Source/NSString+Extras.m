@@ -363,9 +363,9 @@ static HTMLEscapeMap gUnicodeHTMLEscapeMap[] = {
 
 static HTMLEscapeMap gUnicodeAndroidEscapeMap[] = {
     // C0 Controls and Basic Latin
-    {@"&quot;", 34},
+    {@"\\\"", '"'},
     {@"&amp;", 38},
-    {@"&apos;", 39},
+    {@"\\'", 39},
     {@"&lt;", 60},
     {@"&gt;", 62},
     
