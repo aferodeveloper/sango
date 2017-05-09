@@ -123,7 +123,7 @@ open class Utils
             Utils.debug("Copy \(src) -> \(dest)")
         }
         catch {
-            Utils.error("Error: copying file \(src) to \(dest)")
+            Utils.error("Error: copying file \(src) to \(dest): \(String(reflecting: error))")
             ok = false
         }
         
