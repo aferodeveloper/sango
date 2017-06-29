@@ -8,7 +8,7 @@
 	<string name="device_offline">dispositivo Offline</string>
 	<string name="dialog_message_remove_device">Sei sicuro di voler rimuovere il dispositivo dal tuo account?</string>
 	<string name="dialog_title_remove_device">Rimuovi dispositivo?</string>
-	<string name="dialog_title_schedule_time">All&apos;ora concordata</string>
+	<string name="dialog_title_schedule_time">All\'ora concordata</string>
 	<string name="no_network_warning">Impossibile contattare Afero. Controlla la connessione.</string>
 	<string name="primary_account_name">Primary account</string>
 </resources>

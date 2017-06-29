@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generated with Sango, by Afero.io -->
 <resources>
+	<string name="app_html">&lt;a href=\'https://www.example.com/privacy-policy\'&gt;Privacy Policy&lt;/a&gt;</string>
 	<string name="app_name">Afero</string>
 	<string name="button_title_cancel">Cancel</string>
 	<string name="button_title_cancel_all_caps">CANCEL</string>

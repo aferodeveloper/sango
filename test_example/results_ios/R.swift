@@ -3,6 +3,7 @@
 import Foundation
 public struct R {
 	public struct String {
+		static let AppHtml = "app_html"
 		static let AppName = "app_name"
 		static let ButtonTitleCancel = "button_title_cancel"
 		static let ButtonTitleCancelAllCaps = "button_title_cancel_all_caps"

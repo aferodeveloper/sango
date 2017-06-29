@@ -1801,8 +1801,9 @@ class App
             }
         }
 
-        if (assetTag == nil) {
-            assetTag = getOption(args, option: optInputAssetsTag)
+        // allow for an override of the asset tag
+        if let overrideTag = getOption(args, option: optInputAssetsTag) {
+            assetTag = overrideTag
         }
 
         if (outputClassFile == nil) {
