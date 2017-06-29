@@ -36,7 +36,7 @@ open class Utils
         }
         catch let error as NSError {
             let message:String = error.userInfo["NSDebugDescription"] as! String
-            print(message)
+            Utils.error(message)
             return nil
         }
     }
@@ -65,7 +65,7 @@ open class Utils
         }
         catch let error as NSError {
             let message:String = error.userInfo["NSDebugDescription"] as! String
-            print(message)
+            Utils.error(message)
             dict = nil
         }
         

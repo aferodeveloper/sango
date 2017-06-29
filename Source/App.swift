@@ -1639,24 +1639,29 @@ class App
     }
     
     func prepareGitRepro(_ folder:String, tag:String?) -> Void {
-        let currentBranch = Shell.gitCurrentBranch(folder)
-        if (tag != nil) {
-            if (tag!.contains(assetTagIgnore)) {
+        var currentBranch = Shell.gitCurrentBranch(folder)
+        if let tag = tag {
+            if (tag.contains(assetTagIgnore)) {
+                Utils.debug("No asset tag. Use HEAD.")
                 return
             }
-            else if (tag!.lowercased().contains(assetTagHead)) {
+            else if (tag.lowercased().contains(assetTagHead)) {
                 if (Shell.gitResetHead(folder, branch: currentBranch) == false) {
                     Utils.error("Error: Can't reset asset repo to HEAD")
                     exit(-1)
                 }
+                Utils.error("Use HEAD assets.")
             }
             else {
-                if (Shell.gitCheckoutAtTag(folder, tag: tag!) == false) {
-                    Utils.error("Error: Can't set asset repo to \(String(describing: tag)) tag")
+                if (Shell.gitCheckoutAtTag(folder, tag: tag) == false) {
+                    Utils.error("Error: Can't set asset repo to \(tag) tag")
                     exit(-1)
                 }
+                Utils.debug("Use assets at tag \(tag).")
+                currentBranch = Shell.gitCurrentBranch(folder)
             }
         }
+        Utils.debug("Current branch \(currentBranch)")
     }
     
     let baseAssetTemplate = [keySchemaVersion :SchemaVersion,
@@ -1787,6 +1792,10 @@ class App
                 exit(-1)
             }
         }
+
+        if (gitEnabled) && (sourceAssetFolder != nil) {
+            prepareGitRepro(sourceAssetFolder!, tag: assetTag!)
+        }
         
         if (compileType == .unset) {
             if (findOption(args, option: optJava)) {
@@ -1878,9 +1887,6 @@ class App
         }
 
         if (result != nil) {
-            if (gitEnabled) && (sourceAssetFolder != nil) {
-                prepareGitRepro(sourceAssetFolder!, tag: assetTag!)
-            }
 
             // process
             consume(result!, type: compileType, langOutputFile: outputClassFile!)
