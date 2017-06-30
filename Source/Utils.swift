@@ -25,6 +25,10 @@ open class Utils
     open static func error(_ message: String) -> Void {
         print(message)
     }
+    
+    open static func always(_ message: String) -> Void {
+        print(message)
+    }
 
     open static func toJSON(_ dictionary:Dictionary<String, Any>) -> String? {
         do {

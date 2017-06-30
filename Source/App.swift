@@ -55,13 +55,14 @@ let keyAndroidAppIcon = "appIconAndroid"
 let keyAndroidLayout = "layoutAndroid"
 let keyJava = "java"
 let keySwift = "swift"
+let keyPrint = "print"
 let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
                                     keyFonts, keyFontRoot, keySchemaVersion, keyAndroidLayout, keyEnums,
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
                                     keyImagesScaledUp, keyImagesScaledIosUp, keyImagesScaledAndroidUp,
                                     keyImages, keyImagesIos, keyImagesAndroid, keyLocale,
                                     keyJava, keySwift, keyGlobalTint,
-                                    keyGlobalIosTint, keyGlobalAndroidTint]
+                                    keyGlobalIosTint, keyGlobalAndroidTint, keyPrint]
 
 enum LangType {
     case unset
@@ -247,7 +248,8 @@ class App
                        keyJava: "dictionary. keys are base:class name, package:package name",
                        keyGlobalTint: "color. ie #F67D4B. apply as tint to all images saved",
                        keyGlobalIosTint: "color. ie #F67D4B. apply as tint to all images saved for iOS",
-                       keyGlobalAndroidTint: "color. ie #F67D4B. apply as tint to all images saved for Android"
+                       keyGlobalAndroidTint: "color. ie #F67D4B. apply as tint to all images saved for Android",
+                       keyPrint: "debugging. value is a string and is printed to the console"
                        ]
         var keyLength = 0
         for (key, _) in details {
@@ -1526,7 +1528,12 @@ class App
                 copyLocales(value as! Dictionary, type: type)
             }
             if (self.localeOnly == false) {
-                if (key == keyCopied) {
+                if (key == keyPrint) {
+                    if let message = value as? String {
+                        Utils.always(message)
+                    }
+                }
+                else if (key == keyCopied) {
                     copyAssets(value as! Array, type: type, assetType: .raw, destLocation: .relative)
                 }
                 else if (key == keyAppIcon) {
@@ -1642,7 +1649,7 @@ class App
         var currentBranch = Shell.gitCurrentBranch(folder)
         if let tag = tag {
             if (tag.contains(assetTagIgnore)) {
-                Utils.debug("No asset tag. Use HEAD.")
+                Utils.always("No asset tag. Use HEAD")
                 return
             }
             else if (tag.lowercased().contains(assetTagHead)) {
@@ -1650,18 +1657,18 @@ class App
                     Utils.error("Error: Can't reset asset repo to HEAD")
                     exit(-1)
                 }
-                Utils.error("Use HEAD assets.")
+                Utils.always("Use HEAD assets")
             }
             else {
                 if (Shell.gitCheckoutAtTag(folder, tag: tag) == false) {
                     Utils.error("Error: Can't set asset repo to \(tag) tag")
                     exit(-1)
                 }
-                Utils.debug("Use assets at tag \(tag).")
+                Utils.always("Use assets at tag \(tag)")
                 currentBranch = Shell.gitCurrentBranch(folder)
             }
         }
-        Utils.debug("Current branch \(currentBranch)")
+        Utils.always("Current branch \(currentBranch)")
     }
     
     let baseAssetTemplate = [keySchemaVersion :SchemaVersion,
@@ -1793,10 +1800,11 @@ class App
             }
         }
 
-        if (gitEnabled) && (sourceAssetFolder != nil) {
-            prepareGitRepro(sourceAssetFolder!, tag: assetTag!)
+        // allow for an override of the asset tag
+        if let overrideTag = getOption(args, option: optInputAssetsTag) {
+            assetTag = overrideTag
         }
-        
+
         if (compileType == .unset) {
             if (findOption(args, option: optJava)) {
                 compileType = .java
@@ -1808,11 +1816,6 @@ class App
                 Utils.error("Error: need either -swift or -java")
                 exit(-1)
             }
-        }
-
-        // allow for an override of the asset tag
-        if let overrideTag = getOption(args, option: optInputAssetsTag) {
-            assetTag = overrideTag
         }
 
         if (outputClassFile == nil) {
@@ -1836,6 +1839,10 @@ class App
         else {
             Utils.error("Error: missing source asset folder")
             exit(-1)
+        }
+
+        if (gitEnabled) && (sourceAssetFolder != nil) {
+            prepareGitRepro(sourceAssetFolder!, tag: assetTag!)
         }
         
         if (outputAssetFolder == nil) {

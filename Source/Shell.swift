@@ -67,7 +67,7 @@ open class Shell
         Utils.debug(output.output)
         return (output.status == 0)
     }
-    
+
     @discardableResult open static func gitDropChanges(_ path: String) -> Bool {
         let output = _shell(["cd \(path)",
             "\(gitPath) stash -u", "\(gitPath) stash drop"])
