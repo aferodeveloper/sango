@@ -1,6 +1,7 @@
 # sango
 Tool for processing common app constants and assets for iOS and Android. Takes a source JSON and copies files, and outputs a Swift and Java file for use.
 
+![Sango Pipeline](images/sango_pipeline.png)
 
 We have a need to share constants, and assets between iOS and Android projects. One solution that has worked well has a 3rd git depot that contains shared assets, and a source JSON file that is parsed by a tool for each platform.
 
