@@ -47,7 +47,7 @@
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
-      customWorkingDirectory = "${PROJECT_DIR}"
+      customWorkingDirectory = "${PROJECT_DIR}/test_example"
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
@@ -64,16 +64,12 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-config brand1_android.json"
+            argument = "-config config_android.json -verbose"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-config brand1_config.json"
+            argument = "-config config_ios.json -verbose"
             isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-config brand2_config.json"
-            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-asset_template test"
