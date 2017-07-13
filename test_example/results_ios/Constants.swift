@@ -39,7 +39,7 @@ public struct Constants {
 		static let ViewOnboardingLabelMarginTop = "75dp"
 	}
 	public static let Empty = [
-			""
+			
 		]
 	public static let FloatyNumbers = [
 			1,

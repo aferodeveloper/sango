@@ -14,8 +14,12 @@ all:
 	@echo "Targets:"
 	@echo "   distro"
 	@echo "   install"
+	@echo "   version"
 	@echo "   run"
 	@echo "   clean"
+
+version:
+	@echo "Current build version: $(REVISION) sha1 $(GIT_SHA1)"
 
 _clean_temps:
 	@rm -rdf temp

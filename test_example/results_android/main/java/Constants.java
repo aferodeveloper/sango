@@ -3,7 +3,7 @@
 package io.afero.tokui;
 public final class Constants {
 	public static final String Empty[] = {
-		""
+		
 	};
 	public static final double FloatyNumbers[] = {
 		1,

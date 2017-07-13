@@ -20,6 +20,7 @@ public struct R {
 		static let Asr1 = "asr_1"
 		static let BusinessMen = "business_men"
 		static let GreenGuy = "green_guy"
+		static let LargeDeviceIcon = "large_device_icon"
 		static let VectorAvatar = "vector_avatar"
 	}
 }

@@ -795,23 +795,28 @@ class App
                     outputString.append("public static final \(type.rawValue) \(name)[] = {\n\t")
                 }
 
-                for (index, itm) in constantsArray.enumerated() {
-                    let lineValue = parseJavaConstant(String(index), value: itm)
-                    switch lineValue.type {
-                    case .Color:
-                        // ok, we have a color, so we're going to store it
-                        let colorKey = name + "_\(index)"
-                        androidColors[colorKey.lowercased()] = String(describing: itm)
-                    case .Dimen:
-                        let dimensKey = name + "_\(index)"
-                        androidDimens[dimensKey.lowercased()] = String(describing: itm)
-                    default:
-                        ending = true
-                        outputString.append(lineValue.output);
-                        if (index < lastItm) {
-                            outputString.append(",\n\t")
+                if constantsArray.count > 0 {
+                    for (index, itm) in constantsArray.enumerated() {
+                        let lineValue = parseJavaConstant(String(index), value: itm)
+                        switch lineValue.type {
+                        case .Color:
+                            // ok, we have a color, so we're going to store it
+                            let colorKey = name + "_\(index)"
+                            androidColors[colorKey.lowercased()] = String(describing: itm)
+                        case .Dimen:
+                            let dimensKey = name + "_\(index)"
+                            androidDimens[dimensKey.lowercased()] = String(describing: itm)
+                        default:
+                            ending = true
+                            outputString.append(lineValue.output);
+                            if (index < lastItm) {
+                                outputString.append(",\n\t")
+                            }
                         }
                     }
+                }
+                else {
+                    ending = true
                 }
                 if (ending) {
                     outputString.append("\n};");
