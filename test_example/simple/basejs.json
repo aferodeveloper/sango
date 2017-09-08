@@ -1,0 +1,147 @@
+{
+	"schemaVersion": 1,
+	"javascript": {
+		"base": "Constants"
+	},
+	"images": [
+		"assets/asr_1.png"
+	],
+	"copied": [
+		"assets/file_data1",
+		"assets/file_data2"
+	],
+	"imagesScaled": [
+		"assets/large_device_icon.png",
+		"assets/vector_avatar.pdf",
+		"assets/business_men.ai",
+		"assets/green_guy.eps"
+	],
+	"Settings": {
+		"UI_BASE_COLOR": "67,163,199,255",
+		"UI_BASE_COLOR2": "67,163,199,20",
+		"UI_SECONDARY_COLOR": "#431298",
+		"UI_SECONDARY_COLOR_LOW": "#80431298",
+		"DEFAULT_UI_FONT": "GT-Walsheim-Black.ttf",
+		"DEFAULT_AVATAR": "account_avatar1",
+		"PREF_ACCOUNT_NAME": "pref_account_display_name",
+		"PREF_SERVICE": "pref_service_name",
+		"DEFAULT_DISPLAY_UI_STYLE": 1,
+		"SCALE": 1.5,
+		"DEBUG_ENABLED": true,
+		"SHOW_UI": false
+	},
+	"Empty": [
+	],
+	"Hello": [
+		"one",
+		"two",
+		"three"
+	],
+	"FloatyNumbers": [
+		1,
+		2,
+		3.15,
+		23,
+		415.03
+	],
+	"InteryNumbers": [
+		5,
+		23,
+		54,
+		120,
+		100
+	],
+	"RainbowColors": [
+		"#535557",
+		"#9D9C98",
+		"#F2845B",
+		"#F67D4B",
+		"#EDAC93"
+	],
+	"Service": {
+		"LOGIN_TYPE": "OAUTH2",
+		"BROWSE_TYPE": "CARDS",
+		"MENU_VIEW": "SETTINGS",
+		"BASE_URL_PROD_USW2": "api.afero.io",
+		"BASE_URL_STAGE": "api.dev.afero.io"
+	},
+	"Colors": {
+		"GRAY01_50": "#F2EDEB",
+		"GRAY02_50": "#D0CBC7",
+		"GRAY03_50": "#A4A099",
+		"GRAY04_50": "#7E7B77",
+		"ORANGE01_50": "#F67D4B",
+		"WHITE01_50": "#FFFFFF",
+		"GRAY01": "#E1DFDC",
+		"GRAY02": "#BFBCB7",
+		"GRAY03": "#9D9C98",
+		"GRAY04": "#85878A",
+		"GRAY05": "#717375",
+		"GRAY06": "#616264",
+		"GRAY07": "#535557",
+		"ORANGE06": "#F67D4B",
+		"ORANGE05": "#F47344",
+		"ORANGE04": "#F2845B",
+		"ORANGE03": "#EF9471",
+		"ORANGE02": "#EBA485",
+		"ORANGE01": "#EDAC93",
+		"WHITE01": "#FFFFFF"
+	},
+	"Dimen": {
+		"button_group_spacing": "10dp",
+		"view_onboarding_board": "400dp",
+		"view_onboarding_board_wrapper": "600dp",
+		"view_onboarding_label_margin_top": "75dp",
+		"view_onboarding_label_margin_side": "20dp",
+		"view_onboarding_board_margin_top": "50dp",
+		"oobe_modal_vline": "80dp",
+		"oobe_madal_hline": "40dp",
+		"oobe_icon_size": "100dp",
+		"oobe_arrow_size": "120dp",
+		"button_radius": "400dp",
+		"offline_schedule_day_editor_ring_width": "35dp"
+	},
+	"TemperatureUnits": [
+		"FAHRENHEIT",
+		"CELSIUS",
+		"KELVIN"
+	],
+	"enums": {
+		"TEMPERATURE_UNIT": [
+			"CELSIUS",
+			"FAHRENHEIT",
+			"KELVIN"
+		],
+		"AUTH_TYPE": [
+			"AFERO",
+			"OAUTH2"
+		],
+		"MENU_VIEW_TYPE": [
+			"CLASSIC",
+			"SETTINGS"
+		],
+		"DEVICE_BROWSER_TYPE": [
+			"HEX",
+			"CARDS"
+		],
+		"DAY": [
+			"MONDAY",
+			"TUESDAY",
+			"WEDNESDAY",
+			"THURSDAY",
+			"FRIDAY",
+			"SATURDAY",
+			"SUNDAY"
+		],
+		"TIME_OF_DAY": [
+			"BREAKFAST",
+			"LUNCH",
+			"SNACK",
+			"DINNER"
+		],
+		"SAFE_IMAGES": [
+			"asr_1",
+			"ac_icon_large"
+		]
+	}
+}

@@ -1,6 +1,7 @@
 SANGO = sango
 RESULTS_IOS = results_ios
 RESULTS_ANDROID = results_android
+RESULTS_JS = results_js
 
 all:
 	@echo "Example to build sango data for iOS and Android, used for testing."
@@ -12,6 +13,7 @@ all:
 clean:
 	@rm -rdf $(RESULTS_ANDROID)
 	@rm -rdf $(RESULTS_IOS)
+	@rm -rdf $(RESULTS_JS)
 
 build_android:
 	@rm -rdf $(RESULTS_ANDROID)
@@ -20,6 +22,10 @@ build_android:
 build_ios:
 	@rm -rdf $(RESULTS_IOS)
 	$(SANGO) -config config_ios.json -verbose
+
+build_js:
+	@rm -rdf $(RESULTS_JS)
+	$(SANGO) -config config_javascript.json -verbose
 
 build_both:
 	set -e

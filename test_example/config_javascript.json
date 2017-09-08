@@ -1,0 +1,10 @@
+{
+	"input_assets": "simple",
+	"inputs": [
+		"basejs.json"
+	],
+	"out_source": "results_js/Constants.js",
+	"out_assets": "results_js/resources",
+	"type": "javascript",
+	"input_assets_tag": "~"
+}
