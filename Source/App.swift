@@ -27,6 +27,17 @@ import CoreGraphics
 
 */
 
+/*
+ var Auto = {
+	CONSTANT1: "const1",
+    CONSTANT2: "const2",
+ 
+    Tire: {
+        SPOKE: "SPOKE",
+        RIM: "RIM"
+    }
+ }
+ */
 let SchemaVersion = 1
 
 let keySchemaVersion = "schemaVersion"
@@ -142,8 +153,10 @@ let swift3Additions =
 "    }\n" +
 "}\n"
 
-
-
+let javascriptCommon =
+"var Sango = {\n" +
+"   VERSION = \"\(App.copyrightNotice)\";\n" +
+"}\n"
 
 class App
 {
@@ -173,9 +186,12 @@ class App
 
     var swift3Output = false
 
-    // because Android colors are stored as an xml file, we collect them when walking through the constants,
-    // and write them out last
-    var androidColors:[String:Any] = [:]
+    // because Android and Javascript colors are stored in an external file, we collect them 
+    // when walking through the constants, and write them out last
+    var colorsFound:[String:Any] = [:]
+
+    // because Android dimentions are stored in an external file, we collect them
+    // when walking through the constants, and write them out last
     var androidDimens:[String:Any] = [:]
     
     var enumsFound: [String:Any] = [:]
@@ -472,7 +488,7 @@ class App
             sangoFile += "/Sango.java"
         }
         else if (type == .javascript) {
-            Utils.debug("Warn: using javascript, can't write enums")
+            outputStr.append(javascriptCommon)
             sangoFile += "/Sango.js"
         }
 
@@ -513,24 +529,47 @@ class App
         }
     }
 
-    func writeAndroidColors() -> Void {
-        if (androidColors.count > 0) {
-            var destPath = outputAssetFolder! + "/res/values"
+    func writeExternalColors(_ destFolder: String) -> Void {
+        if (colorsFound.count > 0) {
+            var destPath = destFolder
             Utils.createFolder(destPath)
-            destPath.append("/colors.xml")
-            var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
-            outputStr.append("<resources>\n")
-            let sorted = androidColors.keys.sorted()
-            for key in sorted {
-                if let color = parseColor(androidColors[key] as! String) {
-                    //    <color name="medium_gray">#939597</color>
-                    // RGB
-                    // ARGB
-                    outputStr.append("\t<color name=\"\(key)\">\(color.hexRgb)</color>\n")
+            if compileType == .java {
+                destPath.append("/colors.xml")
+                var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
+                outputStr.append("<resources>\n")
+                let sorted = colorsFound.keys.sorted()
+                for key in sorted {
+                    if let color = parseColor(colorsFound[key] as! String) {
+                        // <color name="medium_gray">#939597</color>
+                        // RGB
+                        // ARGB
+                        outputStr.append("\t<color name=\"\(key)\">\(color.hexRgb)</color>\n")
+                    }
                 }
+                outputStr.append("</resources>\n")
+                saveString(outputStr, file: destPath)
             }
-            outputStr.append("</resources>\n")
-            saveString(outputStr, file: destPath)
+            else if compileType == .javascript {
+                destPath.append("/colors.scss")
+                var outputStr = "// Generated with Sango, by Afero.io\n\n"
+                let sorted = colorsFound.keys.sorted()
+                for key in sorted {
+                    if let color = parseColor(colorsFound[key] as! String) {
+//                        $TEXT_HOVER: #AAAAAA;
+//                        $APE_BACKGROUND: rgb(130, 124, 120);
+//                        $BOX_SHADOW_01: rgba(0, 0, 0, 0.25);
+                        // RGB
+                        if color.s == 3 {
+                            outputStr.append("$\(key): \(color.hexRgb);\n")
+                        }
+                        // ARGB
+                        else {
+                            outputStr.append("$\(key): rbga(\(Int(color.r * 255)), \(Int(color.g * 255)), \(Int(color.b * 255)), \(color.a));\n")
+                        }
+                    }
+                }
+                saveString(outputStr, file: destPath)
+            }
         }
     }
     
@@ -759,7 +798,7 @@ class App
                     case .Color:
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(key)"
-                        androidColors[colorKey.lowercased()] = strValue as Any?
+                        colorsFound[colorKey.lowercased()] = strValue as Any?
                     case .Dimen:
                         androidDimens[key.lowercased()] = strValue as Any?
                     case .CustomEnum:
@@ -811,7 +850,7 @@ class App
                         case .Color:
                             // ok, we have a color, so we're going to store it
                             let colorKey = name + "_\(index)"
-                            androidColors[colorKey.lowercased()] = String(describing: itm)
+                            colorsFound[colorKey.lowercased()] = String(describing: itm)
                         case .Dimen:
                             let dimensKey = name + "_\(index)"
                             androidDimens[dimensKey.lowercased()] = String(describing: itm)
@@ -840,7 +879,93 @@ class App
             }
         }
         else if (type == .javascript) {
-            Utils.debug("Warn: using javascript, can't write constants")
+            var skipClass = true
+            var outputClassString = ""
+            
+            if let constantsDictionary = value as? Dictionary<String, Any> {
+                for (key, value) in Array(constantsDictionary).sorted(by: {$0.0 < $1.0}) {
+                    if (reservedWords.contains(key.lowercased())) {
+                        Utils.error("Error: Constant '\(name).\(key)' is a reserved word and has to be changed")
+                        exit(-1)
+                    }
+                    let strValue = String(describing: value)
+                    var lineValue = parseJavaConstant(key, value: value)
+                    
+                    switch lineValue.type {
+                    case .Color:
+                        // ok, we have a color, so we're going to store it
+                        let colorKey = name + "_\(key)"
+                        colorsFound[colorKey.uppercased()] = strValue as Any?
+                    case .CustomEnum:
+                        let line = "\t " + key.uppercased() + ": \(lineValue.output),\n"
+                        outputClassString.append(line)
+                        skipClass = false
+                    default:
+                        let line = "\t " + key.uppercased() + ": \(lineValue.output),\n"
+                        outputClassString.append(line)
+                        skipClass = false
+                    }
+                }
+            }
+            else if let constantsArray = value as? Array<Any> {
+                let lastItm = constantsArray.count - 1
+                var ending = false
+                // ok we have an array of strings, int, floats, we have to figure out a type before hand for Java
+                var type:ValueType = .String
+                if (hasArrayFloats(value)) {
+                    type = .Float
+                }
+                else if (hasArrayInts(value)) {
+                    type = .Int
+                }
+                else {
+                    for (index, itm) in constantsArray.enumerated() {
+                        let lineValue = parseJavaConstant(String(index), value: itm)
+                        if (lineValue.type == .Color) {
+                            type = .Color
+                            break
+                        }
+                        if (lineValue.type == .CustomEnum) {
+                            type = .CustomEnum
+                            outputString.append("\(name): [\n\t")
+                            break
+                        }
+                    }
+                }
+                if (type != .Color && type != .CustomEnum) {
+                    outputString.append("\(name): [\n\t")
+                }
+                
+                if constantsArray.count > 0 {
+                    for (index, itm) in constantsArray.enumerated() {
+                        let lineValue = parseJavaConstant(String(index), value: itm)
+                        switch lineValue.type {
+                        case .Color:
+                            // ok, we have a color, so we're going to store it
+                            let colorKey = name + "_\(index)"
+                            colorsFound[colorKey.uppercased()] = String(describing: itm)
+                        default:
+                            ending = true
+                            outputString.append(lineValue.output);
+                            if (index < lastItm) {
+                                outputString.append(",\n\t")
+                            }
+                        }
+                    }
+                }
+                else {
+                    ending = true
+                }
+                if (ending) {
+                    outputString.append("\n],");
+                }
+            }
+            
+            if (skipClass == false) {
+                outputString.append(name + ": {\n")
+                outputString.append(outputClassString)
+                outputString.append("},")
+            }
         }
         else {
             Utils.error("Error: invalid output type")
@@ -1674,9 +1799,6 @@ class App
                         outputStr.append("package \(package);\n")
                     }
                 }
-                else if (type == .javascript) {
-                    Utils.debug("Warn: using javascript, can't complete output")
-                }
 
                 if (baseClass.isEmpty == false) {
                     genString = insertTabPerLine(genString)
@@ -1687,7 +1809,7 @@ class App
                         outputStr.append("public final class \(baseClass) {")
                     }
                     else if (type == .javascript) {
-                        Utils.debug("Warn: using javascript, can't complete output")
+                        outputStr.append("var \(baseClass) = {")
                     }
 
                     genString.append("\n}")
@@ -1698,11 +1820,16 @@ class App
             let langOutputFolder = langOutputFile.pathOnlyComponent()
             writeSangoExtras(type, filePath: langOutputFolder)
             if (type == .java) {
-                writeAndroidColors()
+                let destPath = outputAssetFolder! + "/res/values"
+                writeExternalColors(destPath)
                 writeAndroidDimens()
             }
             else if (type == .swift) {
                 writeResourceKeysSwift(langOutputFolder)
+            }
+            else if (type == .javascript) {
+                writeExternalColors(langOutputFolder)
+                Utils.debug("Warn: can't write resources")
             }
         }
     }
@@ -1851,13 +1978,13 @@ class App
                 outputAssetFolder = result!["out_assets"] as? String
                 assetTag = result!["input_assets_tag"] as? String
                 let type = result!["type"] as? String
-                if (type == "java") {
+                if (type == keyJava) {
                     compileType = .java
                 }
-                else if (type == "swift") {
+                else if (type == keySwift) {
                     compileType = .swift
                 }
-                else if (type == "javascript") {
+                else if (type == keyJavascript) {
                     compileType = .javascript
                 }
             }
@@ -1882,7 +2009,7 @@ class App
                 compileType = .javascript
             }
             else {
-                Utils.error("Error: need either -swift or -java")
+                Utils.error("Error: need either -swift, -java, -javascript")
                 exit(-1)
             }
         }

@@ -7,7 +7,8 @@ all:
 	@echo "Example to build sango data for iOS and Android, used for testing."
 	@echo " build_android"
 	@echo " build_ios"
-	@echo " build_both"
+	@echo " build_js"
+	@echo " build_all"
 	@echo " validate"
 
 clean:
@@ -27,10 +28,11 @@ build_js:
 	@rm -rdf $(RESULTS_JS)
 	$(SANGO) -config config_javascript.json -verbose
 
-build_both:
+build_all:
 	set -e
 	@$(MAKE) build_android
 	@$(MAKE) build_ios
+	@$(MAKE) build_js
 
 validate:
 	$(SANGO) -verbose -input_assets simple -validate simple/*.json
