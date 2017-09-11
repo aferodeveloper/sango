@@ -4,6 +4,7 @@
 		"basejs.json"
 	],
 	"out_source": "results_js/Constants.js",
+	"out_scss": "results_js/colors.scss",
 	"out_assets": "results_js/resources",
 	"type": "nodejs",
 	"input_assets_tag": "~"

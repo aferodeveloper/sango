@@ -111,6 +111,7 @@ let optInput = "-input"
 let optInputs = "-inputs"
 let optInputAssets = "-input_assets"
 let optOutSource = "-out_source"
+let optOutSCSS = "-out_scss"
 let optJava = "-java"
 let optSwift = "-swift"
 let optJavascript = "-javascript"
@@ -174,6 +175,7 @@ class App
     var inputFile:String? = nil
     var inputFiles:[String]? = nil
     var outputClassFile:String? = nil
+    var outputSCSSFile:String? = nil
     var assetTag:String? = nil
 
     var compileType:LangType = .unset
@@ -210,7 +212,8 @@ class App
             optInput: ["[file.json]", "asset json file"],
             optInputs: ["[file1.json file2.json ...]", "merges asset files and process"],
             optInputAssets: ["[folder]", "asset source folder (read)"],
-            optOutSource: ["[source.java|swift]", "path to result of language"],
+            optOutSource: ["[source.java|swift|js]", "path to result of language"],
+            optOutSCSS: ["[source.scss]", "when using javascript/node path to scss file"],
             optJava: ["", "write java source"],
             optSwift: ["", "write swift source"],
             optJavascript: ["", "write javascript source"],
@@ -577,22 +580,27 @@ class App
                 saveString(outputStr, file: destPath)
             }
             else if (compileType == .javascript || compileType == .nodejs) {
-                destPath.append("/colors.scss")
-                var outputStr = "// Generated with Sango, by Afero.io\n\n"
-                let sorted = colorsFound.keys.sorted()
-                for key in sorted {
-                    if let color = parseColor(colorsFound[key] as! String) {
-                        // RGB
-                        if color.s == 3 {
-                            outputStr.append("$\(key): \(color.hexRgb);\n")
-                        }
-                        // ARGB
-                        else {
-                            outputStr.append("$\(key): rbga(\(Int(color.r * 255)), \(Int(color.g * 255)), \(Int(color.b * 255)), \(color.a));\n")
+                if let outputSCSSFile = outputSCSSFile {
+                    var outputStr = "// Generated with Sango, by Afero.io\n\n"
+                    let sorted = colorsFound.keys.sorted()
+                    for key in sorted {
+                        if let color = parseColor(colorsFound[key] as! String) {
+                            // RGB
+                            if color.s == 3 {
+                                outputStr.append("$\(key): \(color.hexRgb);\n")
+                            }
+                                // ARGB
+                            else {
+                                outputStr.append("$\(key): rbga(\(Int(color.r * 255)), \(Int(color.g * 255)), \(Int(color.b * 255)), \(color.a));\n")
+                            }
                         }
                     }
+                    saveString(outputStr, file: outputSCSSFile)
                 }
-                saveString(outputStr, file: destPath)
+                else {
+                    Utils.error("Error: missing scss location")
+                    exit(-1)
+                }
             }
         }
     }
@@ -1926,6 +1934,7 @@ class App
     let baseConfigTemplate = ["inputs": ["example/base.json","example/brand_1.json"],
                                      "input_assets": "../path/to/depot",
                                      "out_source": "path/to/app/source",
+                                     "out_scss": "path/to/app/scss",
                                      "out_assets": "path/to/app/resources",
                                      "type": "swift or java"
     ] as [String : Any]
@@ -2010,6 +2019,7 @@ class App
                 inputFiles = result!["inputs"] as? [String]
                 sourceAssetFolder = result!["input_assets"] as? String
                 outputClassFile = result!["out_source"] as? String
+                outputSCSSFile = result!["out_scss"] as? String
                 outputAssetFolder = result!["out_assets"] as? String
                 assetTag = result!["input_assets_tag"] as? String
                 let type = result!["type"] as? String
@@ -2066,6 +2076,13 @@ class App
             exit(-1)
         }
 
+        if (outputSCSSFile == nil) {
+            outputSCSSFile = getOption(args, option: optOutSCSS)
+        }
+        if (outputSCSSFile != nil) {
+            outputSCSSFile = NSString(string: outputSCSSFile!).expandingTildeInPath
+        }
+        
         let overrideSourceAssets = getOption(args, option: optInputAssets)
         if (overrideSourceAssets != nil) {
             sourceAssetFolder = overrideSourceAssets
