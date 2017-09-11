@@ -434,7 +434,7 @@ class App
     }
     
     func writeEnums(_ enums: Dictionary<String, Any>, type: LangType) -> String {
-        var outputString = "\n"
+        var outputString = ""
         let sorted = Array(enums).sorted(by: {$0.0 < $1.0})
         if (type == .swift) {
             for (key, value) in sorted {
@@ -1813,14 +1813,14 @@ class App
         }
         
         if (completeOutput) {
-            var outputStr = "/* Generated with Sango, by Afero.io */\n"
+            var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
             if (enumsFound.isEmpty == false) {
                 let line = writeEnums(enumsFound, type: type)
                 if (type == .javascript || type == .nodejs) {
                     outputStr.append(line)
                 }
                 else {
-                    genString.append(line)
+                    genString.append("\n" + line)
                 }
             }
             if (genString.isEmpty == false) {
