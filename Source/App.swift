@@ -339,6 +339,13 @@ class App
         return true
     }
     
+    private func parseDouble(_ string: String, _ defaultValue: Double = 0.0) -> Double {
+        guard let value = Double(string) else {
+            return defaultValue
+        }
+        return value
+    }
+
     func parseColor(_ color: String) -> (r:Double, g:Double, b:Double, a:Double, s:Int,
                                             rgb:UInt32, hexRgb:String)?
     {
@@ -353,13 +360,13 @@ class App
         let parts = color.removeWhitespace().components(separatedBy: ",")
         if (parts.count == 3 || parts.count == 4) {
             // color
-            red = Double(parts[0])! / 255.0
-            green = Double(parts[1])! / 255.0
-            blue = Double(parts[2])! / 255.0
+            red = parseDouble(parts[0]) / 255.0
+            green = parseDouble(parts[1]) / 255.0
+            blue = parseDouble(parts[2]) / 255.0
             alpha = 1
             size = 3
             if (parts.count == 4) {
-                alpha = Double(parts[3])! / 255.0
+                alpha = parseDouble(parts[3]) / 255.0
                 size = 4
             }
             isColor = true
