@@ -350,7 +350,7 @@ class App
         var isColor = false
         var size = 0
         var hexRgb = ""
-        let parts = color.components(separatedBy: ",")
+        let parts = color.removeWhitespace().components(separatedBy: ",")
         if (parts.count == 3 || parts.count == 4) {
             // color
             red = Double(parts[0])! / 255.0

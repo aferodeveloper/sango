@@ -391,6 +391,10 @@ public extension String
         return newString
     }
 
+    public func removeWhitespace() -> String {
+        return self.removeCharacters(.whitespacesAndNewlines)
+    }
+
     public func removeCharacters(_ set: CharacterSet) -> String {
         var newString = String()
         for (_, c) in self.characters.enumerated() {
