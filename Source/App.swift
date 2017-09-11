@@ -67,13 +67,14 @@ let keyAndroidLayout = "layoutAndroid"
 let keyJava = "java"
 let keySwift = "swift"
 let keyJavascript = "javascript"
+let keyNodeJS = "nodejs"
 let keyPrint = "print"
 let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
                                     keyFonts, keyFontRoot, keySchemaVersion, keyAndroidLayout, keyEnums,
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
                                     keyImagesScaledUp, keyImagesScaledIosUp, keyImagesScaledAndroidUp,
                                     keyImages, keyImagesIos, keyImagesAndroid, keyLocale,
-                                    keyJava, keySwift, keyJavascript, keyGlobalTint,
+                                    keyJava, keySwift, keyJavascript, keyNodeJS, keyGlobalTint,
                                     keyGlobalIosTint, keyGlobalAndroidTint, keyPrint]
 
 enum LangType {
@@ -81,6 +82,7 @@ enum LangType {
     case java
     case swift
     case javascript
+    case nodejs
 }
 
 enum AssetType {
@@ -112,6 +114,7 @@ let optOutSource = "-out_source"
 let optJava = "-java"
 let optSwift = "-swift"
 let optJavascript = "-javascript"
+let optNodeJS = "-nodejs"
 let optOutAssets = "-out_assets"
 let optInputAssetsTag = "-input_assets_tag"
 let optVerbose = "-verbose"
@@ -211,6 +214,7 @@ class App
             optJava: ["", "write java source"],
             optSwift: ["", "write swift source"],
             optJavascript: ["", "write javascript source"],
+            optNodeJS: ["", "write nodejs source"],
             optSwift3: ["", "write Swift 3 compatible Swift source (requires \(optSwift))"],
             optOutAssets: ["[folder]", "asset root folder (write), typically iOS Resource, or Android app/src/main"],
             optInputAssetsTag: ["[tag]", "optional git tag to pull repro at before processing"],
@@ -267,6 +271,7 @@ class App
                        keySwift: "dictionary. keys are base:class name",
                        keyJava: "dictionary. keys are base:class name, package:package name",
                        keyJavascript: "dictionary. keys are base:class name",
+                       keyNodeJS: "dictionary. keys are base:class name",
                        keyGlobalTint: "color. ie #F67D4B. apply as tint to all images saved",
                        keyGlobalIosTint: "color. ie #F67D4B. apply as tint to all images saved for iOS",
                        keyGlobalAndroidTint: "color. ie #F67D4B. apply as tint to all images saved for Android",
@@ -459,8 +464,23 @@ class App
                 outputString.append("\n}\n")
             }
         }
-        else if (type == .javascript) {
-            Utils.debug("Warn: using javascript, can't write enums")
+        else if (type == .javascript || type == .nodejs) {
+            for (key, value) in sorted {
+                let list:[String] = value as! [String]
+                outputString.append("var \(key.snakeCaseToCamelCase()) = {\n\t")
+                var firstComma = false
+                for itm in list {
+                    if (firstComma) {
+                        outputString.append(", ")
+                    }
+                    else {
+                        firstComma = true
+                    }
+                    let itm = itm.uppercased()
+                    outputString.append("\(itm): '\(itm)'")
+                }
+                outputString.append("\n}\n")
+            }
         }
         else {
             Utils.error("Error: invalid output type")
@@ -494,7 +514,7 @@ class App
             outputStr.append("}\n")
             sangoFile += "/Sango.java"
         }
-        else if (type == .javascript) {
+        else if (type == .javascript || type == .nodejs) {
             outputStr.append(javascriptCommon)
             sangoFile += "/Sango.js"
         }
@@ -556,15 +576,12 @@ class App
                 outputStr.append("</resources>\n")
                 saveString(outputStr, file: destPath)
             }
-            else if compileType == .javascript {
+            else if (compileType == .javascript || compileType == .nodejs) {
                 destPath.append("/colors.scss")
                 var outputStr = "// Generated with Sango, by Afero.io\n\n"
                 let sorted = colorsFound.keys.sorted()
                 for key in sorted {
                     if let color = parseColor(colorsFound[key] as! String) {
-//                        $TEXT_HOVER: #AAAAAA;
-//                        $APE_BACKGROUND: rgb(130, 124, 120);
-//                        $BOX_SHADOW_01: rgba(0, 0, 0, 0.25);
                         // RGB
                         if color.s == 3 {
                             outputStr.append("$\(key): \(color.hexRgb);\n")
@@ -885,7 +902,7 @@ class App
                 outputString.append("}")
             }
         }
-        else if (type == .javascript) {
+        else if (type == .javascript || type == .nodejs) {
             var skipClass = true
             var outputClassString = ""
             
@@ -1068,7 +1085,7 @@ class App
                     }
                 }
             }
-            else if (type == .javascript) {
+            else if (type == .javascript || type == .nodejs) {
                 Utils.debug("Warn: using javascript, can't scale images")
             }
             else {
@@ -1111,7 +1128,7 @@ class App
         if (type == .swift) {
             // do nothing
         }
-        else if (type == .javascript) {
+        else if (type == .javascript || type == .nodejs) {
             // do nothing
         }
         else if (type == .java) {
@@ -1251,7 +1268,7 @@ class App
                 }
             }
         }
-        else if (type == .javascript) {
+        else if (type == .javascript || type == .nodejs) {
             Utils.debug("Warn: using javascript, can't copy app icons")
         }
         else {
@@ -1289,7 +1306,7 @@ class App
                 newString = string.replacingOccurrences(of: "$@", with: "$s")
             }
         }
-        else if (type == .javascript) {
+        else if (type == .javascript || type == .nodejs) {
             Utils.debug("Warn: using javascript, can't convert string parms")
         }
         else {
@@ -1310,7 +1327,7 @@ class App
             genString.append("<!-- Generated with Sango, by Afero.io -->\n")
             genString.append("<resources>\n")
         }
-        else if (type == .javascript) {
+        else if (type == .javascript || type == .nodejs) {
             Utils.debug("Warn: using javascript, can't write locale")
             return
         }
@@ -1329,8 +1346,7 @@ class App
                 let newKey = key.escapingForAndroid()
                 genString.append("\t<string name=\"" + newKey! + "\">" + newString + "</string>\n")
             }
-            else if (type == .javascript) {
-                Utils.debug("Warn: using javascript, can't write locale")
+            else if (type == .javascript || type == .nodejs) {
             }
         }
         Utils.debug("Generate locale \(localePath)")
@@ -1339,7 +1355,7 @@ class App
         else if (type == .java) {
             genString.append("</resources>\n")
         }
-        else if (type == .javascript) {
+        else if (type == .javascript || type == .nodejs) {
             Utils.debug("Warn: using javascript, can't write locale")
         }
 
@@ -1436,7 +1452,7 @@ class App
                     }
                     fileName = "strings.xml"
                 }
-                else if (type == .javascript) {
+                else if (type == .javascript || type == .nodejs) {
                     Utils.debug("Warn: using javascript, can't copy locales")
                     fileName = "strings.xml"
                 }
@@ -1512,7 +1528,7 @@ class App
                     exit(-1)
                 }
             }
-            else if (type == .javascript) {
+            else if (type == .javascript || type == .nodejs) {
                 if (Utils.copyFile(filePath, dest: destFile) == false) {
                     exit(-1)
                 }
@@ -1667,7 +1683,7 @@ class App
                 let options = value as! Dictionary<String, Any>
                 baseClass = options["base"] as! String
             }
-            else if (key == keyJavascript) {
+            else if (key == keyJavascript || key == keyNodeJS) {
                 let options = value as! Dictionary<String, Any>
                 baseClass = options["base"] as! String
             }
@@ -1789,12 +1805,17 @@ class App
         }
         
         if (completeOutput) {
+            var outputStr = "/* Generated with Sango, by Afero.io */\n"
             if (enumsFound.isEmpty == false) {
                 let line = writeEnums(enumsFound, type: type)
-                genString.append(line)
+                if (type == .javascript || type == .nodejs) {
+                    outputStr.append(line)
+                }
+                else {
+                    genString.append(line)
+                }
             }
             if (genString.isEmpty == false) {
-                var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
                 if (type == .swift) {
                     outputStr.append("import UIKit\n")
                 }
@@ -1815,11 +1836,18 @@ class App
                     else if (type == .java) {
                         outputStr.append("public final class \(baseClass) {")
                     }
-                    else if (type == .javascript) {
+                    else if (type == .javascript || type == .nodejs) {
                         outputStr.append("var \(baseClass) = {")
                     }
 
                     genString.append("\n}")
+                }
+                else {
+                    Utils.error("Error: missing base class")
+                    exit(-1)
+                }
+                if (type == .nodejs) {
+                    genString.append("\nmodule.exports = \(baseClass)")
                 }
                 outputStr.append(genString + "\n")
                 _ = saveString(outputStr, file: langOutputFile)
@@ -1834,9 +1862,8 @@ class App
             else if (type == .swift) {
                 writeResourceKeysSwift(langOutputFolder)
             }
-            else if (type == .javascript) {
+            else if (type == .javascript || type == .nodejs) {
                 writeExternalColors(langOutputFolder)
-                Utils.debug("Warn: can't write resources")
             }
         }
     }
@@ -1885,6 +1912,7 @@ class App
         temp[keyJava] = ["package" : "one.two", "base": base]
         temp[keySwift] = ["base": base]
         temp[keyJavascript] = ["base": base]
+        temp[keyNodeJS] = ["base": base]
         temp["Example"] = ["EXAMPLE_CONSTANT": 1]
         let jsonString = Utils.toJSON(temp)
         let outputFile = base + ".json"
@@ -1994,6 +2022,9 @@ class App
                 else if (type == keyJavascript) {
                     compileType = .javascript
                 }
+                else if (type == keyNodeJS) {
+                    compileType = .nodejs
+                }
             }
             else {
                 exit(-1)
@@ -2015,8 +2046,11 @@ class App
             else if (findOption(args, option: optJavascript)) {
                 compileType = .javascript
             }
+            else if (findOption(args, option: optNodeJS)) {
+                compileType = .nodejs
+            }
             else {
-                Utils.error("Error: need either -swift, -java, -javascript")
+                Utils.error("Error: need either \(optSwift) \(optJava) \(optJavascript) \(optNodeJS)")
                 exit(-1)
             }
         }

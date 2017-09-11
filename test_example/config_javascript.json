@@ -5,6 +5,6 @@
 	],
 	"out_source": "results_js/Constants.js",
 	"out_assets": "results_js/resources",
-	"type": "javascript",
+	"type": "nodejs",
 	"input_assets_tag": "~"
 }
