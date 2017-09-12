@@ -9,6 +9,9 @@
 "dialog_title_remove_device" = "Remove Device?";
 "dialog_message_remove_device" = "Are you sure you want to remove this device from your account?";
 "app_html" = "<a href='https:\/\/www.example.com\/privacy-policy'>Privacy Policy<\/a>";
+"error_save" = "Couldn’t save project file ‘%3$s’ to ‘%2$s’: %1$s.";
+"error_load" = "Can't load '%s' file";
+
 
 
 

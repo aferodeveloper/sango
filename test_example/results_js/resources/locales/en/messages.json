@@ -1,0 +1,41 @@
+{
+	"app_html": {
+		"message": "<a href='https:\/\/www.example.com\/privacy-policy'>Privacy Policy<\/a>"
+	},
+	"app_name": {
+		"message": "Afero"
+	},
+	"button_title_cancel": {
+		"message": "Cancel"
+	},
+	"button_title_cancel_all_caps": {
+		"message": "CANCEL"
+	},
+	"button_title_ok": {
+		"message": "OK"
+	},
+	"device_offline": {
+		"message": "Device Offline"
+	},
+	"dialog_message_remove_device": {
+		"message": "Are you sure you want to remove this device from your account?"
+	},
+	"dialog_title_remove_device": {
+		"message": "Remove Device?"
+	},
+	"dialog_title_schedule_time": {
+		"message": "Set Time"
+	},
+	"error_load": {
+		"message": "Can't load '%s' file"
+	},
+	"error_save": {
+		"message": "Couldn’t save project file ‘%3$s’ to ‘%2$s’: %1$s."
+	},
+	"no_network_warning": {
+		"message": "Couldn’t contact Afero.\nPlease check your connection."
+	},
+	"primary_account_name": {
+		"message": "Primary Account"
+	}
+}

@@ -1296,6 +1296,61 @@ class App
         return newKey
     }
     
+    /*
+        Returns %1$s %2$s %3$s %1$d %2$d etc
+     */
+    private let LocaleOrderedParam = "\\%(\\d+)\\$([@sd])"
+    /*
+     Returns %s or %d etc
+     */
+    private let LocaleParam = "\\%([@sd])"
+    struct Group {
+        var found: String
+        var param: String
+        var format: String
+        var start: String.UTF16Index
+        var end: String.UTF16Index
+        init() {
+            found = ""
+            param = ""
+            format = ""
+            start = String.UTF16Index(0)
+            end = String.UTF16Index(0)
+        }
+    }
+    private func findGroups(_ line: String, regexPattern: String) -> [Group] {
+        let regex = try! NSRegularExpression(pattern: regexPattern,
+                                                 options: .caseInsensitive)
+        let matches = regex.matches(in: line, range: NSMakeRange(0, line.utf16.count))
+        
+        let groups = matches.map { result -> Group in
+            var founds: [String] = []
+            for indx in (0..<result.numberOfRanges) {
+                let groupRange = result.rangeAt(indx)
+                let start = String.UTF16Index(groupRange.location)
+                let end = String.UTF16Index(groupRange.location + groupRange.length)
+                
+                let group = String(line.utf16[start..<end])!
+                founds.append(group)
+            }
+            var group = Group()
+            if founds.count == 3 {
+                group.found = founds[0]
+                group.param = founds[1]
+                group.format = founds[2]
+            } else if founds.count == 2 {
+                group.found = founds[0]
+                group.format = founds[1]
+                group.param = "1"
+            }
+            let range = result.rangeAt(0)
+            group.start = String.UTF16Index(range.location)
+            group.end = String.UTF16Index(range.location + range.length)
+            return group
+        }
+        return groups
+    }
+    
     /**
      * Covert a string that has parameters, like %1$s, %1$d, %1$@, to be correct per platform.
      * ie $@ is converted to $s on android, and left along for iOS, and $s is converted to
@@ -1315,7 +1370,18 @@ class App
             }
         }
         else if (type == .javascript || type == .nodejs) {
-            Utils.debug("Warn: using javascript, can't convert string parms")
+            let orderedParams = findGroups(string, regexPattern: LocaleOrderedParam)
+            let soloParams = findGroups(string, regexPattern: LocaleParam)
+            if soloParams.count > 0 && orderedParams.count > 0 {
+                Utils.error("Error: Can't have both ordered and non order string parameters in same string")
+                exit(-1)
+            }
+            else if soloParams.count > 0 {
+                
+            }
+            else if orderedParams.count > 0 {
+                
+            }
         }
         else {
             Utils.error("Error: incorrect type")
@@ -1326,6 +1392,7 @@ class App
     
     func writeLocale(_ localePath:String, properties:Dictionary<String, String>, type: LangType) -> Void
     {
+        // write header
         var genString = ""
         if (type == .swift) {
             genString.append("/* Generated with Sango, by Afero.io */\n")
@@ -1336,10 +1403,10 @@ class App
             genString.append("<resources>\n")
         }
         else if (type == .javascript || type == .nodejs) {
-            Utils.debug("Warn: using javascript, can't write locale")
-            return
+            genString.append("{\n")
         }
 
+        var propCount: Int = 0
         for (key, value) in Array(properties).sorted(by: {$0.0 < $1.0}) {
             var newString = updateStringParameters(value, type: type)
             newString = newString.replacingOccurrences(of: "\n", with: "\\n");
@@ -1355,7 +1422,15 @@ class App
                 genString.append("\t<string name=\"" + newKey! + "\">" + newString + "</string>\n")
             }
             else if (type == .javascript || type == .nodejs) {
+                newString = newString.escapeStr()
+                let newKey = key.escapeStr()
+                genString.append("\t\"" + newKey + "\": {\n\t\t\"message\": \"" + newString + "\"\n\t}")
+                if propCount < (properties.count - 1) {
+                    genString.append(",")
+                }
+                genString.append("\n")
             }
+            propCount += 1
         }
         Utils.debug("Generate locale \(localePath)")
         if (type == .swift) {
@@ -1364,7 +1439,7 @@ class App
             genString.append("</resources>\n")
         }
         else if (type == .javascript || type == .nodejs) {
-            Utils.debug("Warn: using javascript, can't write locale")
+            genString.append("}\n")
         }
 
         saveString(genString, file: localePath)
@@ -1442,7 +1517,7 @@ class App
                 let fileName:String
                 let langLower = lang.lowercased()
                 if (type == .swift) {
-                    if isLocaleDefault(langLower) && (langLower == "default") {
+                    if isLocaleDefault(langLower) {
                         destPath.append("/Base.lproj")
                     }
                     else {
@@ -1461,8 +1536,13 @@ class App
                     fileName = "strings.xml"
                 }
                 else if (type == .javascript || type == .nodejs) {
-                    Utils.debug("Warn: using javascript, can't copy locales")
-                    fileName = "strings.xml"
+                    if isLocaleDefault(langLower) {
+                        destPath.append("/locales/en")
+                    }
+                    else {
+                        destPath.append("/locales/\(langLower)")
+                    }
+                    fileName = "messages.json"
                 }
                 else {
                     Utils.error("Error: wrong type")

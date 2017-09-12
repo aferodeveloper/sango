@@ -16,6 +16,9 @@
 		"assets/business_men.ai",
 		"assets/green_guy.eps"
 	],
+	"locale": {
+		"default": "assets/locale/en.strings",
+	},
 	"Settings": {
 		"UI_BASE_COLOR": "67,163,199,255",
 		"UI_BASE_COLOR2": "67,163,199,20",
