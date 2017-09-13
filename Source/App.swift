@@ -519,6 +519,9 @@ class App
         }
         else if (type == .javascript || type == .nodejs) {
             outputStr.append(javascriptCommon)
+            if type == .nodejs {
+                outputStr.append("\nmodule.exports = Sango;\n")
+            }
             sangoFile += "/Sango.js"
         }
 
@@ -1329,7 +1332,6 @@ class App
                 let groupRange = result.rangeAt(indx)
                 let start = String.UTF16Index(groupRange.location)
                 let end = String.UTF16Index(groupRange.location + groupRange.length)
-                
                 let group = String(line.utf16[start..<end])!
                 founds.append(group)
             }
@@ -1342,6 +1344,10 @@ class App
                 group.found = founds[0]
                 group.format = founds[1]
                 group.param = "1"
+            }
+            else {
+                Utils.error("Error: A locale parsing error for the line '\(line)")
+                exit(-1)
             }
             let range = result.rangeAt(0)
             group.start = String.UTF16Index(range.location)
@@ -1377,10 +1383,18 @@ class App
                 exit(-1)
             }
             else if soloParams.count > 0 {
-                
+                var indx = 0
+                for group in soloParams {
+                    newString = newString.replacingOccurrences(of: group.found, with: "{\(indx)}")
+                    indx += 1
+                }
             }
             else if orderedParams.count > 0 {
-                
+                for group in orderedParams {
+                    var indx = Int(group.param) ?? 0
+                    indx = indx - 1
+                    newString = newString.replacingOccurrences(of: group.found, with: "{\(indx)}")
+                }
             }
         }
         else {
@@ -1935,7 +1949,7 @@ class App
                     exit(-1)
                 }
                 if (type == .nodejs) {
-                    genString.append("\nmodule.exports = \(baseClass)")
+                    genString.append("\nmodule.exports = \(baseClass);")
                 }
                 outputStr.append(genString + "\n")
                 _ = saveString(outputStr, file: langOutputFile)

@@ -27,10 +27,10 @@
 		"message": "Set Time"
 	},
 	"error_load": {
-		"message": "Can't load '%s' file"
+		"message": "Can't load '{0}' file"
 	},
 	"error_save": {
-		"message": "Couldn’t save project file ‘%3$s’ to ‘%2$s’: %1$s."
+		"message": "Couldn’t save project file ‘{2}’ to ‘{1}’: {0}."
 	},
 	"no_network_warning": {
 		"message": "Couldn’t contact Afero.\nPlease check your connection."

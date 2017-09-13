@@ -81,4 +81,4 @@ var Constants = {
 		TemperatureUnit.KELVIN
 	],
 }
-module.exports = Constants
+module.exports = Constants;
