@@ -64,23 +64,27 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-config config_android.json -verbose"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-config config_javascript.json -verbose"
+            argument = "-config config_ios.json"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-config config_ios.json -verbose"
+            argument = "-input_assets simple"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-asset_template test"
+            argument = "-input simple/base.json"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-config_template test"
+            argument = "-swift"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-out_source results_ios/Constants.swift"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-out_assets results_ios/Resources"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

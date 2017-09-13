@@ -2197,8 +2197,11 @@ class App
             exit(-1)
         }
 
-        if (gitEnabled) && (sourceAssetFolder != nil) {
-            prepareGitRepro(sourceAssetFolder!, tag: assetTag!)
+        if gitEnabled {
+            if let source = sourceAssetFolder,
+               let tag = assetTag {
+                prepareGitRepro(source, tag: tag)
+            }
         }
         
         if (outputAssetFolder == nil) {
@@ -2235,22 +2238,27 @@ class App
             }
         }
 
-        if (locales.count > 0) {
-            result![keyLocale] = locales as Any?
-        }
-
         if (inputFile == nil) {
             inputFile = getOption(args, option: optInput)
         }
         if (inputFile != nil) {
-            result = Utils.fromJSONFile(inputFile!)
-            if (result == nil) {
+            if var d = Utils.fromJSONFile(inputFile!) {
+                let locale: [String: String]? = d[keyLocale] as? [String:String]
+                if (locale != nil) {
+                    d.removeValue(forKey: keyLocale)
+                    locales = mergeLocales(locales, newInput:locale! as Dictionary<String, Any>)
+                }
+                result = d
+            }
+            else {
                 exit(-1)
             }
         }
-
+        if (locales.count > 0) {
+            result![keyLocale] = locales as Any?
+        }
+        
         if (result != nil) {
-
             // process
             consume(result!, type: compileType, langOutputFile: outputClassFile!)
         }

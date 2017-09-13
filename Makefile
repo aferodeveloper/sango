@@ -67,26 +67,3 @@ install: distro
 	echo "/usr/local/bin not writable; need permission to install."; \
 	sudo cp $(TARGET) /usr/local/bin/$(TARGET); \
 	fi
-
-
-test1: _clean_temps
-	@./$(TARGET) -config brand1_config.json -verbose
-
-test2: _clean_temps
-	@./$(TARGET) -config brand2_config.json -verbose
-
-test3: _clean_temps
-	@./$(TARGET) -config brand1_android.json -verbose
-
-run: distro
-	@./$(TARGET) -input example/source.json \
-				-swift \
-				-out_source temp_ios/Constants.swift \
-				-input_assets example/assets \
-				-out_assets temp_ios/Resources
-	@./$(TARGET) -input example/source.json \
-				-java \
-				-out_source temp_android/Constants.java \
-				-input_assets example/assets \
-				-out_assets temp_android
-
