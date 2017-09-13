@@ -12,6 +12,8 @@ public struct R {
 		static let DialogMessageRemoveDevice = "dialog_message_remove_device"
 		static let DialogTitleRemoveDevice = "dialog_title_remove_device"
 		static let DialogTitleScheduleTime = "dialog_title_schedule_time"
+		static let ErrorLoad = "error_load"
+		static let ErrorSave = "error_save"
 		static let NoNetworkWarning = "no_network_warning"
 		static let PrimaryAccountName = "primary_account_name"
 	}

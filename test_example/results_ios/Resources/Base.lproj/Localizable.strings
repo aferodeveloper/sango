@@ -8,5 +8,7 @@
 "dialog_message_remove_device" = "Are you sure you want to remove this device from your account?";
 "dialog_title_remove_device" = "Remove Device?";
 "dialog_title_schedule_time" = "Set Time";
+"error_load" = "Can't load '%s' file";
+"error_save" = "Couldn’t save project file ‘%3$@’ to ‘%2$@’: %1$@.";
 "no_network_warning" = "Couldn’t contact Afero.\nPlease check your connection.";
 "primary_account_name" = "Primary Account";
