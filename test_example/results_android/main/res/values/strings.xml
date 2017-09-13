@@ -10,6 +10,8 @@
 	<string name="dialog_message_remove_device">Are you sure you want to remove this device from your account?</string>
 	<string name="dialog_title_remove_device">Remove Device?</string>
 	<string name="dialog_title_schedule_time">Set Time</string>
+	<string name="error_load">Can\'t load \'%s\' file</string>
+	<string name="error_save">Couldn’t save project file ‘%3$s’ to ‘%2$s’: %1$s.</string>
 	<string name="no_network_warning">Couldn’t contact Afero.\nPlease check your connection.</string>
 	<string name="primary_account_name">Primary Account</string>
 </resources>
