@@ -197,7 +197,7 @@ class App
     var globalAndroidTint:NSColor? = nil
     var gitEnabled = false
 
-    var swift3Output = false
+    var swift3Output = true
 
     // because Android and Javascript colors are stored in an external file, we collect them 
     // when walking through the constants, and write them out last
