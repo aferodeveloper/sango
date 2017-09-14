@@ -25,8 +25,8 @@ public final class Constants {
 		100
 	};
 	public static final class Service {
-		public static final String BASE_URL_PROD_USW2 = "api.afero.io";
-		public static final String BASE_URL_STAGE = "api.dev.afero.io";
+		public static final String BASE_URL_PROD_USW2 = "prod.example.com";
+		public static final String BASE_URL_STAGE = "dev.example.com";
 		public static final DeviceBrowserType BROWSE_TYPE = DeviceBrowserType.CARDS;
 		public static final AuthType LOGIN_TYPE = AuthType.OAUTH2;
 		public static final MenuViewType MENU_VIEW = MenuViewType.SETTINGS;
@@ -59,7 +59,7 @@ public final class Constants {
 		CLASSIC, SETTINGS
 	}
 	public enum SafeImages {
-		ASR_1, AC_ICON_LARGE
+		ASR_1
 	}
 	public enum TemperatureUnit {
 		CELSIUS, FAHRENHEIT, KELVIN

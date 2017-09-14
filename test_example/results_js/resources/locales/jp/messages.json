@@ -1,0 +1,32 @@
+{
+	"app_name": {
+		"message": "Afero"
+	},
+	"button_title_cancel": {
+		"message": "キャンセル"
+	},
+	"button_title_cancel_all_caps": {
+		"message": "キャンセル"
+	},
+	"button_title_ok": {
+		"message": "良し"
+	},
+	"device_offline": {
+		"message": "デバイスのオフライン"
+	},
+	"dialog_message_remove_device": {
+		"message": "あなたは、あなたのアカウントからこのデバイスを削除してもよろしいですか？"
+	},
+	"dialog_title_remove_device": {
+		"message": "デバイスを削除しますか？"
+	},
+	"dialog_title_schedule_time": {
+		"message": "時刻の設定"
+	},
+	"no_network_warning": {
+		"message": "Aferoにご連絡できませんでした。あなたの接続を確認してください。"
+	},
+	"primary_account_name": {
+		"message": "主要口座"
+	}
+}

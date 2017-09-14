@@ -68,8 +68,8 @@ public struct Constants {
 			UIColor(red: 0.929, green: 0.675, blue: 0.576, alpha: 1.0) /* #EDAC93 */
 		]
 	public struct Service {
-		static let BaseUrlProdUsw2 = "api.afero.io"
-		static let BaseUrlStage = "api.dev.afero.io"
+		static let BaseUrlProdUsw2 = "prod.example.com"
+		static let BaseUrlStage = "dev.example.com"
 		static let BrowseType = DeviceBrowserType.Cards
 		static let LoginType = AuthType.Oauth2
 		static let MenuView = MenuViewType.Settings
@@ -116,7 +116,6 @@ public struct Constants {
 	}
 	public enum SafeImages {
 		case Asr_1
-		case AcIconLarge
 	}
 	public enum TemperatureUnit {
 		case Celsius

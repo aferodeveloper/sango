@@ -8,6 +8,9 @@
 	"swift": {
 		"base": "Constants"
 	},
+	"javascript": {
+		"base": "Constants"
+	},
 	"locale": {
 		"default": "assets/locale/en.strings",
 		"de": "assets/locale/de.strings",

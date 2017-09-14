@@ -1,0 +1,32 @@
+{
+	"app_name": {
+		"message": "Afero"
+	},
+	"button_title_cancel": {
+		"message": "Annulla"
+	},
+	"button_title_cancel_all_caps": {
+		"message": "ANNULLATO"
+	},
+	"button_title_ok": {
+		"message": "ok"
+	},
+	"device_offline": {
+		"message": "dispositivo Offline"
+	},
+	"dialog_message_remove_device": {
+		"message": "Sei sicuro di voler rimuovere il dispositivo dal tuo account?"
+	},
+	"dialog_title_remove_device": {
+		"message": "Rimuovi dispositivo?"
+	},
+	"dialog_title_schedule_time": {
+		"message": "All'ora concordata"
+	},
+	"no_network_warning": {
+		"message": "Impossibile contattare Afero. Controlla la connessione."
+	},
+	"primary_account_name": {
+		"message": "Primary account"
+	}
+}

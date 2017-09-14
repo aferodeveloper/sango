@@ -1,7 +1,7 @@
 {
 	"input_assets": "simple",
 	"inputs": [
-		"basejs.json"
+		"base.json"
 	],
 	"out_source": "results_js/Constants.js",
 	"out_scss": "results_js/colors.scss",

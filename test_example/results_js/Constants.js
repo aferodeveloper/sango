@@ -13,7 +13,7 @@ var MenuViewType = {
 	CLASSIC: 'CLASSIC', SETTINGS: 'SETTINGS'
 }
 var SafeImages = {
-	ASR_1: 'ASR_1', AC_ICON_LARGE: 'AC_ICON_LARGE'
+	ASR_1: 'ASR_1'
 }
 var TemperatureUnit = {
 	CELSIUS: 'CELSIUS', FAHRENHEIT: 'FAHRENHEIT', KELVIN: 'KELVIN'
@@ -59,8 +59,8 @@ var Constants = {
 		100
 	],
 	Service: {
-		 BASE_URL_PROD_USW2: "api.afero.io",
-		 BASE_URL_STAGE: "api.dev.afero.io",
+		 BASE_URL_PROD_USW2: "prod.example.com",
+		 BASE_URL_STAGE: "dev.example.com",
 		 BROWSE_TYPE: DeviceBrowserType.CARDS,
 		 LOGIN_TYPE: AuthType.OAUTH2,
 		 MENU_VIEW: MenuViewType.SETTINGS,
