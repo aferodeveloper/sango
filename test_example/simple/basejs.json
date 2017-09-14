@@ -65,8 +65,8 @@
 		"LOGIN_TYPE": "OAUTH2",
 		"BROWSE_TYPE": "CARDS",
 		"MENU_VIEW": "SETTINGS",
-		"BASE_URL_PROD_USW2": "api.afero.io",
-		"BASE_URL_STAGE": "api.dev.afero.io"
+		"BASE_URL_PROD_USW2": "prod.example.com",
+		"BASE_URL_STAGE": "dev.example.com"
 	},
 	"Colors": {
 		"GRAY01_50": "#F2EDEB",
@@ -143,8 +143,7 @@
 			"DINNER"
 		],
 		"SAFE_IMAGES": [
-			"asr_1",
-			"ac_icon_large"
+			"asr_1"
 		]
 	}
 }
