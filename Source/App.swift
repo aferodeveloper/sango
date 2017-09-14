@@ -1539,7 +1539,7 @@ class App
                 let fileName:String
                 let langLower = lang.lowercased()
                 if (type == .swift) {
-                    if isLocaleDefault(langLower) {
+                    if isLocaleDefault(langLower) && (langLower == "default") {
                         destPath.append("/Base.lproj")
                     }
                     else {
