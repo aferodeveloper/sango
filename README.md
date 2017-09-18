@@ -3,22 +3,24 @@ Tool for processing common app constants and assets for iOS and Android. Takes a
 
 ![Sango Pipeline](images/sango_pipeline.png)
 
-We have a need to share constants, and assets between iOS and Android projects. One solution that has worked well has a 3rd git depot that contains shared assets, and a source JSON file that is parsed by a tool for each platform.
+We have a need to share constants, and assets between iOS, Android and web projects. One solution that has worked well has a 3rd git depot that contains shared assets, and a source JSON file that is parsed by a tool for each platform.
 
-Today we have basic localization that will transform and copy the standard iOS key/value strings files into what's needed to iOS and Android xml.
-
-We may migrate to something like Twine, in the future. https://github.com/mobiata/twine.
+Sango standardizes localization by using the iOS key/value format, and when writing out, transforms the source into XML for Android, and copies for iOS. For web a JSON format.
 
 ```json
+
 Basic data spec:
 {
 	"schemaVersion": 1,
 	"java": {
-		"package": "io.afero.tokui",
+		"package": "io.afero.example",
 		"launcher_icon_name": "android_launcher_icon",
 		"base": "Constants"
 	},
 	"swift": {
+		"base": "Constants"
+	},
+	"javascript": {
 		"base": "Constants"
 	},
 	"locale": {
@@ -176,6 +178,7 @@ Output:
 Constants.swift
 
 ```swift
+
 /* Generated with Sango, by Afero.io */
 
 import UIKit
@@ -300,6 +303,7 @@ Output
 R.swift
 
 ```swift
+
 /* Generated with Sango, by Afero.io */
 
 import Foundation
@@ -330,12 +334,13 @@ Output
 Constants.java
 
 ```java
+
 /* Generated with Sango, by Afero.io */
 
-package io.afero.tokui;
+package io.afero.example;
 public final class Constants {
 	public static final String Empty[] = {
-		""
+
 	};
 	public static final double FloatyNumbers[] = {
 		1,
@@ -357,8 +362,8 @@ public final class Constants {
 		100
 	};
 	public static final class Service {
-		public static final String BASE_URL_PROD_USW2 = "api.afero.io";
-		public static final String BASE_URL_STAGE = "api.dev.afero.io";
+		public static final String BASE_URL_PROD_USW2 = "prod.example.com";
+		public static final String BASE_URL_STAGE = "dev.example.com";
 		public static final DeviceBrowserType BROWSE_TYPE = DeviceBrowserType.CARDS;
 		public static final AuthType LOGIN_TYPE = AuthType.OAUTH2;
 		public static final MenuViewType MENU_VIEW = MenuViewType.SETTINGS;
@@ -391,7 +396,7 @@ public final class Constants {
 		CLASSIC, SETTINGS
 	}
 	public enum SafeImages {
-		ASR_1, AC_ICON_LARGE
+		ASR_1
 	}
 	public enum TemperatureUnit {
 		CELSIUS, FAHRENHEIT, KELVIN
@@ -405,6 +410,7 @@ public final class Constants {
 And for Android a colors.xml file is generated:
 
 ```xml
+
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generated with Sango, by Afero.io -->
 <resources>
@@ -440,6 +446,132 @@ And for Android a colors.xml file is generated:
 </resources>
 ```
 
+Output for javascript
+
+```javascript
+
+/* Generated with Sango, by Afero.io */
+
+var AuthType = {
+	AFERO: 'AFERO', OAUTH2: 'OAUTH2'
+}
+var Day = {
+	MONDAY: 'MONDAY', TUESDAY: 'TUESDAY', WEDNESDAY: 'WEDNESDAY', THURSDAY: 'THURSDAY', FRIDAY: 'FRIDAY', SATURDAY: 'SATURDAY', SUNDAY: 'SUNDAY'
+}
+var DeviceBrowserType = {
+	HEX: 'HEX', CARDS: 'CARDS'
+}
+var MenuViewType = {
+	CLASSIC: 'CLASSIC', SETTINGS: 'SETTINGS'
+}
+var SafeImages = {
+	ASR_1: 'ASR_1'
+}
+var TemperatureUnit = {
+	CELSIUS: 'CELSIUS', FAHRENHEIT: 'FAHRENHEIT', KELVIN: 'KELVIN'
+}
+var TimeOfDay = {
+	BREAKFAST: 'BREAKFAST', LUNCH: 'LUNCH', SNACK: 'SNACK', DINNER: 'DINNER'
+}
+var Constants = {
+	Dimen: {
+		 BUTTON_GROUP_SPACING: "10dp",
+		 BUTTON_RADIUS: "400dp",
+		 OFFLINE_SCHEDULE_DAY_EDITOR_RING_WIDTH: "35dp",
+		 OOBE_ARROW_SIZE: "120dp",
+		 OOBE_ICON_SIZE: "100dp",
+		 OOBE_MADAL_HLINE: "40dp",
+		 OOBE_MODAL_VLINE: "80dp",
+		 VIEW_ONBOARDING_BOARD: "400dp",
+		 VIEW_ONBOARDING_BOARD_MARGIN_TOP: "50dp",
+		 VIEW_ONBOARDING_BOARD_WRAPPER: "600dp",
+		 VIEW_ONBOARDING_LABEL_MARGIN_SIDE: "20dp",
+		 VIEW_ONBOARDING_LABEL_MARGIN_TOP: "75dp",
+	},
+	Empty: [
+
+	],
+	FloatyNumbers: [
+		1,
+		2,
+		3.15,
+		23,
+		415.03
+	],
+	Hello: [
+		"one",
+		"two",
+		"three"
+	],
+	InteryNumbers: [
+		5,
+		23,
+		54,
+		120,
+		100
+	],
+	Service: {
+		 BASE_URL_PROD_USW2: "prod.example.com",
+		 BASE_URL_STAGE: "dev.example.com",
+		 BROWSE_TYPE: DeviceBrowserType.CARDS,
+		 LOGIN_TYPE: AuthType.OAUTH2,
+		 MENU_VIEW: MenuViewType.SETTINGS,
+	},
+	Settings: {
+		 DEBUG_ENABLED: true,
+		 DEFAULT_AVATAR: "account_avatar1",
+		 DEFAULT_DISPLAY_UI_STYLE: 1,
+		 DEFAULT_UI_FONT: "GT-Walsheim-Black.ttf",
+		 PREF_ACCOUNT_NAME: "pref_account_display_name",
+		 PREF_SERVICE: "pref_service_name",
+		 SCALE: 1.5,
+		 SHOW_UI: false,
+	},
+	TemperatureUnits: [
+		TemperatureUnit.FAHRENHEIT,
+		TemperatureUnit.CELSIUS,
+		TemperatureUnit.KELVIN
+	],
+}
+module.exports = Constants;
+
+```
+And a SCSS file is generated:
+
+```SCSS
+
+// Generated with Sango, by Afero.io
+
+$COLORS_GRAY01: #E1DFDC;
+$COLORS_GRAY01_50: #F2EDEB;
+$COLORS_GRAY02: #BFBCB7;
+$COLORS_GRAY02_50: #D0CBC7;
+$COLORS_GRAY03: #9D9C98;
+$COLORS_GRAY03_50: #A4A099;
+$COLORS_GRAY04: #85878A;
+$COLORS_GRAY04_50: #7E7B77;
+$COLORS_GRAY05: #717375;
+$COLORS_GRAY06: #616264;
+$COLORS_GRAY07: #535557;
+$COLORS_ORANGE01: #EDAC93;
+$COLORS_ORANGE01_50: #F67D4B;
+$COLORS_ORANGE02: #EBA485;
+$COLORS_ORANGE03: #EF9471;
+$COLORS_ORANGE04: #F2845B;
+$COLORS_ORANGE05: #F47344;
+$COLORS_ORANGE06: #F67D4B;
+$COLORS_WHITE01: #FFFFFF;
+$COLORS_WHITE01_50: #FFFFFF;
+$RAINBOWCOLORS_0: #535557;
+$RAINBOWCOLORS_1: #9D9C98;
+$RAINBOWCOLORS_2: #F2845B;
+$RAINBOWCOLORS_3: #F67D4B;
+$RAINBOWCOLORS_4: #EDAC93;
+$SETTINGS_UI_BASE_COLOR: rbga(67, 163, 199, 1.0);
+$SETTINGS_UI_BASE_COLOR2: rbga(67, 163, 199, 0.0784313725490196);
+$SETTINGS_UI_SECONDARY_COLOR: #431298;
+$SETTINGS_UI_SECONDARY_COLOR_LOW: rbga(67, 18, 152, 0.501960784313725);
+```
 
 The parsing tool is run from the source platform depot, and the resulting files are copied or generated and put into the correct place, as defined by the JSON file. Those changes are then verified and checked in.
 
@@ -447,7 +579,40 @@ Great thing about this process, is you can branch both the asset depot and the p
 
 The ‘images’ key are tagged with @2, @3, etc that will be copied direct to drawable-hdpi, drawable-xhdpi, drawable-xxhdpi for equivalent. The ‘copied’ key are just copied into the resource tree of the target platform. The ‘fonts’ key are copied into the target platform for the specific place, and for iOS the bundle will be modified via UIAppFonts to add the fonts the application.
 
+Sango command line options:
 ```
+Usage:
+-asset_template        [basename]                      creates a json template, specifically for the assets
+-config                [file.json]                     use config file for options, instead of command line
+-config_template       [file.json]                     creates a json template, specifically for the app
+-help_keys                                             display JSON keys and their use
+-input                 [file.json]                     asset json file
+-input_assets          [folder]                        asset source folder (read)
+-input_assets_tag      [tag]                           optional git tag to pull repro at before processing
+-inputs                [file1.json file2.json ...]     merges asset files and process
+-java                                                  write java source
+-javascript                                            write javascript source
+-locale_only                                           when included, process localization files only
+-nodejs                                                write nodejs source
+-out_assets            [folder]                        asset root folder (write), typically iOS Resource, or Android app/src/main
+-out_locales           [folder]                        locale folder to write results
+-out_scss              [source.scss]                   when using javascript/node path to scss file
+-out_source            [source.java|swift|js]          path to result of language
+-swift                                                 write swift source
+-swift3                                                write Swift 3 compatible Swift source (requires -swift)
+-validate              [asset_file.json, ...]          validates asset JSON file(s), requires -input_assets
+-validate_android      [asset_file.json, ...]          validates Android asset JSON file(s), requires -input_assets
+-validate_ios          [asset_file.json, ...]          validates iOS asset JSON file(s), requires -input_assets
+-validate_javascript   [asset_file.json, ...]          validates Javascript asset JSON file(s), requires -input_assets
+-validate_nodejs       [asset_file.json, ...]          validates NodeJS asset JSON file(s), requires -input_assets
+-verbose                                               be verbose in details
+-version                                               version
+```
+
+```
+
+$ sango -help_keys
+
 JSON keys and their meaning:
 appIcon                 string. path to app icon that is common and is scaled
 appIconAndroid          string. path to app icon that is Android only and is scaled
@@ -471,8 +636,11 @@ imagesScaledIos         array. path to image files that are iOS only and will be
 imagesScaledIosUp       array. path to image files that are iOS only and will be scaled. Source is always scaled up
 imagesScaledUp          array. path to image files that are common and will be scaled. Source is always scaled up
 java                    dictionary. keys are base:class name, package:package name
+javascript              dictionary. keys are base:class name
 layoutAndroid           array. path to layout files that is Android only
-locale                  dictionary. keys are IOS lang. ie, enUS, enES, path to strings file
+locale                  dictionary. keys are IOS lang. Use 'default' for enUS, enES, path to strings file
+nodejs                  dictionary. keys are base:class name
+print                   debugging. value is a string and is printed to the console
 schemaVersion           number. Version, which should be 1
 swift                   dictionary. keys are base:class name
 ```
@@ -480,6 +648,7 @@ swift                   dictionary. keys are base:class name
 A complete example is located in this depot at:
 
 ```bash
+
 $ cd test_example
 $ ls
 Makefile

@@ -1,6 +1,6 @@
 /* Generated with Sango, by Afero.io */
 
-package io.afero.tokui;
+package io.afero.example;
 public final class Constants {
 	public static final String Empty[] = {
 		

@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"java": {
-		"package": "io.afero.tokui",
+		"package": "io.afero.example",
 		"launcher_icon_name": "android_launcher_icon",
 		"base": "Constants"
 	},
