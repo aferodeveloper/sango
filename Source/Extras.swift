@@ -284,6 +284,10 @@ public extension String
         return first + String(characters.dropFirst())
     }
 
+    public func removeFirst() -> String {
+        return String(characters.dropFirst())
+    }
+
     public func snakeCaseToCamelCase() -> String {
         let items = self.components(separatedBy: "_")
         var camelCase = ""

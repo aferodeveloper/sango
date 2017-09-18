@@ -115,11 +115,14 @@ let optConfig = "-config"
 let optValidate = "-validate"
 let optValidateIos = "-validate_ios"
 let optValidateAndroid = "-validate_android"
+let optValidateJavascript = "-validate_javascript"
+let optValidateNodejs = "-validate_nodejs"
 let optInput = "-input"
 let optInputs = "-inputs"
 let optInputAssets = "-input_assets"
 let optOutSource = "-out_source"
 let optOutSCSS = "-out_scss"
+let optOutLocales = "-out_locales"
 let optJava = "-java"
 let optSwift = "-swift"
 let optJavascript = "-javascript"
@@ -131,7 +134,7 @@ let optHelpKeys = "-help_keys"
 let optVersion = "-version"
 let optLocaleOnly = "-locale_only"
 let optSwift3 = "-swift3"
-
+let optLangType = "-type"
 
 // The Sango additions for swift are different for swift3 and swift 2.3
 
@@ -184,6 +187,7 @@ class App
     var inputFiles:[String]? = nil
     var outputClassFile:String? = nil
     var outputSCSSFile:String? = nil
+    var outputLocaleFolder:String? = nil
     var assetTag:String? = nil
 
     var compileType:LangType = .unset
@@ -216,12 +220,15 @@ class App
             optConfig: ["[file.json]", "use config file for options, instead of command line"],
             optValidate: ["[asset_file.json, ...]", "validates asset JSON file(s), requires \(optInputAssets)"],
             optValidateIos: ["[asset_file.json, ...]", "validates iOS asset JSON file(s), requires \(optInputAssets)"],
-            optValidateAndroid: ["[asset_file.json, ...]", "validates Android asset JSON file(s), requires \(optInputAssets)"],            
+            optValidateAndroid: ["[asset_file.json, ...]", "validates Android asset JSON file(s), requires \(optInputAssets)"],
+            optValidateJavascript: ["[asset_file.json, ...]", "validates Javascript asset JSON file(s), requires \(optInputAssets)"],
+            optValidateNodejs: ["[asset_file.json, ...]", "validates NodeJS asset JSON file(s), requires \(optInputAssets)"],
             optInput: ["[file.json]", "asset json file"],
             optInputs: ["[file1.json file2.json ...]", "merges asset files and process"],
             optInputAssets: ["[folder]", "asset source folder (read)"],
             optOutSource: ["[source.java|swift|js]", "path to result of language"],
             optOutSCSS: ["[source.scss]", "when using javascript/node path to scss file"],
+            optOutLocales: ["[folder]", "locale folder to write results"],
             optJava: ["", "write java source"],
             optSwift: ["", "write swift source"],
             optJavascript: ["", "write javascript source"],
@@ -1536,6 +1543,9 @@ class App
             }
             if (prop.count > 0) {
                 var destPath = outputAssetFolder!
+                if outputLocaleFolder != nil {
+                    destPath = outputLocaleFolder!
+                }
                 let fileName:String
                 let langLower = lang.lowercased()
                 if (type == .swift) {
@@ -1558,11 +1568,14 @@ class App
                     fileName = "strings.xml"
                 }
                 else if (type == .javascript || type == .nodejs) {
+                    if outputLocaleFolder == nil {
+                        destPath.append("/locales")
+                    }
                     if isLocaleDefault(langLower) {
-                        destPath.append("/locales/en")
+                        destPath.append("/en")
                     }
                     else {
-                        destPath.append("/locales/\(langLower)")
+                        destPath.append("/\(langLower)")
                     }
                     fileName = "messages.json"
                 }
@@ -1740,6 +1753,13 @@ class App
                                 exit(-1)
                             }
                             else {
+                                if (key == keyLocale) {
+                                    let locale = NSDictionary.init(contentsOfFile: filePath) as? [String:Any]
+                                    if locale == nil {
+                                        Utils.error("Error: failed to read locale from \(filePath)")
+                                        exit(-1)
+                                    }
+                                }
                                 Utils.debug("Found \(filePath)")
                             }
                         }
@@ -2038,7 +2058,7 @@ class App
                                      "out_source": "path/to/app/source",
                                      "out_scss": "path/to/app/scss",
                                      "out_assets": "path/to/app/resources",
-                                     "type": "swift or java"
+                                     "type": "swift, java, javascript, or nodejs"
     ] as [String : Any]
     func createConfigTemplate(_ file: String) -> Void {
         let jsonString = Utils.toJSON(baseConfigTemplate)
@@ -2093,14 +2113,22 @@ class App
             validateInputs = getOptions(args, option: optValidateAndroid)
             validateLang = .java
         }
+        if (validateInputs == nil) {
+            validateInputs = getOptions(args, option: optValidateNodejs)
+            validateLang = .nodejs
+        }
+        if (validateInputs == nil) {
+            validateInputs = getOptions(args, option: optValidateJavascript)
+            validateLang = .javascript
+        }
         if (validateInputs != nil) {
-            sourceAssetFolder = getOption(args, option: optInputAssets)
+            sourceAssetFolder = getFilePathOption(args, option: optInputAssets)
             if (sourceAssetFolder != nil) {
-                sourceAssetFolder = NSString(string: sourceAssetFolder!).expandingTildeInPath
-
                 if (validateLang == .unset) {
                     validate(validateInputs!, type: .swift)
                     validate(validateInputs!, type: .java)
+                    validate(validateInputs!, type: .javascript)
+                    validate(validateInputs!, type: .nodejs)
                 }
                 else {
                     validate(validateInputs!, type: validateLang)
@@ -2117,14 +2145,15 @@ class App
         if (configFile != nil) {
             let result = Utils.fromJSONFile(configFile!)
             if (result != nil) {
-                inputFile = result!["input"] as? String
-                inputFiles = result!["inputs"] as? [String]
-                sourceAssetFolder = result!["input_assets"] as? String
-                outputClassFile = result!["out_source"] as? String
-                outputSCSSFile = result!["out_scss"] as? String
-                outputAssetFolder = result!["out_assets"] as? String
-                assetTag = result!["input_assets_tag"] as? String
-                let type = result!["type"] as? String
+                inputFile = result![optInput.removeFirst()] as? String
+                inputFiles = result![optInputs.removeFirst()] as? [String]
+                sourceAssetFolder = result![optInputAssets.removeFirst()] as? String
+                outputClassFile = result![optOutSource.removeFirst()] as? String
+                outputSCSSFile = result![optOutSCSS.removeFirst()] as? String
+                outputLocaleFolder = result![optOutLocales.removeFirst()] as? String
+                outputAssetFolder = result![optOutAssets.removeFirst()] as? String
+                assetTag = result![optInputAssetsTag.removeFirst()] as? String
+                let type = result![optLangType.removeFirst()] as? String
                 if (type == keyJava) {
                     compileType = .java
                 }
@@ -2168,31 +2197,25 @@ class App
         }
 
         if (outputClassFile == nil) {
-            outputClassFile = getOption(args, option: optOutSource)
+            outputClassFile = getFilePathOption(args, option: optOutSource)
         }
-        if (outputClassFile != nil) {
-            outputClassFile = NSString(string: outputClassFile!).expandingTildeInPath
-        }
-        else {
+        if (outputClassFile == nil) {
             Utils.error("Error: missing output file")
             exit(-1)
         }
 
         if (outputSCSSFile == nil) {
-            outputSCSSFile = getOption(args, option: optOutSCSS)
+            outputSCSSFile = getFilePathOption(args, option: optOutSCSS)
         }
-        if (outputSCSSFile != nil) {
-            outputSCSSFile = NSString(string: outputSCSSFile!).expandingTildeInPath
+        if (outputLocaleFolder == nil) {
+            outputLocaleFolder = getFilePathOption(args, option: optOutLocales)
         }
-        
-        let overrideSourceAssets = getOption(args, option: optInputAssets)
+
+        let overrideSourceAssets = getFilePathOption(args, option: optInputAssets)
         if (overrideSourceAssets != nil) {
             sourceAssetFolder = overrideSourceAssets
         }
-        if (sourceAssetFolder != nil) {
-            sourceAssetFolder = NSString(string: sourceAssetFolder!).expandingTildeInPath
-        }
-        else {
+        if (sourceAssetFolder == nil) {
             Utils.error("Error: missing source asset folder")
             exit(-1)
         }
@@ -2205,12 +2228,9 @@ class App
         }
         
         if (outputAssetFolder == nil) {
-            outputAssetFolder = getOption(args, option: optOutAssets)
+            outputAssetFolder = getFilePathOption(args, option: optOutAssets)
         }
-        if (outputAssetFolder != nil) {
-            outputAssetFolder = NSString(string: outputAssetFolder!).expandingTildeInPath
-        }
-        else {
+        if (outputAssetFolder == nil) {
             Utils.error("Error: missing output asset folder")
             exit(-1)
         }

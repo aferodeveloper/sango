@@ -68,6 +68,10 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-verbose -input_assets simple -validate simple/base.json"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-input_assets simple"
             isEnabled = "NO">
          </CommandLineArgument>

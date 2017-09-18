@@ -28,6 +28,15 @@ public func findOption(_ args:[String], option:String) -> Bool
     return found
 }
 
+public func getFilePathOption(_ args:[String], option:String) -> String?
+{
+    var filePath = getOption(args, option: option)
+    if (filePath != nil) {
+        filePath = NSString(string: filePath!).expandingTildeInPath
+    }
+    return filePath
+}
+
 public func getOption(_ args:[String], option:String) -> String?
 {
     var found:String? = nil
