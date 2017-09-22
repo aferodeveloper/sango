@@ -2070,7 +2070,7 @@ class App
     }
     
     func start(_ args: [String]) -> Void {
-        if (findOption(args, option: "-h") || args.count == 0) {
+        if (findOption(args, option: "-h") || findOption(args, option: "-help") || args.count == 0) {
             usage()
             exit(0)
         }

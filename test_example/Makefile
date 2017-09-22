@@ -20,7 +20,7 @@ RESULTS_ANDROID = results_android
 RESULTS_JS = results_js
 
 all:
-	@echo "Example to build sango data for iOS and Android, used for testing."
+	@echo "Example to build sango data for iOS, Android, NodeJS, Javascript, used for testing."
 	@echo " build_android"
 	@echo " build_ios"
 	@echo " build_js"

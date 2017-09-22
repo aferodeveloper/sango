@@ -581,6 +581,9 @@ The ‘images’ key are tagged with @2, @3, etc that will be copied direct to d
 
 Sango command line options:
 ```
+
+$ sango -help
+
 Usage:
 -asset_template        [basename]                      creates a json template, specifically for the assets
 -config                [file.json]                     use config file for options, instead of command line
@@ -647,19 +650,20 @@ swift                   dictionary. keys are base:class name
 
 A complete example is located in this depot at:
 
-```bash
+```
 
 $ cd test_example
 $ ls
 Makefile
 config_android.json
 config_ios.json
+config_javascript.json
 simple
 
-$ make
-Example to build sango data for iOS and Android, used for testing.
+Example to build sango data for iOS, Android, NodeJS, Javascript, used for testing.
  build_android
  build_ios
- build_both
+ build_js
+ build_all
  validate
 ```
