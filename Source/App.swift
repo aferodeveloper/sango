@@ -1053,7 +1053,7 @@ class App
                 Utils.error("Error: missing file \(filePath)")
                 exit(-1)
             }
-            if (type == .swift) {
+            if (type == .swift || type == .javascript || type == .nodejs) {
                 let iosScales: [CGFloat:String] = [
                     100:   "@3x.png",
                     66.67: "@2x.png",
@@ -1110,9 +1110,6 @@ class App
                         exit(-1)
                     }
                 }
-            }
-            else if (type == .javascript || type == .nodejs) {
-                Utils.debug("Warn: using javascript, can't scale images")
             }
             else {
                 Utils.error("Error: wrong type")
