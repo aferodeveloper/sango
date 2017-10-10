@@ -19,7 +19,7 @@ import AppKit
 import CoreGraphics
 
 /* enums
- 
+
  java
  public enum Day {
     SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
@@ -39,7 +39,7 @@ import CoreGraphics
  var Auto = {
 	CONSTANT1: "const1",
     CONSTANT2: "const2",
- 
+
     Tire: {
         SPOKE: "SPOKE",
         RIM: "RIM"
@@ -203,14 +203,14 @@ class App
 
     var swift3Output = true
 
-    // because Android and Javascript colors are stored in an external file, we collect them 
+    // because Android and Javascript colors are stored in an external file, we collect them
     // when walking through the constants, and write them out last
     var colorsFound:[String:Any] = [:]
 
     // because Android dimentions are stored in an external file, we collect them
     // when walking through the constants, and write them out last
     var androidDimens:[String:Any] = [:]
-    
+
     var enumsFound: [String:Any] = [:]
 
     func usage() -> Void {
@@ -251,7 +251,7 @@ class App
                 parmLength = value[0].characters.count
             }
         }
-        
+
         print(App.copyrightNotice)
         print("Usage:")
         for (key, value) in Array(details).sorted(by: {$0.0 < $1.0}) {
@@ -307,7 +307,7 @@ class App
             print(keyPad + value)
         }
     }
-    
+
     private func hasLocaleDefault(_ dict: [String: Any]) -> Bool {
         for (k, _) in dict {
             if isLocaleDefault(k) {
@@ -323,19 +323,19 @@ class App
         }
         return false
     }
-    
+
     // Save image, tinted
     @discardableResult func saveImage(_ image: NSImage, file: String) -> Bool {
         var tint:NSColor? = globalTint
         var result: Bool = false
-    
+
         if ((compileType == .java) && (globalAndroidTint != nil)) {
             tint = globalAndroidTint
         }
         else if ((compileType == .swift) && (globalIosTint != nil)) {
             tint = globalIosTint
         }
-        
+
         if (tint != nil) {
             let tintedImage = image.tint(globalTint!)
             result = tintedImage.saveTo(file)
@@ -349,7 +349,7 @@ class App
         }
         return true
     }
-    
+
     @discardableResult func saveString(_ data:String, file: String) -> Bool
     {
         do {
@@ -361,7 +361,7 @@ class App
         }
         return true
     }
-    
+
     private func parseDouble(_ string: String, _ defaultValue: Double = 0.0) -> Double {
         guard let value = Double(string) else {
             return defaultValue
@@ -408,18 +408,18 @@ class App
         else if (color.hasPrefix("#")) {
             var hexStr = color.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
             hexStr = hexStr.substring(from: hexStr.characters.index(hexStr.startIndex, offsetBy: 1))
-            
+
             Scanner(string: hexStr).scanHexInt32(&rgbValue)
             red = 1
             green = 1
             blue = 1
             alpha = 1
-            
+
             if (hexStr.characters.count < 6) {
                 Utils.error("Error: not enough characters for hex color definition. Needs 6.")
                 exit(-1)
             }
-            
+
             if (hexStr.characters.count >= 6) {
                 red = Double((rgbValue & 0x00FF0000) >> 16) / 255.0
                 green = Double((rgbValue & 0x0000FF00) >> 8) / 255.0
@@ -447,7 +447,7 @@ class App
         }
         return nil
     }
-    
+
     func writeEnums(_ enums: Dictionary<String, Any>, type: LangType) -> String {
         var outputString = ""
         let sorted = Array(enums).sorted(by: {$0.0 < $1.0})
@@ -548,10 +548,10 @@ class App
             var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
             outputStr.append("import Foundation\n")
             outputStr.append("public struct R {\n")
-            
+
             if (localeKeysFound.count > 0) {
                 outputStr.append("\tpublic struct String {\n")
-                
+
                 let sorted = localeKeysFound.keys.sorted()
                 for key in sorted {
                     if let origKey = localeKeysFound[key] {
@@ -562,7 +562,7 @@ class App
             }
             if (imageKeysFound.count > 0) {
                 outputStr.append("\tpublic struct Images {\n")
-                
+
                 let sorted = imageKeysFound.keys.sorted()
                 for key in sorted {
                     if let origKey = imageKeysFound[key] {
@@ -622,8 +622,8 @@ class App
             }
         }
     }
-    
-    
+
+
     func writeAndroidDimens() -> Void {
         if (androidDimens.count > 0) {
             var destPath = outputAssetFolder! + "/res/values"
@@ -641,7 +641,7 @@ class App
             saveString(outputStr, file: destPath)
         }
     }
-    
+
     struct EnumResults {
         var error = false
         var valid = false
@@ -699,16 +699,16 @@ class App
         if (enums.error) {
             exit(-1)
         }
-        
+
         if (enums.valid && (key == enums.origType)) {
-            
+
             var lineValue = "\(enums.enumType).".snakeCaseToCamelCase()
             var caseValue = String(describing: value).snakeCaseToCamelCase()
-            
+
             if swift3Output {
                 caseValue = caseValue.lowercasedFirst()
             }
-            
+
             lineValue.append(caseValue)
             outputString.append(lineValue)
         }
@@ -739,7 +739,7 @@ class App
 
         return outputString
     }
-    
+
     func parseJavaConstant(_ key: String, value: Any) -> (type:ValueType, output:String, results:EnumResults) {
         var outputString = ""
         var type = ValueType.Int
@@ -749,7 +749,7 @@ class App
         if (enums.error) {
             exit(-1)
         }
-        
+
         if (enums.valid && (key == enums.origType)) {
             let lineValue = "\(enums.enumType.snakeCaseToCamelCase()).\(strValue)"
             outputString.append(lineValue);
@@ -771,7 +771,7 @@ class App
                 }
                 else {
                     type = ValueType.String
-                    
+
                     let color = parseColor(strValue)
                     if (color != nil) {
                         type = ValueType.Color
@@ -830,7 +830,7 @@ class App
         else if (type == .java) {
             var skipClass = true
             var outputClassString = ""
-            
+
             if let constantsDictionary = value as? Dictionary<String, Any> {
                 for (key, value) in Array(constantsDictionary).sorted(by: {$0.0 < $1.0}) {
                     if (reservedWords.contains(key.lowercased())) {
@@ -839,11 +839,11 @@ class App
                     }
                     let strValue = String(describing: value)
                     var lineValue = parseJavaConstant(key, value: value)
-                    
+
                     if name == "Dimen" {
                         lineValue.type = .Dimen
                     }
-                    
+
                     switch lineValue.type {
                     case .Color:
                         // ok, we have a color, so we're going to store it
@@ -931,7 +931,7 @@ class App
         else if (type == .javascript || type == .nodejs) {
             var skipClass = true
             var outputClassString = ""
-            
+
             if let constantsDictionary = value as? Dictionary<String, Any> {
                 for (key, value) in Array(constantsDictionary).sorted(by: {$0.0 < $1.0}) {
                     if (reservedWords.contains(key.lowercased())) {
@@ -940,7 +940,7 @@ class App
                     }
                     let strValue = String(describing: value)
                     var lineValue = parseJavaConstant(key, value: value)
-                    
+
                     switch lineValue.type {
                     case .Color:
                         // ok, we have a color, so we're going to store it
@@ -985,7 +985,7 @@ class App
                 if (type != .Color && type != .CustomEnum) {
                     outputString.append("\(name): [\n\t")
                 }
-                
+
                 if constantsArray.count > 0 {
                     for (index, itm) in constantsArray.enumerated() {
                         let lineValue = parseJavaConstant(String(index), value: itm)
@@ -1010,7 +1010,7 @@ class App
                     outputString.append("\n],");
                 }
             }
-            
+
             if (skipClass == false) {
                 outputString.append(name + ": {\n")
                 outputString.append(outputClassString)
@@ -1025,7 +1025,7 @@ class App
     }
 
     // http://petrnohejl.github.io/Android-Cheatsheet-For-Graphic-Designers/
-    
+
     func scaleAndCopyImages(_ files: [String], type: LangType, useRoot: Bool, scale: ScaleType) -> Void {
         for file in files {
             if (type == .java) {
@@ -1036,12 +1036,21 @@ class App
             }
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
-            if (useRoot) {
+
+            if (type == .javascript || type == .nodejs) {
+                var subFolder = "/device_icons/"
+                if (file.fileNameOnly().contains("_control_icon")) {
+                    subFolder = "/control_icons/"
+                }
+                destFile = outputAssetFolder! + subFolder + file.lastPathComponent()
+            }
+            else if (useRoot) {
                 destFile = outputAssetFolder! + "/" + file.lastPathComponent()
             }
             else {
                 destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
             }
+
             let destPath = (destFile as NSString).deletingLastPathComponent
             Utils.createFolder(destPath)
 
@@ -1053,7 +1062,7 @@ class App
                 Utils.error("Error: missing file \(filePath)")
                 exit(-1)
             }
-            if (type == .swift) {
+            if (type == .swift || type == .javascript || type == .nodejs) {
                 let iosScales: [CGFloat:String] = [
                     100:   "@3x.png",
                     66.67: "@2x.png",
@@ -1111,16 +1120,14 @@ class App
                     }
                 }
             }
-            else if (type == .javascript || type == .nodejs) {
-                Utils.debug("Warn: using javascript, can't scale images")
-            }
+
             else {
                 Utils.error("Error: wrong type")
                 exit(-1)
             }
         }
     }
-    
+
     // this table to used to place images marked with either @2, @3 into their respective android equals
     let iOStoAndroid = [
         1: "mdpi",
@@ -1147,10 +1154,10 @@ class App
             destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
         }
         var destPath = (destFile as NSString).deletingLastPathComponent
-        
+
         let fileName = file.fileNameOnly()
         let fileExt = file.fileExtention()
-        
+
         if (type == .swift) {
             // do nothing
         }
@@ -1173,7 +1180,7 @@ class App
         }
         return (sourceFile: filePath, destFile: destFile, destPath: destPath)
     }
-    
+
     func copyImage(_ file: String, type: LangType, useRoot: Bool) -> Void
     {
         if (type == .java) {
@@ -1210,7 +1217,7 @@ class App
             copyImage(file, type: type, useRoot: useRoot)
         }
     }
-    
+
     let iOSAppIconSizes = [
         "Icon-Small.png": 29,
         "Icon-Small@2x.png": 58,
@@ -1302,7 +1309,7 @@ class App
             exit(-1)
         }
     }
-    
+
     func simplifyKey(_ key: String) -> String {
         var chars = CharacterSet.newlines
         chars = chars.union(.punctuationCharacters)
@@ -1313,7 +1320,7 @@ class App
         newKey = newKey.trunc(100, trailing: "")
         return newKey
     }
-    
+
     /*
         Returns %1$s %2$s %3$s %1$d %2$d etc
      */
@@ -1340,7 +1347,7 @@ class App
         let regex = try! NSRegularExpression(pattern: regexPattern,
                                                  options: .caseInsensitive)
         let matches = regex.matches(in: line, range: NSMakeRange(0, line.utf16.count))
-        
+
         let groups = matches.map { result -> Group in
             var founds: [String] = []
             for indx in (0..<result.numberOfRanges) {
@@ -1371,7 +1378,7 @@ class App
         }
         return groups
     }
-    
+
     /**
      * Covert a string that has parameters, like %1$s, %1$d, %1$@, to be correct per platform.
      * ie $@ is converted to $s on android, and left along for iOS, and $s is converted to
@@ -1418,7 +1425,7 @@ class App
         }
         return newString
     }
-    
+
     func writeLocale(_ localePath:String, properties:Dictionary<String, String>, type: LangType) -> Void
     {
         // write header
@@ -1439,7 +1446,7 @@ class App
         for (key, value) in Array(properties).sorted(by: {$0.0 < $1.0}) {
             var newString = updateStringParameters(value, type: type)
             newString = newString.replacingOccurrences(of: "\n", with: "\\n");
-            
+
             if (type == .swift) {
                 newString = newString.escapeStr()
                 let newKey = key.escapeStr()
@@ -1473,20 +1480,20 @@ class App
 
         saveString(genString, file: localePath)
     }
-    
+
     /*
      Given a current locale dictionary in the form of:
      "locale" : {
          "en" : ["file1/path1, "file1/path2"]
          "de" : ["file2/path1, "file2/path2"]
      }
-     
+
      and a new dictioanry in the form of:
      {
          "en" : "file/path1"
          "de" : "file/path2"
      }
-     
+
      merge and return:
      "locale" : {
          "en" : ["file1/path1, "file1/path2"]
@@ -1495,7 +1502,7 @@ class App
      */
     func mergeLocales(_ src: Dictionary<String, Any>, newInput : Dictionary<String, Any>) -> Dictionary<String, Any> {
         var mergedLocales = src
-        
+
         for (key, value) in newInput {
             var list = mergedLocales[key] as? [String]
             if (list != nil) {
@@ -1506,10 +1513,10 @@ class App
                 mergedLocales[key] = [value]
             }
         }
-        
+
         return mergedLocales
     }
-    
+
     /*
      Expecting locales to be in the form of:
      {
@@ -1586,7 +1593,7 @@ class App
                 Utils.createFolder(destPath)
                 destPath.append("/" + fileName)
                 writeLocale(destPath, properties: prop as! Dictionary<String, String>, type: type)
-                
+
                 // For swift, we are going to write out the string keys for easy discovery
                 if isLocaleDefault(langLower) {
                     if (type == .swift) {
@@ -1607,7 +1614,7 @@ class App
         case relative
         case custom
     }
-    
+
     func copyAssets(_ files: [String], type: LangType,
                             assetType: AssetType,
                             destLocation: AssetLocation,
@@ -1636,9 +1643,9 @@ class App
             }
             let destPath = (destFile as NSString).deletingLastPathComponent
             Utils.createFolder(destPath)
-            
+
             let fileName = file.lastPathComponent()
-            
+
             if (type == .swift) {
                 if (Utils.copyFile(filePath, dest: destFile) == false) {
                     exit(-1)
@@ -1720,7 +1727,7 @@ class App
                         testingArray = list
                         testAndroid = false
                     }
-                    
+
                     if (testFile) {
                         let file = value as! String
                         if ((type == .java) && (testAndroid == true)) {
@@ -1771,7 +1778,7 @@ class App
             }
         }
     }
-    
+
     func insertTabPerLine(_ text: String) -> String {
         var output = ""
         let lines = text.components(separatedBy: CharacterSet.newlines)
@@ -1783,7 +1790,7 @@ class App
         }
         return output
     }
-    
+
     func consume(_ data: Dictionary <String, Any>, type: LangType, langOutputFile: String) -> Void
     {
         Utils.createFolderForFile(langOutputFile)
@@ -1839,7 +1846,7 @@ class App
                 }
             }
         }
-        
+
         // everything else is converted to Java, Swift classes
         var genString = ""
         for (key, value) in Array(data).sorted(by: {$0.0 < $1.0}) {
@@ -1933,7 +1940,7 @@ class App
                 completeOutput = false
             }
         }
-        
+
         if (completeOutput) {
             var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
             if (enumsFound.isEmpty == false) {
@@ -1997,7 +2004,7 @@ class App
             }
         }
     }
-    
+
     func prepareGitRepro(_ folder:String, tag:String?) -> Void {
         var currentBranch = Shell.gitCurrentBranch(folder)
         if let tag = tag {
@@ -2023,7 +2030,7 @@ class App
         }
         Utils.always("Current branch \(currentBranch)")
     }
-    
+
     let baseAssetTemplate = [keySchemaVersion :SchemaVersion,
                                     keyFonts: [],
                                     keyLocale: ["enUS":""],
@@ -2052,7 +2059,7 @@ class App
             }
         }
     }
-    
+
     let baseConfigTemplate = ["inputs": ["example/base.json","example/brand_1.json"],
                                      "input_assets": "../path/to/depot",
                                      "out_source": "path/to/app/source",
@@ -2068,7 +2075,7 @@ class App
             }
         }
     }
-    
+
     func start(_ args: [String]) -> Void {
         if (findOption(args, option: "-h") || findOption(args, option: "-help") || args.count == 0) {
             usage()
@@ -2085,7 +2092,7 @@ class App
         }
 
         gitEnabled = Shell.gitInstalled()
-        
+
         Utils.debug(App.copyrightNotice)
 
         let baseName = getOption(args, option: optAssetTemplates)
@@ -2099,7 +2106,7 @@ class App
             createConfigTemplate(configTemplateFile!)
             exit(0)
         }
-        
+
         self.localeOnly = findOption(args, option: optLocaleOnly)
         self.swift3Output = findOption(args, option: optSwift3)
         var validateInputs:[String]? = nil
@@ -2140,7 +2147,7 @@ class App
             }
             exit(0)
         }
-        
+
         let configFile = getOption(args, option: optConfig)
         if (configFile != nil) {
             let result = Utils.fromJSONFile(configFile!)
@@ -2226,7 +2233,7 @@ class App
                 prepareGitRepro(source, tag: tag)
             }
         }
-        
+
         if (outputAssetFolder == nil) {
             outputAssetFolder = getFilePathOption(args, option: optOutAssets)
         }
@@ -2277,7 +2284,7 @@ class App
         if (locales.count > 0) {
             result![keyLocale] = locales as Any?
         }
-        
+
         if (result != nil) {
             // process
             consume(result!, type: compileType, langOutputFile: outputClassFile!)
