@@ -1111,9 +1111,6 @@ class App
                     }
                 }
             }
-            else if (type == .javascript || type == .nodejs) {
-                Utils.debug("Warn: using javascript, can't scale images")
-            }
             else {
                 Utils.error("Error: wrong type")
                 exit(-1)
