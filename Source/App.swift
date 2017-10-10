@@ -1053,7 +1053,7 @@ class App
                 Utils.error("Error: missing file \(filePath)")
                 exit(-1)
             }
-            if (type == .swift) {
+            if (type == .swift || type == .javascript || type == .nodejs) {
                 let iosScales: [CGFloat:String] = [
                     100:   "@3x.png",
                     66.67: "@2x.png",
