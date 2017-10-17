@@ -134,6 +134,7 @@ let optHelpKeys = "-help_keys"
 let optVersion = "-version"
 let optLocaleOnly = "-locale_only"
 let optSwift3 = "-swift3"
+let optSwift4 = "-swift4"
 let optLangType = "-type"
 
 // The Sango additions for swift are different for swift3 and swift 2.3
@@ -201,7 +202,8 @@ class App
     var globalAndroidTint:NSColor? = nil
     var gitEnabled = false
 
-    var swift3Output = true
+    var swift3Output = false
+    var swift4Output = true
 
     // because Android and Javascript colors are stored in an external file, we collect them 
     // when walking through the constants, and write them out last
@@ -234,6 +236,7 @@ class App
             optJavascript: ["", "write javascript source"],
             optNodeJS: ["", "write nodejs source"],
             optSwift3: ["", "write Swift 3 compatible Swift source (requires \(optSwift))"],
+            optSwift4: ["", "write Swift 4 compatible Swift source (requires \(optSwift))"],
             optOutAssets: ["[folder]", "asset root folder (write), typically iOS Resource, or Android app/src/main"],
             optInputAssetsTag: ["[tag]", "optional git tag to pull repro at before processing"],
             optVerbose: ["", "be verbose in details"],
@@ -457,7 +460,7 @@ class App
                 outputString.append("public enum \(key.snakeCaseToCamelCase()) {\n")
                 for itm in list {
                     var caseName = itm.snakeCaseToCamelCase()
-                    if swift3Output {
+                    if swift3Output || swift4Output {
                         caseName = caseName.lowercasedFirst()
                     }
                     outputString.append("\tcase \(caseName)\n")
@@ -512,7 +515,7 @@ class App
         var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
         if (type == .swift) {
             outputStr.append(swiftCommon)
-            if (self.swift3Output) {
+            if (self.swift3Output || swift4Output) {
                 outputStr.append(swift3Additions)
             }
             else {
@@ -555,7 +558,7 @@ class App
                 let sorted = localeKeysFound.keys.sorted()
                 for key in sorted {
                     if let origKey = localeKeysFound[key] {
-                        outputStr.append("\t\tstatic let \(key) = \"\(origKey)\"\n")
+                        outputStr.append("\t\tpublic static let \(key) = \"\(origKey)\"\n")
                     }
                 }
                 outputStr.append("\t}\n")
@@ -566,7 +569,7 @@ class App
                 let sorted = imageKeysFound.keys.sorted()
                 for key in sorted {
                     if let origKey = imageKeysFound[key] {
-                        outputStr.append("\t\tstatic let \(key) = \"\(origKey)\"\n")
+                        outputStr.append("\t\tpublic static let \(key) = \"\(origKey)\"\n")
                     }
                 }
                 outputStr.append("\t}\n")
@@ -807,7 +810,7 @@ class App
                         Utils.error("Error: Constant '\(name).\(key)' is a reserved word and has to be changed")
                         exit(-1)
                     }
-                    let line = "\tstatic let " + key.snakeCaseToCamelCase() + " = "
+                    let line = "\tpublic static let " + key.snakeCaseToCamelCase() + " = "
                     outputString.append(line)
                     let lineValue = parseSwiftConstant(key, value: value)
                     outputString.append(lineValue + "\n");
@@ -2099,6 +2102,7 @@ class App
         
         self.localeOnly = findOption(args, option: optLocaleOnly)
         self.swift3Output = findOption(args, option: optSwift3)
+        self.swift4Output = findOption(args, option: optSwift4)
         var validateInputs:[String]? = nil
         var validateLang:LangType = .unset
         validateInputs = getOptions(args, option: optValidate)
