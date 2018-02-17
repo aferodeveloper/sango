@@ -65,6 +65,7 @@ let keyImagesAndroid = "imagesAndroid"
 let keyGlobalTint = "globalTint"
 let keyGlobalIosTint = "globalTintIos"
 let keyGlobalAndroidTint = "globalTintAndroid"
+let keyCopyRoot = "copyAtRoot"
 let keyCopied = "copied"
 let keyCopiedIos = "copiedIos"
 let keyCopiedAndroid = "copiedAndroid"
@@ -77,7 +78,7 @@ let keySwift = "swift"
 let keyJavascript = "javascript"
 let keyNodeJS = "nodejs"
 let keyPrint = "print"
-let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
+let firstPassIgnoredKeys = [keyCopyRoot, keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
                                     keyFonts, keyFontRoot, keySchemaVersion, keyAndroidLayout, keyEnums,
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
                                     keyImagesScaledUp, keyImagesScaledIosUp, keyImagesScaledAndroidUp,
@@ -283,6 +284,7 @@ class App
                        keyImagesScaledIosUp: "array. path to image files that are iOS only and will be scaled. Source is always scaled up",
                        keyImagesScaledAndroidUp: "array. path to image files that are Android only and will be scaled. Source is always scaled up",
                        keyCopied: "array. path to files that are common and are just copied",
+                       keyCopyRoot: "array. path to files that are common and are just copied at asset root",
                        keyCopiedIos: "array. path to files that are iOS only and are just copied",
                        keyCopiedAndroid: "array. path to files that Android only and are just copied",
                        keyAppIcon: "string. path to app icon that is common and is scaled",
@@ -1622,10 +1624,15 @@ class App
             Utils.deleteFolder(defaultLoc)
         }
         for file in files {
-            let filePath = sourceAssetFolder! + "/" + file
+            let extraPath = file.extraPath()
+            let filePath = sourceAssetFolder! + "/" + extraPath.file
             var destFile:String
             if (destLocation == .root) {
-                destFile = outputAssetFolder! + "/" + file.lastPathComponent()
+                destFile = outputAssetFolder! + "/"
+                if extraPath.folder.isEmpty == false {
+                    destFile = destFile + extraPath.folder + "/"
+                }
+                destFile = destFile + extraPath.file.lastPathComponent()
             }
             else if (destLocation == .relative) {
                 destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
@@ -1675,6 +1682,10 @@ class App
                     var testAndroid = true
                     var testingArray = value
                     if (key == keyCopied) {
+                        testArray = true
+                        testAndroid = false
+                    }
+                    else if (key == keyCopyRoot) {
                         testArray = true
                         testAndroid = false
                     }
@@ -1864,6 +1875,9 @@ class App
                     if let message = value as? String {
                         Utils.always(message)
                     }
+                }
+                else if (key == keyCopyRoot) {
+                    copyAssets(value as! Array, type: type, assetType: .raw, destLocation: .root)
                 }
                 else if (key == keyCopied) {
                     copyAssets(value as! Array, type: type, assetType: .raw, destLocation: .relative)

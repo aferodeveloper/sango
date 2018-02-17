@@ -347,6 +347,24 @@ public extension String
         return escaped
     }
 
+    /**
+     * Given a string like "file.mp3#folder/here", return
+     *  file.mp3, folder/here
+     */
+    public func extraPath() -> (file: String, folder:String) {
+        var file: String = ""
+        var folder: String = ""
+        let parts = self.components(separatedBy: "#")
+        if (parts.count > 1) {
+            file = parts[0]
+            folder = parts[1]
+        }
+        else {
+            file = self
+        }
+        return (file: file, folder: folder)
+    }
+
     public func lastPathComponent() -> String {
         return (self as NSString).lastPathComponent
     }

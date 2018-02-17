@@ -39,6 +39,9 @@
 		"assets/file_data1",
 		"assets/file_data2"
 	],
+	"copyAtRoot": [
+		"assets/more/data/file_data3#folder"
+	],
 	"imagesScaled": [
 		"assets/large_device_icon.png",
 		"assets/vector_avatar.pdf",
