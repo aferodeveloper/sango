@@ -1628,43 +1628,29 @@ class App
             let filePath = sourceAssetFolder! + "/" + extraPath.file
             var destFile:String
             if (destLocation == .root) {
-                destFile = outputAssetFolder! + "/"
+                destFile = outputAssetFolder!
+                if (type == .java) {
+                    destFile.append(androidAssetLocations[assetType]!)
+                }
+                else {
+                    destFile.append("/")
+                }
                 if extraPath.folder.isEmpty == false {
-                    destFile = destFile + extraPath.folder + "/"
+                    destFile.append(extraPath.folder + "/")
                 }
                 destFile = destFile + extraPath.file.lastPathComponent()
             }
             else if (destLocation == .relative) {
-                destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
+                destFile = outputAssetFolder! + "/" + extraPath.file  // can include file/does/include/path
             }
             else {
                 // Custom
-                destFile = outputAssetFolder! + "/" + root + "/" + file.lastPathComponent()
+                destFile = outputAssetFolder! + "/" + root + "/" + extraPath.file.lastPathComponent()
             }
             let destPath = (destFile as NSString).deletingLastPathComponent
             Utils.createFolder(destPath)
             
-            let fileName = file.lastPathComponent()
-            
-            if (type == .swift) {
-                if (Utils.copyFile(filePath, dest: destFile) == false) {
-                    exit(-1)
-                }
-            }
-            else if (type == .java) {
-                let defaultLoc = destPath + androidAssetLocations[assetType]!
-                Utils.createFolder(defaultLoc)
-                if (Utils.copyFile(filePath, dest: defaultLoc + fileName) == false) {
-                    exit(-1)
-                }
-            }
-            else if (type == .javascript || type == .nodejs) {
-                if (Utils.copyFile(filePath, dest: destFile) == false) {
-                    exit(-1)
-                }
-            }
-            else {
-                Utils.error("Error: wrong type")
+            if (Utils.copyFile(filePath, dest: destFile) == false) {
                 exit(-1)
             }
         }
