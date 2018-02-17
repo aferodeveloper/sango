@@ -1638,14 +1638,22 @@ class App
                 if extraPath.folder.isEmpty == false {
                     destFile.append(extraPath.folder + "/")
                 }
-                destFile = destFile + extraPath.file.lastPathComponent()
+                destFile.append(extraPath.file.lastPathComponent())
             }
             else if (destLocation == .relative) {
                 destFile = outputAssetFolder! + "/" + extraPath.file  // can include file/does/include/path
             }
             else {
                 // Custom
-                destFile = outputAssetFolder! + "/" + root + "/" + extraPath.file.lastPathComponent()
+                destFile = outputAssetFolder!
+                if (type == .java) {
+                    destFile.append(androidAssetLocations[assetType]!)
+                }
+                else {
+                    destFile.append("/")
+                }
+                destFile.append(root + "/")
+                destFile.append(extraPath.file.lastPathComponent())
             }
             let destPath = (destFile as NSString).deletingLastPathComponent
             Utils.createFolder(destPath)
