@@ -15,6 +15,7 @@
 #
 
 SANGO = sango
+SANGO_OPTS = -swift4
 RESULTS_IOS = results_ios
 RESULTS_ANDROID = results_android
 RESULTS_JS = results_js
@@ -34,15 +35,15 @@ clean:
 
 build_android:
 	@rm -rdf $(RESULTS_ANDROID)
-	$(SANGO) -config config_android.json -verbose
+	$(SANGO) $(SANGO_OPTS) -config config_android.json -verbose
 	
 build_ios:
 	@rm -rdf $(RESULTS_IOS)
-	$(SANGO) -config config_ios.json -verbose
+	$(SANGO) $(SANGO_OPTS) -config config_ios.json -verbose
 
 build_js:
 	@rm -rdf $(RESULTS_JS)
-	$(SANGO) -config config_javascript.json -verbose
+	$(SANGO) $(SANGO_OPTS) -config config_javascript.json -verbose
 
 build_all:
 	set -e
@@ -51,5 +52,5 @@ build_all:
 	@$(MAKE) build_js
 
 validate:
-	$(SANGO) -verbose -input_assets simple -validate simple/*.json
+	$(SANGO) $(SANGO_OPTS) -verbose -input_assets simple -validate simple/*.json
 	

@@ -37,7 +37,7 @@ public extension NSImage
                 }
             }
             let newImage = NSImage(size: NSMakeSize(CGFloat(width), CGFloat(height)))
-            newImage.setName(file.lastPathComponent())
+            newImage.setName(NSImage.Name(rawValue: file.lastPathComponent()))
             newImage.addRepresentations(imageReps)
             return newImage
         }
@@ -75,14 +75,14 @@ public extension NSImage
                                       samplesPerPixel: 4,
                                       hasAlpha: true,
                                       isPlanar: false,
-                                      colorSpaceName: NSDeviceRGBColorSpace,
+                                      colorSpaceName: NSColorSpaceName.deviceRGB,
                                       bytesPerRow: 0,
                                       bitsPerPixel: 0)!
         bitmap.size = self.size
         
         NSGraphicsContext.saveGraphicsState()
         
-        NSGraphicsContext.setCurrent(NSGraphicsContext(bitmapImageRep: bitmap))
+        NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: bitmap)
         self.draw(at: NSPoint.zero,
                          from: NSRect.zero,
                          operation: .sourceOver,
@@ -91,8 +91,8 @@ public extension NSImage
         NSGraphicsContext.restoreGraphicsState()
         
         var ok = false
-        if let imageData = bitmap.representation(using: NSBitmapImageFileType.PNG,
-                                                 properties: [NSImageCompressionFactor: 1.0]) {
+        if let imageData = bitmap.representation(using: NSBitmapImageRep.FileType.png,
+                                                 properties: [NSBitmapImageRep.PropertyKey.compressionFactor: 1.0]) {
             ok = (try? imageData.write(to: URL(fileURLWithPath: (file as NSString).standardizingPath), options: [.atomic])) != nil
         }
         if (ok == false) {
@@ -141,7 +141,7 @@ public extension NSImage
                                       samplesPerPixel: 4,
                                       hasAlpha: true,
                                       isPlanar: false,
-                                      colorSpaceName: NSDeviceRGBColorSpace,
+                                      colorSpaceName: NSColorSpaceName.deviceRGB,
                                       bytesPerRow: 0,
                                       bitsPerPixel: 0)!
         bitmap.size = destSize
@@ -151,7 +151,7 @@ public extension NSImage
         let context = NSGraphicsContext(bitmapImageRep: bitmap)
         context?.imageInterpolation = .high
         context?.shouldAntialias = true
-        NSGraphicsContext.setCurrent(context)
+        NSGraphicsContext.current = context
         self.draw(in: NSMakeRect(0, 0, destSize.width, destSize.height),
                         from: NSMakeRect(0, 0, self.size.width, self.size.height),
                         operation: .sourceOver,
@@ -160,7 +160,7 @@ public extension NSImage
         // tint with Source Atop operation, via 
         // http://www.w3.org/TR/2014/CR-compositing-1-20140220/#porterduffcompositingoperators
         color.set()
-        NSRectFillUsingOperation(rect, .sourceAtop)
+        rect.fill(using: .sourceAtop)
 
         NSGraphicsContext.restoreGraphicsState()
         let newImage = NSImage(size: destSize)
@@ -177,7 +177,7 @@ public extension NSImage
                                       samplesPerPixel: 4,
                                       hasAlpha: true,
                                       isPlanar: false,
-                                      colorSpaceName: NSDeviceRGBColorSpace,
+                                      colorSpaceName: NSColorSpaceName.deviceRGB,
                                       bytesPerRow: 0,
                                       bitsPerPixel: 0)!
         bitmap.size = destSize
@@ -187,7 +187,7 @@ public extension NSImage
         let context = NSGraphicsContext(bitmapImageRep: bitmap)
         context?.imageInterpolation = .high
         context?.shouldAntialias = true
-        NSGraphicsContext.setCurrent(context)
+        NSGraphicsContext.current = context
         self.draw(in: NSMakeRect(0, 0, destSize.width, destSize.height),
                         from: NSMakeRect(0, 0, self.size.width, self.size.height),
                         operation: .sourceOver,
