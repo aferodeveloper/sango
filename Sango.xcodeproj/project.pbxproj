@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		AA1CA53A1D6E568A009CF0FC /* Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA1CA5391D6E568A009CF0FC /* Version.swift */; };
-		AA85FF7020388C20008B5DD7 /* Makefile in Sources */ = {isa = PBXBuildFile; fileRef = AA85FEF820388C1F008B5DD7 /* Makefile */; };
 		AA89E00B1D8760DC00D2D9A8 /* NSString+Extras.m in Sources */ = {isa = PBXBuildFile; fileRef = AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */; };
 		AAB57D9E1D5B883800FA37CA /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB57D9C1D5B883800FA37CA /* App.swift */; };
 		AAB57D9F1D5B883800FA37CA /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB57D9D1D5B883800FA37CA /* main.swift */; };
@@ -33,11 +32,6 @@
 /* Begin PBXFileReference section */
 		AA1CA5391D6E568A009CF0FC /* Version.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Version.swift; path = Source/Version.swift; sourceTree = "<group>"; };
 		AA6C0D771D5A9AB000ECA808 /* Sango */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sango; sourceTree = BUILT_PRODUCTS_DIR; };
-		AA85FEBE20388C1F008B5DD7 /* config_javascript.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config_javascript.json; sourceTree = "<group>"; };
-		AA85FEF820388C1F008B5DD7 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		AA85FEF920388C1F008B5DD7 /* config_android.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config_android.json; sourceTree = "<group>"; };
-		AA85FEFB20388C1F008B5DD7 /* base.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = base.json; sourceTree = "<group>"; };
-		AA85FF6D20388C1F008B5DD7 /* config_ios.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = config_ios.json; sourceTree = "<group>"; };
 		AA89E0081D8760DB00D2D9A8 /* Sango-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Sango-Bridging-Header.h"; path = "Source/Sango-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA89E0091D8760DC00D2D9A8 /* NSString+Extras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+Extras.h"; path = "Source/NSString+Extras.h"; sourceTree = "<group>"; };
 		AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+Extras.m"; path = "Source/NSString+Extras.m"; sourceTree = "<group>"; };
@@ -72,7 +66,6 @@
 				AAB57D9D1D5B883800FA37CA /* main.swift */,
 				AA89E0091D8760DC00D2D9A8 /* NSString+Extras.h */,
 				AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */,
-				AA85FEBD20388C1F008B5DD7 /* test_example */,
 				AA6C0D781D5A9AB000ECA808 /* Products */,
 				AA89E0081D8760DB00D2D9A8 /* Sango-Bridging-Header.h */,
 			);
@@ -84,26 +77,6 @@
 				AA6C0D771D5A9AB000ECA808 /* Sango */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		AA85FEBD20388C1F008B5DD7 /* test_example */ = {
-			isa = PBXGroup;
-			children = (
-				AA85FEBE20388C1F008B5DD7 /* config_javascript.json */,
-				AA85FEF920388C1F008B5DD7 /* config_android.json */,
-				AA85FF6D20388C1F008B5DD7 /* config_ios.json */,
-				AA85FEF820388C1F008B5DD7 /* Makefile */,
-				AA85FEFA20388C1F008B5DD7 /* simple */,
-			);
-			path = test_example;
-			sourceTree = "<group>";
-		};
-		AA85FEFA20388C1F008B5DD7 /* simple */ = {
-			isa = PBXGroup;
-			children = (
-				AA85FEFB20388C1F008B5DD7 /* base.json */,
-			);
-			path = simple;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -133,12 +106,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0800;
+				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "Afero, Inc";
 				TargetAttributes = {
 					AA6C0D761D5A9AB000ECA808 = {
 						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0830;
+						LastSwiftMigration = 0920;
 					};
 				};
 			};
@@ -148,10 +121,6 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
-				de,
-				it,
-				Base,
-				jp,
 			);
 			mainGroup = AA6C0D6E1D5A9AB000ECA808;
 			productRefGroup = AA6C0D781D5A9AB000ECA808 /* Products */;
@@ -171,7 +140,6 @@
 				AAE52D671D6E0568002BDE3D /* Utils.swift in Sources */,
 				AAC944A81E0B8B2C00CFFFA1 /* Reserved.swift in Sources */,
 				AAB57D9F1D5B883800FA37CA /* main.swift in Sources */,
-				AA85FF7020388C20008B5DD7 /* Makefile in Sources */,
 				AA89E00B1D8760DC00D2D9A8 /* NSString+Extras.m in Sources */,
 				AACE09741D6627CE003CF4F1 /* Extras.swift in Sources */,
 				AAE52D651D6E032A002BDE3D /* Shell.swift in Sources */,
@@ -192,14 +160,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -227,6 +201,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 			};
 			name = Debug;
 		};
@@ -239,14 +214,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -267,6 +248,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 			};
 			name = Release;
 		};
@@ -279,7 +261,8 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Source/Sango-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -291,7 +274,8 @@
 				OTHER_SWIFT_FLAGS = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Source/Sango-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
+				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

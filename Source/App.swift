@@ -203,8 +203,12 @@ class App
     var globalAndroidTint:NSColor? = nil
     var gitEnabled = false
 
-    var swift3Output = false
-    var swift4Output = true
+    enum SangoSwiftVersion {
+        case two
+        case three
+        case four
+    }
+    var swiftOutput = SangoSwiftVersion.four
 
     // because Android and Javascript colors are stored in an external file, we collect them 
     // when walking through the constants, and write them out last
@@ -248,11 +252,11 @@ class App
         var keyLength = 0
         var parmLength = 0
         for (key, value) in details {
-            if (key.characters.count > keyLength) {
-                keyLength = key.characters.count
+            if key.utf8.count > keyLength {
+                keyLength = key.utf8.count
             }
-            if (value[0].characters.count > parmLength) {
-                parmLength = value[0].characters.count
+            if (value[0].utf8.count > parmLength) {
+                parmLength = value[0].utf8.count
             }
         }
         
@@ -302,8 +306,8 @@ class App
                        ]
         var keyLength = 0
         for (key, _) in details {
-            if (key.characters.count > keyLength) {
-                keyLength = key.characters.count
+            if (key.utf8.count > keyLength) {
+                keyLength = key.utf8.count
             }
         }
         print("JSON keys and their meaning:")
@@ -411,27 +415,29 @@ class App
             }
         }
         else if (color.hasPrefix("#")) {
-            var hexStr = color.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-            hexStr = hexStr.substring(from: hexStr.characters.index(hexStr.startIndex, offsetBy: 1))
-            
-            Scanner(string: hexStr).scanHexInt32(&rgbValue)
+            var hexStrTrim = color.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+            let startIndex = hexStrTrim.utf8.index(hexStrTrim.startIndex, offsetBy: 1)
+            var hexStr = String(hexStrTrim[startIndex...])
+
+            let scan = Scanner(string: hexStr)
+            scan.scanHexInt32(&rgbValue)
             red = 1
             green = 1
             blue = 1
             alpha = 1
             
-            if (hexStr.characters.count < 6) {
+            if (hexStr.utf8.count < 6) {
                 Utils.error("Error: not enough characters for hex color definition. Needs 6.")
                 exit(-1)
             }
             
-            if (hexStr.characters.count >= 6) {
+            if (hexStr.utf8.count >= 6) {
                 red = Double((rgbValue & 0x00FF0000) >> 16) / 255.0
                 green = Double((rgbValue & 0x0000FF00) >> 8) / 255.0
                 blue = Double(rgbValue & 0x000000FF) / 255.0
                 size = 3
             }
-            if (hexStr.characters.count == 8) {
+            if (hexStr.utf8.count == 8) {
                 alpha = Double((rgbValue & 0xFF000000) >> 24) / 255.0
                 size = 4
             }
@@ -462,7 +468,7 @@ class App
                 outputString.append("public enum \(key.snakeCaseToCamelCase()) {\n")
                 for itm in list {
                     var caseName = itm.snakeCaseToCamelCase()
-                    if swift3Output || swift4Output {
+                    if swiftOutput == .four {
                         caseName = caseName.lowercasedFirst()
                     }
                     outputString.append("\tcase \(caseName)\n")
@@ -517,7 +523,7 @@ class App
         var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
         if (type == .swift) {
             outputStr.append(swiftCommon)
-            if (self.swift3Output || swift4Output) {
+            if swiftOutput == .three || swiftOutput == .four {
                 outputStr.append(swift3Additions)
             }
             else {
@@ -710,7 +716,7 @@ class App
             var lineValue = "\(enums.enumType).".snakeCaseToCamelCase()
             var caseValue = String(describing: value).snakeCaseToCamelCase()
             
-            if swift3Output {
+            if swiftOutput == .four {
                 caseValue = caseValue.lowercasedFirst()
             }
             
@@ -944,7 +950,7 @@ class App
                         exit(-1)
                     }
                     let strValue = String(describing: value)
-                    var lineValue = parseJavaConstant(key, value: value)
+                    let lineValue = parseJavaConstant(key, value: value)
                     
                     switch lineValue.type {
                     case .Color:
@@ -1328,14 +1334,14 @@ class App
         var found: String
         var param: String
         var format: String
-        var start: String.UTF16Index
-        var end: String.UTF16Index
+        var start: Int
+        var end: Int
         init() {
             found = ""
             param = ""
             format = ""
-            start = String.UTF16Index(0)
-            end = String.UTF16Index(0)
+            start = 0
+            end = 0
         }
     }
     private func findGroups(_ line: String, regexPattern: String) -> [Group] {
@@ -1346,10 +1352,11 @@ class App
         let groups = matches.map { result -> Group in
             var founds: [String] = []
             for indx in (0..<result.numberOfRanges) {
-                let groupRange = result.rangeAt(indx)
-                let start = String.UTF16Index(groupRange.location)
-                let end = String.UTF16Index(groupRange.location + groupRange.length)
-                let group = String(line.utf16[start..<end])!
+                let groupRange = result.range(at: indx)
+                let start = groupRange.location
+                let end = groupRange.location + groupRange.length
+                let range = String.Index(encodedOffset: start)..<String.Index(encodedOffset: end)
+                let group = String(line[range])
                 founds.append(group)
             }
             var group = Group()
@@ -1366,9 +1373,9 @@ class App
                 Utils.error("Error: A locale parsing error for the line '\(line)")
                 exit(-1)
             }
-            let range = result.rangeAt(0)
-            group.start = String.UTF16Index(range.location)
-            group.end = String.UTF16Index(range.location + range.length)
+            let range = result.range(at: 0)
+            group.start = range.location
+            group.end = range.location + range.length
             return group
         }
         return groups
@@ -1594,7 +1601,7 @@ class App
                     if (type == .swift) {
                         for (key, _) in prop {
                             let newKey = simplifyKey(key)
-                            if (newKey.characters.count > 0) {
+                            if (newKey.utf8.count > 0) {
                                 localeKeysFound[newKey] = key.escapeStr()
                             }
                         }
@@ -1781,7 +1788,7 @@ class App
         var output = ""
         let lines = text.components(separatedBy: CharacterSet.newlines)
         for line in lines {
-            if (line.characters.count > 0) {
+            if (line.utf8.count > 0) {
                 output.append("\n\t")
             }
             output.append(line)
@@ -2109,8 +2116,13 @@ class App
         }
         
         self.localeOnly = findOption(args, option: optLocaleOnly)
-        self.swift3Output = findOption(args, option: optSwift3)
-        self.swift4Output = findOption(args, option: optSwift4)
+        
+        if findOption(args, option: optSwift3) {
+            swiftOutput = .three
+        }
+        else if findOption(args, option: optSwift4) {
+            swiftOutput = .four
+        }
         var validateInputs:[String]? = nil
         var validateLang:LangType = .unset
         validateInputs = getOptions(args, option: optValidate)
