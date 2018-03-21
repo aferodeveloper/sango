@@ -2,16 +2,14 @@
 
 import UIKit
 public struct Sango {
-    public static let Version = "Sango © 2016,2017 Afero, Inc - Build 240"
+    public static let Version = "Sango © 2016,2017 Afero, Inc - Build 245"
 }
 extension String {
     init(locKey key: String, value: String) {
-        let v = NSBundle.mainBundle().localizedStringForKey(key, value: value, table: nil)
-        self.init(v)
+        self = Bundle.main.localizedString(forKey: key, value: value, table: nil)
     }
 
     init(locKey key: String) {
-        let v = NSBundle.mainBundle().localizedStringForKey(key, value: nil, table: nil)
-        self.init(v)
+        self = Bundle.main.localizedString(forKey: key, value: nil, table: nil)
     }
 }
