@@ -466,7 +466,7 @@ class App
                 outputString.append("public enum \(key.snakeCaseToCamelCase()) {\n")
                 for itm in list {
                     var caseName = itm.snakeCaseToCamelCase()
-                    if swiftOutput == .four {
+                    if [.three, .four].contains(swiftOutput) {
                         caseName = caseName.lowercasedFirst()
                     }
                     outputString.append("\tcase \(caseName)\n")
@@ -521,7 +521,7 @@ class App
         var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
         if (type == .swift) {
             outputStr.append(swiftCommon)
-            if swiftOutput == .three || swiftOutput == .four {
+            if [.three, .four].contains(swiftOutput) {
                 outputStr.append(swift3Additions)
             }
             else {
@@ -714,7 +714,7 @@ class App
             var lineValue = "\(enums.enumType).".snakeCaseToCamelCase()
             var caseValue = String(describing: value).snakeCaseToCamelCase()
             
-            if swiftOutput == .four {
+            if [.three, .four].contains(swiftOutput) {
                 caseValue = caseValue.lowercasedFirst()
             }
             
