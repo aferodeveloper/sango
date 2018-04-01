@@ -220,7 +220,7 @@ class App
     var enumsFound: [String:Any] = [:]
 
     func usage() -> Void {
-        let details = [
+        let page1 = [
             optAssetTemplates: ["[basename]", "creates a json template, specifically for the assets"],
             optConfigTemplate: ["[file.json]", "creates a json template, specifically for the app"],
             optConfig: ["[file.json]", "use config file for options, instead of command line"],
@@ -232,7 +232,9 @@ class App
             optInput: ["[file.json]", "asset json file"],
             optInputs: ["[file1.json file2.json ...]", "merges asset files and process"],
             optInputAssets: ["[folder]", "asset source folder (read)"],
-            optOutSource: ["[source.java|swift|js]", "path to result of language"],
+            optOutSource: ["[source.java|swift|js]", "path to result of language"]
+        ]
+        let page2 = [
             optOutSCSS: ["[source.scss]", "when using javascript/node path to scss file"],
             optOutLocales: ["[folder]", "locale folder to write results"],
             optJava: ["", "write java source"],
@@ -248,6 +250,7 @@ class App
             optVersion: ["", "version"],
             optLocaleOnly: ["", "when included, process localization files only"]
         ]
+        let details = (page1 + page2) as! [String: [String]]
         var keyLength = 0
         var parmLength = 0
         for (key, value) in details {
@@ -1539,7 +1542,7 @@ class App
             var prop:[String:Any] = [:]
             for file in fileList as! [String] {
                 let filePath = sourceAssetFolder! + "/" + file
-                let newProps = NSDictionary.init(contentsOfFile: filePath) as? [String:Any]
+                let newProps = NSDictionary(contentsOfFile: filePath) as? [String:Any]
                 if (newProps != nil) {
                     prop = prop + newProps!
                 }
@@ -1761,7 +1764,7 @@ class App
                             }
                             else {
                                 if (key == keyLocale) {
-                                    let locale = NSDictionary.init(contentsOfFile: filePath) as? [String:Any]
+                                    let locale = NSDictionary(contentsOfFile: filePath) as? [String:Any]
                                     if locale == nil {
                                         Utils.error("Error: failed to read locale from \(filePath)")
                                         exit(-1)
