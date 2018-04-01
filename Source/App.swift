@@ -618,7 +618,7 @@ class App
                             }
                                 // ARGB
                             else {
-                                outputStr.append("$\(key): rbga(\(Int(color.r * 255)), \(Int(color.g * 255)), \(Int(color.b * 255)), \(color.a));\n")
+                                outputStr.append("$\(key): rgba(\(Int(color.r * 255)), \(Int(color.g * 255)), \(Int(color.b * 255)), \(color.a));\n")
                             }
                         }
                     }
