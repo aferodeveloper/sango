@@ -1221,31 +1221,67 @@ class App
     }
     
     let iOSAppIconSizes = [
+
+        // iPad Settings iOS 5-11
+        // iPhone Spotlight iOS 5,6
+        // iPhone Settings iOS 5-11
         "Icon-Small.png": 29,
         "Icon-Small@2x.png": 58,
         "Icon-Small@3x.png": 87,
+        
+        // iPhone Spotlight (possibly redundant)
         "Icon-Small-40.png": 40,
         "Icon-Small-40@2x.png": 80,
         "Icon-Small-40@3x.png": 120,
+        
+        // Legacy
         "Icon-Small-50.png": 50,
         "Icon-Small-50@2x.png": 100,
+        
+        // Legacy
         "Icon.png": 57,
         "Icon@2x.png": 114,
+        
+        // iPhone Notification iOS 7-11
+        // iPad Notifications iOS 7-11
+        "Icon-20.png": 20,
+        "Icon-20@2x.png": 40,
+        "Icon-20@3x.png": 60,
+        
+        // iPad Spotlight iOS 7-11
+        // iPhone Spotlight iOS 7-11
         "Icon-40.png": 40,
+        "Icon-40@2x.png": 80,
         "Icon-40@3x.png": 120,
+        
+        // iPhone App iOS 7-11
         "Icon-60.png": 60,
         "Icon-60@2x.png": 120,
         "Icon-60@3x.png": 180,
+        
         "Icon-72.png": 72,
         "Icon-72@2x.png": 144,
+
+        // iPad iOS 7-11
         "Icon-76.png": 76,
         "Icon-76@2x.png": 152,
+        
+        // Legacy
         "Icon-80.png": 80,
         "Icon-80@2x.png": 160,
+        
+        // iPad Pro iOS 9-11
+        "Icon-83.5@2x.png": 167,
+
+        // Legacy
         "Icon-120.png": 120,
         "Icon-167.png": 167,
-        "Icon-83.5@2x.png": 167
+    
+        // App Store
+        "Icon-1024.png": 1024,
+        
     ]
+    
     let AndroidIconSizes = [
         "mdpi": 48,
         "hdpi": 72,
