@@ -222,7 +222,7 @@ public func + (left: Dictionary<String, Array<Any>>?, right: Dictionary<String, 
     return localRight.reduce(localLeft) {
         curr, next in
         var ret = curr
-        ret[next.0] = [ret[next.0], next.1].flatMap({$0})
+        ret[next.0] = [ret[next.0], next.1].compactMap({$0})
         return ret
     }
     
@@ -275,17 +275,17 @@ public extension Character
 public extension String
 {
     public func lowercasedFirst() -> String {
-        let first = String(characters.prefix(1)).lowercased()
-        return first + String(characters.dropFirst())
+        let first = String(prefix(1)).lowercased()
+        return first + String(dropFirst())
     }
     
     public func uppercasedFirst() -> String {
-        let first = String(characters.prefix(1)).uppercased()
-        return first + String(characters.dropFirst())
+        let first = String(prefix(1)).uppercased()
+        return first + String(dropFirst())
     }
 
     public func removeFirst() -> String {
-        return String(characters.dropFirst())
+        return String(dropFirst())
     }
 
     public func snakeCaseToCamelCase() -> String {
@@ -393,7 +393,7 @@ public extension String
         var newString = String()
         let numbers = CharacterSet.decimalDigits
         var finished = false
-        for (_, c) in self.characters.enumerated() {
+        for (_, c) in self.enumerated() {
             let uc = c.unicodeScalarCodePoint()
             if (numbers.contains(uc) == false) || finished {
                 newString.append(c)
@@ -409,7 +409,7 @@ public extension String
 
     public func removeCharacters(_ set: CharacterSet) -> String {
         var newString = String()
-        for (_, c) in self.characters.enumerated() {
+        for (_, c) in self.enumerated() {
             let uc = c.unicodeScalarCodePoint()
             if set.contains(uc) == false {
                 newString.append(c)
@@ -419,8 +419,8 @@ public extension String
     }
 
     public func trunc(_ length: Int, trailing: String? = "…") -> String {
-        if self.characters.count > length {
-            return String(self.characters.prefix(length)) + (trailing ?? "")
+        if self.count > length {
+            return String(self.prefix(length)) + (trailing ?? "")
         }
         else {
             return String(self)
