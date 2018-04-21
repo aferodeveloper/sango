@@ -65,6 +65,10 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-config config_ios.json"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-config config_android.json"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

@@ -1670,30 +1670,39 @@ class App
         for file in files {
             let filePath = sourceAssetFolder! + "/" + file
             var destFile:String
+            
+            var middlePath = "/"
+            if type == .java {
+                middlePath = androidAssetLocations[assetType]!
+            }
+
             if (destLocation == .root) {
-                destFile = outputAssetFolder! + "/" + file.lastPathComponent()
+                destFile = outputAssetFolder! + middlePath + file.lastPathComponent()
             }
             else if (destLocation == .relative) {
-                destFile = outputAssetFolder! + "/" + file  // can include file/does/include/path
+                destFile = outputAssetFolder! + middlePath + file  // can include file/does/include/path
             }
             else {
                 // Custom
-                destFile = outputAssetFolder! + "/" + root + "/" + file.lastPathComponent()
+                var rootPath = root
+                if rootPath.isEmpty && type == .java {
+                    rootPath = androidAssetLocations[assetType]!
+                }
+                else {
+                    rootPath = "/" + rootPath + "/"
+                }
+                destFile = outputAssetFolder! + rootPath + file.lastPathComponent()
             }
             let destPath = (destFile as NSString).deletingLastPathComponent
             Utils.createFolder(destPath)
-            
-            let fileName = file.lastPathComponent()
-            
+                        
             if (type == .swift) {
                 if (Utils.copyFile(filePath, dest: destFile) == false) {
                     exit(-1)
                 }
             }
             else if (type == .java) {
-                let defaultLoc = destPath + androidAssetLocations[assetType]!
-                Utils.createFolder(defaultLoc)
-                if (Utils.copyFile(filePath, dest: defaultLoc + fileName) == false) {
+                if (Utils.copyFile(filePath, dest: destFile) == false) {
                     exit(-1)
                 }
             }

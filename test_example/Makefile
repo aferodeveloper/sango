@@ -32,6 +32,9 @@ clean:
 	@rm -rdf $(RESULTS_ANDROID)
 	@rm -rdf $(RESULTS_IOS)
 	@rm -rdf $(RESULTS_JS)
+	@git checkout $(RESULTS_ANDROID)
+	@git checkout $(RESULTS_IOS)
+	@git checkout $(RESULTS_JS)
 
 build_android:
 	@rm -rdf $(RESULTS_ANDROID)
@@ -52,5 +55,5 @@ build_all:
 	@$(MAKE) build_js
 
 validate:
-	$(SANGO) $(SANGO_OPTS) -verbose -input_assets simple -validate simple/*.json
+	$(SANGO) $(SANGO_OPTS) -verbose -input_assets simple/assets -validate simple/assets/*.json
 	
