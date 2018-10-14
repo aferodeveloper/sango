@@ -1327,8 +1327,8 @@ class App
 
                 do {
                     let url = URL(fileURLWithPath: destPath + "/")
-                    try appIcon.saveCombinedAssetCatalog(named: "AppIcons", toUrl: url)
-//                    try appIcon.saveAssetCatalog(named: "AppIcons", toURL: url)
+                    let resultURL = try appIcon.saveCombinedAssetCatalog(named: "AppIcons", toUrl: url)
+                    Utils.debug("Generate icon asset catalog and copy \(filePath) -> \(resultURL.relativeString)")
                 }
                 catch let error as NSError {
                     Utils.error("Error: Failed to resize \(filePath) \(error)")
