@@ -2193,7 +2193,8 @@ class App
         else if findOption(args, option: optSwift4) {
             swiftOutput = .four
         }
-        else if findOption(args, option: optUseAppAssetCatalog) {
+
+        if findOption(args, option: optUseAppAssetCatalog) {
             useAppAssetCatalog = true
         }
 
