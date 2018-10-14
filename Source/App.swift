@@ -1310,10 +1310,11 @@ class App
             exit(-1)
         }
         if (type == .swift) {
-            let destPath = outputAssetFolder! + "/icons"
-            Utils.createFolder(destPath)
             
             if useAppAssetCatalog {
+                let destPath = outputAssetFolder! + "/Images.xcassets"
+                Utils.createFolder(destPath)
+                
                 let appIcon = AppIcon()
                 let platforms = [iPadPlatformName, iPhonePlatformName, iOSPlatformName]
                 
@@ -1327,7 +1328,7 @@ class App
 
                 do {
                     let url = URL(fileURLWithPath: destPath + "/")
-                    let resultURL = try appIcon.saveCombinedAssetCatalog(named: "AppIcons", toUrl: url)
+                    let resultURL = try appIcon.saveCombinedAssetCatalog(named: "AppIcon", toUrl: url)
                     Utils.debug("Generate icon asset catalog and copy \(filePath) -> \(resultURL.relativeString)")
                 }
                 catch let error as NSError {
@@ -1337,6 +1338,8 @@ class App
 
             }
             else {
+                let destPath = outputAssetFolder! + "/icons"
+                Utils.createFolder(destPath)
                 for (key, value) in iOSAppIconSizes {
                     let width = CGFloat(value)
                     let height = CGFloat(value)

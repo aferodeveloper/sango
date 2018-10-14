@@ -33,6 +33,7 @@ struct ContentsJSON {
         // Init the contents array, with general information.
         contents["author"] = "Iconizer & Sango"
         contents["version"] = "1.0"
+        contents["properties"] = ["pre-rendered": true]
         contents["images"] = []
 
         dataMap[nameForResource(forIconAssetType: .appIcon, andPlatform: iPadPlatformName)] = appIconIPad
