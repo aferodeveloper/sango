@@ -135,6 +135,7 @@ let optVersion = "-version"
 let optLocaleOnly = "-locale_only"
 let optSwift3 = "-swift3"
 let optSwift4 = "-swift4"
+let optUseAppAssetCatalog = "-use_app_asset_catalog"
 let optLangType = "-type"
 
 // The Sango additions for swift are different for swift3 and swift 2.3
@@ -209,7 +210,9 @@ class App
     }
     var swiftOutput = SangoSwiftVersion.four
 
-    // because Android and Javascript colors are stored in an external file, we collect them 
+    var useAppAssetCatalog = false
+
+    // because Android and Javascript colors are stored in an external file, we collect them
     // when walking through the constants, and write them out last
     var colorsFound:[String:Any] = [:]
 
@@ -243,6 +246,7 @@ class App
             optNodeJS: ["", "write nodejs source"],
             optSwift3: ["", "write Swift 3 compatible Swift source (requires \(optSwift))"],
             optSwift4: ["", "write Swift 4 compatible Swift source (requires \(optSwift))"],
+            optUseAppAssetCatalog: ["", "write iOS app icons as an asset catalog"],
             optOutAssets: ["[folder]", "asset root folder (write), typically iOS Resource, or Android app/src/main"],
             optInputAssetsTag: ["[tag]", "optional git tag to pull repro at before processing"],
             optVerbose: ["", "be verbose in details"],
@@ -1308,17 +1312,43 @@ class App
         if (type == .swift) {
             let destPath = outputAssetFolder! + "/icons"
             Utils.createFolder(destPath)
-            for (key, value) in iOSAppIconSizes {
-                let width = CGFloat(value)
-                let height = CGFloat(value)
-                if let newImage = iconImage?.resize(width, height: height) {
-                    let destFile = destPath + "/" + key
-                    saveImage(newImage, file: destFile)
-                    Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
+            
+            if useAppAssetCatalog {
+                let appIcon = AppIcon()
+                let platforms = [iPadPlatformName, iPhonePlatformName, iOSPlatformName]
+                
+                do {
+                    try appIcon.generateImagesForPlatforms(platforms, fromImage: iconImage!)
                 }
-                else {
-                    Utils.error("Error: Failed to resize \(filePath)")
+                catch let error as NSError {
+                    Utils.error("Error: Failed to setup \(filePath) \(error)")
                     exit(-1)
+                }
+
+                do {
+                    let url = URL(fileURLWithPath: destPath + "/")
+                    try appIcon.saveCombinedAssetCatalog(named: "AppIcons", toUrl: url)
+//                    try appIcon.saveAssetCatalog(named: "AppIcons", toURL: url)
+                }
+                catch let error as NSError {
+                    Utils.error("Error: Failed to resize \(filePath) \(error)")
+                    exit(-1)
+                }
+
+            }
+            else {
+                for (key, value) in iOSAppIconSizes {
+                    let width = CGFloat(value)
+                    let height = CGFloat(value)
+                    if let newImage = iconImage?.resize(width, height: height) {
+                        let destFile = destPath + "/" + key
+                        saveImage(newImage, file: destFile)
+                        Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
+                    }
+                    else {
+                        Utils.error("Error: Failed to resize \(filePath)")
+                        exit(-1)
+                    }
                 }
             }
         }
@@ -2163,6 +2193,10 @@ class App
         else if findOption(args, option: optSwift4) {
             swiftOutput = .four
         }
+        else if findOption(args, option: optUseAppAssetCatalog) {
+            useAppAssetCatalog = true
+        }
+
         var validateInputs:[String]? = nil
         var validateLang:LangType = .unset
         validateInputs = getOptions(args, option: optValidate)

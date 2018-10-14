@@ -15,6 +15,14 @@ struct ContentsJSON {
     /// The Contents.json file as array.
     var contents: [String: Any] = [:]
 
+    let appIconCar = Data(bytes: &AppIcon_Car_json, count: Int(AppIcon_Car_json_len))
+    let appIconIOS = Data(bytes: &AppIcon_iOS_json, count: Int(AppIcon_iOS_json_len))
+    let appIconIPad = Data(bytes: &AppIcon_iPad_json, count: Int(AppIcon_iPad_json_len))
+    let appIconIPhone = Data(bytes: &AppIcon_iPhone_json, count: Int(AppIcon_iPhone_json_len))
+    let appIconMac = Data(bytes: &AppIcon_Mac_json, count: Int(AppIcon_Mac_json_len))
+    let appIconWatch = Data(bytes: &AppIcon_Watch_json, count: Int(AppIcon_Watch_json_len))
+    var dataMap: [String: Data] = [:]
+
     // MARK: Initializers
 
     /// Initialize a new ContentsJSON instance.
@@ -23,9 +31,16 @@ struct ContentsJSON {
         images = []
 
         // Init the contents array, with general information.
-        contents["author"] = "Iconizer"
+        contents["author"] = "Iconizer & Sango"
         contents["version"] = "1.0"
         contents["images"] = []
+
+        dataMap[nameForResource(forIconAssetType: .appIcon, andPlatform: iPadPlatformName)] = appIconIPad
+        dataMap[nameForResource(forIconAssetType: .appIcon, andPlatform: iPhonePlatformName)] = appIconIPhone
+        dataMap[nameForResource(forIconAssetType: .appIcon, andPlatform: iOSPlatformName)] = appIconIOS
+        dataMap[nameForResource(forIconAssetType: .appIcon, andPlatform: macOSPlatformName)] = appIconMac
+        dataMap[nameForResource(forIconAssetType: .appIcon, andPlatform: carPlayPlatformName)] = appIconCar
+        dataMap[nameForResource(forIconAssetType: .appIcon, andPlatform: appleWatchPlatformName)] = appIconWatch
     }
 
     /// Initialize a new ContentsJSON instance with a specified Asset Type
@@ -67,13 +82,11 @@ struct ContentsJSON {
     /// - Returns: The Contents.json for the supplied asset type and platforms as Array.
     /// - Throws: See ContentsJSONError for possible values.
     func arrayFromJson(forType type: IconAssetType, andPlatform platform: String) throws -> [[String: String]] {
-        guard let resourcePath = resourcePath(forIconAssetType: type, andPlatform: platform) else {
+        guard let resourceData = resourceFrom(forIconAssetType: type, andPlatform: platform) else {
             throw ContentsJSONError.fileNotFound
         }
         // Create a new JSON object from the given data.
-        let json = try JSONSerialization
-            .jsonObject(with: try Data(contentsOf: URL(fileURLWithPath: resourcePath), options: .alwaysMapped),
-                        options: .allowFragments)
+        let json = try JSONSerialization.jsonObject(with: resourceData, options: [.allowFragments])
 
         // Convert the JSON object into a Dictionary.
         guard let contents = json as? [String: AnyObject] else {
@@ -88,7 +101,7 @@ struct ContentsJSON {
         return images
     }
 
-    func resourcePath(forIconAssetType type: IconAssetType, andPlatform platform: String) -> String? {
+    private func nameForResource(forIconAssetType type: IconAssetType, andPlatform platform: String) -> String {
         let resource: String
         switch type {
         case .appIcon:
@@ -98,7 +111,12 @@ struct ContentsJSON {
         case .launchImage:
             resource = "LaunchImage_" + platform
         }
-        return Bundle.main.path(forResource: resource, ofType: "json")
+        return resource
+    }
+
+    private func resourceFrom(forIconAssetType type: IconAssetType, andPlatform platform: String) -> Data? {
+        let key = nameForResource(forIconAssetType: type, andPlatform: platform)
+        return dataMap[key]
     }
 
     ///  Saves the Contents.json to the appropriate folder.

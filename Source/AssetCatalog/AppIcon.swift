@@ -63,8 +63,9 @@ class AppIcon: NSObject {
                 continue
             }
 
-            let saveUrl = url.appendingPathComponent("\(appIconDir)/\(platform)/\(name).appiconset",
-                                                     isDirectory: true)
+//            let saveUrl = url.appendingPathComponent("\(appIconDir)/\(platform)/\(name).appiconset",
+//                                                     isDirectory: true)
+            let saveUrl = url.appendingPathComponent("\(name).appiconset", isDirectory: true)
 
             try FileManager.default.createDirectory(at: saveUrl,
                                                     withIntermediateDirectories: true,
@@ -92,7 +93,8 @@ class AppIcon: NSObject {
     ///   - url: The URL to save the catalog to
     /// - Throws: An AppIconError
     func saveCombinedAssetCatalog(named name: String, toUrl url: URL) throws {
-        let saveUrl = url.appendingPathComponent("\(appIconDir)/Combined/\(name).appiconset", isDirectory: true)
+//        let saveUrl = url.appendingPathComponent("\(appIconDir)/Combined/\(name).appiconset", isDirectory: true)
+        let saveUrl = url.appendingPathComponent("\(name).appiconset", isDirectory: true)
 
         for (_, images) in images {
             try FileManager.default.createDirectory(at: saveUrl,
