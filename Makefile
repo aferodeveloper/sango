@@ -43,8 +43,8 @@ _clean_temps:
 	@rm -rdf temp_android
 	
 clean: _clean_temps clear_build
-	@xcodebuild clean &>/dev/null
 	@rm -rdf build
+	@xcodebuild clean &>/dev/null
 	@rm -f $(TARGET)
 
 distro: clean set_build
