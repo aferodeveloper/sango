@@ -2197,10 +2197,6 @@ class App
             swiftOutput = .four
         }
 
-        if findOption(args, option: optUseAppAssetCatalog) {
-            useAppAssetCatalog = true
-        }
-
         var validateInputs:[String]? = nil
         var validateLang:LangType = .unset
         validateInputs = getOptions(args, option: optValidate)
@@ -2252,6 +2248,7 @@ class App
                 outputLocaleFolder = result![optOutLocales.removeFirst()] as? String
                 outputAssetFolder = result![optOutAssets.removeFirst()] as? String
                 assetTag = result![optInputAssetsTag.removeFirst()] as? String
+                useAppAssetCatalog = result![optUseAppAssetCatalog.removeFirst()] as? Bool ?? false
                 let type = result![optLangType.removeFirst()] as? String
                 if (type == keyJava) {
                     compileType = .java
@@ -2270,6 +2267,11 @@ class App
                 exit(-1)
             }
         }
+
+        if findOption(args, option: optUseAppAssetCatalog) {
+            useAppAssetCatalog = true
+        }
+        
 
         // allow for an override of the asset tag
         if let overrideTag = getOption(args, option: optInputAssetsTag) {
