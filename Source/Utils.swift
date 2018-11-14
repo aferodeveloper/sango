@@ -20,25 +20,25 @@ open class Utils
 {
     static var verbose = false
 
-    open static func setVerbose(_ state: Bool) -> Void {
+    public static func setVerbose(_ state: Bool) -> Void {
         verbose = state
     }
 
-    open static func debug(_ message: String) -> Void {
+    public static func debug(_ message: String) -> Void {
         if (verbose) {
             print(message)
         }
     }
 
-    open static func error(_ message: String) -> Void {
+    public static func error(_ message: String) -> Void {
         print(message)
     }
     
-    open static func always(_ message: String) -> Void {
+    public static func always(_ message: String) -> Void {
         print(message)
     }
 
-    open static func toJSON(_ dictionary:Dictionary<String, Any>) -> String? {
+    public static func toJSON(_ dictionary:Dictionary<String, Any>) -> String? {
         do {
             let data: Data = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
             if let jsonString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
@@ -53,7 +53,7 @@ open class Utils
         }
     }
     
-    open static func fromJSONFile(_ file:String) -> [String:Any]? {
+    public static func fromJSONFile(_ file:String) -> [String:Any]? {
         var result:[String: Any]?
         
         let location = NSString(string: file).expandingTildeInPath
@@ -70,7 +70,7 @@ open class Utils
         return result
     }
     
-    open static func fromJSON(_ data:Data) -> [String: Any]? {
+    public static func fromJSON(_ data:Data) -> [String: Any]? {
         var dict: Any?
         do {
             dict = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
@@ -84,7 +84,7 @@ open class Utils
         return dict as? [String: Any]
     }
 
-    open static func createFolders(_ folders: [String]) -> Bool {
+    public static func createFolders(_ folders: [String]) -> Bool {
         for file in folders {
             do {
                 try FileManager.default.createDirectory(atPath: file, withIntermediateDirectories: true, attributes: nil)
@@ -97,12 +97,12 @@ open class Utils
         return true
     }
     
-    @discardableResult open static func createFolderForFile(_ srcFile: String) -> Bool {
+    @discardableResult public static func createFolderForFile(_ srcFile: String) -> Bool {
         let destPath = (srcFile as NSString).deletingLastPathComponent
         return createFolder(destPath)
     }
     
-    @discardableResult open static func createFolder(_ src: String) -> Bool {
+    @discardableResult public static func createFolder(_ src: String) -> Bool {
         var ok = true
         do {
             try FileManager.default.createDirectory(atPath: src, withIntermediateDirectories: true, attributes: nil)
@@ -115,7 +115,7 @@ open class Utils
         return ok
     }
 
-    @discardableResult open static func deleteFolder(_ src: String) -> Bool {
+    @discardableResult public static func deleteFolder(_ src: String) -> Bool {
         var ok = true
         do {
             try FileManager.default.removeItem(atPath: src)
@@ -127,7 +127,7 @@ open class Utils
         return ok
     }
 
-    open static func copyFile(_ src: String, dest: String) -> Bool {
+    public static func copyFile(_ src: String, dest: String) -> Bool {
         deleteFile(dest)
         var ok = true
         do {
@@ -142,7 +142,7 @@ open class Utils
         return ok
     }
     
-    open static func copyFiles(_ files: [String], useRoot: Bool,
+    public static func copyFiles(_ files: [String], useRoot: Bool,
                                  srcRootPath: String, dstRootPath: String) -> Void {
         for file in files {
             let filePath = srcRootPath + "/" + file
@@ -161,7 +161,7 @@ open class Utils
         }
     }
 
-    @discardableResult open static func deleteFile(_ src: String) -> Bool {
+    @discardableResult public static func deleteFile(_ src: String) -> Bool {
         var ok = true
         do {
             try FileManager.default.removeItem(atPath: src)
