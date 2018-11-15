@@ -12,41 +12,42 @@
 		"base": "Constants"
 	},
 	"locale": {
-		"default": "assets/locale/en.strings",
-		"de": "assets/locale/de.strings",
-		"it": "assets/locale/it.strings",
-		"jp": "assets/locale/jp.strings"
+		"default": "locale/en.strings",
+		"de": "locale/de.strings",
+		"it": "locale/it.strings",
+		"jp": "locale/jp.strings"
 	},
 	"fonts": [
-		"assets/GT-Walsheim-Black-Oblique.ttf",
-		"assets/GT-Walsheim-Black.ttf"
+		"GT-Walsheim-Black-Oblique.ttf",
+		"GT-Walsheim-Black.ttf"
 	],
-	"appIconAndroid": "assets/app_icons/android/release_app_icon.png",
-	"appIconIos": "assets/app_icons/ios/release_app_icon.png",
+	"appIconAndroid": "app_icons/android/release_app_icon.png",
+	"appIconIos": "app_icons/ios/release_app_icon.png",
 	"imagesIos": [
-		"assets/account_avatar2.png"
+		"account_avatar2.png"
 	],
 	"layoutAndroid": [
-		"assets/android/activity_object_detail.xml"
+		"android/activity_object_detail.xml"
 	],
 	"imagesAndroid": [
-		"assets/account_avatar1.png"
+		"account_avatar1.png"
 	],
 	"images": [
-		"assets/asr_1.png"
+		"asr_1.png"
 	],
 	"copied": [
-		"assets/file_data1",
-		"assets/file_data2"
+		"file_data1",
+		"file_data2",
+		"dir1/dir2/file_data3"
 	],
 	"copyAtRoot": [
 		"assets/more/data/file_data3#folder"
 	],
 	"imagesScaled": [
-		"assets/large_device_icon.png",
-		"assets/vector_avatar.pdf",
-		"assets/business_men.ai",
-		"assets/green_guy.eps"
+		"large_device_icon.png",
+		"vector_avatar.pdf",
+		"business_men.ai",
+		"green_guy.eps"
 	],
 	"Settings": {
 		"UI_BASE_COLOR": "67,163,199,255",
