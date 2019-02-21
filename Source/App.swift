@@ -1364,6 +1364,13 @@ class App
                     Utils.createFolder(destPath)
                     let destFile = destPath + "/" + appIconName
                     saveImage(newImage, file: destFile)
+                    
+                    
+                    if let roundImage = newImage.roundCorner(width / 2, height / 2) {
+                        let fileOnly = appIconName.fileNameOnly()
+                        let destFile = destPath + "/" + fileOnly + "_round.png"
+                        saveImage(roundImage, file: destFile)
+                    }
                     Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
                 }
                 else {

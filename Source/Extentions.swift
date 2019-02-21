@@ -44,34 +44,6 @@ public extension NSImage
         return nil
     }
     
-    /// Resize the image to the given size.
-    ///
-    /// - Parameter size: The size to resize the image to.
-    /// - Returns: The resized image.
-    func resize(toSize targetSize: NSSize, aspectMode: AspectMode) -> NSImage? {
-        let newSize     = self.calculateAspectSize(withTargetSize: targetSize, aspectMode: aspectMode) ?? targetSize
-        let xCoordinate = round((targetSize.width - newSize.width) / 2)
-        let yCoordinate = round((targetSize.height - newSize.height) / 2)
-        let targetFrame = NSRect(origin: NSPoint.zero, size: targetSize)
-        let frame       = NSRect(origin: NSPoint(x: xCoordinate, y: yCoordinate), size: newSize)
-        
-        var backColor   = NSColor.clear
-        if let tiff = self.tiffRepresentation, let tiffData = NSBitmapImageRep(data: tiff) {
-            backColor = tiffData.colorAt(x: 0, y: 0) ?? NSColor.clear
-        }
-        
-        return NSImage(size: targetSize, flipped: false) { (_: NSRect) -> Bool in
-            backColor.setFill()
-            NSBezierPath.fill(targetFrame)
-            guard let rep = self.bestRepresentation(for: NSRect(origin: NSPoint.zero, size: newSize),
-                                                    context: nil,
-                                                    hints: nil) else {
-                                                        return false
-            }
-            return rep.draw(in: frame)
-        }
-    }
-    
     /// Saves the PNG representation of the image to the supplied URL parameter.
     ///
     /// - Parameter url: The URL to save the image data to.
@@ -283,6 +255,27 @@ public extension NSImage
         return NSImage(data: newImage.tiffRepresentation!)!
     }
 
+    public func roundCorner(_ radiusX: CGFloat, _ radiusY : CGFloat) -> NSImage? {
+        let imageFrame = NSMakeRect(0, 0, self.size.width, self.size.height)
+        
+        let composedImage = NSImage(size: imageFrame.size)
+        composedImage.lockFocus()
+        guard let context = NSGraphicsContext.current else {
+            composedImage.unlockFocus()
+            return nil
+        }
+        context.imageInterpolation = .high
+        context.shouldAntialias = true
+        
+        let clipPath = NSBezierPath(roundedRect: imageFrame, xRadius: radiusX, yRadius: radiusY)
+        clipPath.windingRule = NSBezierPath.WindingRule.evenOddWindingRule
+        clipPath.addClip()
+        
+        self.draw(at: NSPoint.zero, from: imageFrame, operation: NSCompositingOperation.sourceOver, fraction: 1)
+        composedImage.unlockFocus()
+        return composedImage
+    }
+
     public func resize(_ width: CGFloat, height: CGFloat) -> NSImage {
         let destSize = NSMakeSize(width, height)
         let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
@@ -309,10 +302,40 @@ public extension NSImage
                         fraction: 1.0)
         
         NSGraphicsContext.restoreGraphicsState()
+        
         let newImage = NSImage(size: destSize)
         newImage.addRepresentation(bitmap)
         return NSImage(data: newImage.tiffRepresentation!)!
     }
+    
+    /// Resize the image to the given size.
+    ///
+    /// - Parameter size: The size to resize the image to.
+    /// - Returns: The resized image.
+    func resize(toSize targetSize: NSSize, aspectMode: AspectMode) -> NSImage? {
+        let newSize     = self.calculateAspectSize(withTargetSize: targetSize, aspectMode: aspectMode) ?? targetSize
+        let xCoordinate = round((targetSize.width - newSize.width) / 2)
+        let yCoordinate = round((targetSize.height - newSize.height) / 2)
+        let targetFrame = NSRect(origin: NSPoint.zero, size: targetSize)
+        let frame       = NSRect(origin: NSPoint(x: xCoordinate, y: yCoordinate), size: newSize)
+        
+        var backColor   = NSColor.clear
+        if let tiff = self.tiffRepresentation, let tiffData = NSBitmapImageRep(data: tiff) {
+            backColor = tiffData.colorAt(x: 0, y: 0) ?? NSColor.clear
+        }
+        
+        return NSImage(size: targetSize, flipped: false) { (_: NSRect) -> Bool in
+            backColor.setFill()
+            NSBezierPath.fill(targetFrame)
+            guard let rep = self.bestRepresentation(for: NSRect(origin: NSPoint.zero, size: newSize),
+                                                    context: nil,
+                                                    hints: nil) else {
+                                                        return false
+            }
+            return rep.draw(in: frame)
+        }
+    }
+    
 }
 
 public func + (left: [String: [String: Any]]?, right: [String: [String: Any]]?) -> [String: [String: Any]]? {
