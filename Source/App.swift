@@ -47,6 +47,7 @@ import CoreGraphics
  }
  */
 let SchemaVersion = 1
+let FILE_TAG = "DO NOT MODIFY. Generated with Sango, by Afero.io"
 
 let keySchemaVersion = "schemaVersion"
 let keyFonts = "fonts"
@@ -525,7 +526,7 @@ class App
 
     func writeSangoExtras(_ type: LangType, filePath: String) -> Void {
         var sangoFile = filePath
-        var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
+        var outputStr = "/* " + FILE_TAG + " */\n\n"
         if (type == .swift) {
             outputStr.append(swiftCommon)
             if [.three, .four].contains(swiftOutput) {
@@ -561,7 +562,7 @@ class App
 
     func writeResourceKeysSwift(_ filePath: String) -> Void {
         if (localeKeysFound.count > 0) || (imageKeysFound.count > 0) {
-            var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
+            var outputStr = "/* " + FILE_TAG + " */\n\n"
             outputStr.append("import Foundation\n")
             outputStr.append("public struct R {\n")
             
@@ -645,7 +646,7 @@ class App
             var destPath = outputAssetFolder! + "/res/values"
             Utils.createFolder(destPath)
             destPath.append("/dimens.xml")
-            var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
+            var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- " + FILE_TAG + " -->\n"
             outputStr.append("<resources>\n")
             let sorted = androidDimens.keys.sorted()
             for key in sorted {
@@ -1510,11 +1511,11 @@ class App
         // write header
         var genString = ""
         if (type == .swift) {
-            genString.append("/* Generated with Sango, by Afero.io */\n")
+            genString.append("/* " + FILE_TAG + " */\n")
         }
         else if (type == .java) {
             genString.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n")
-            genString.append("<!-- Generated with Sango, by Afero.io -->\n")
+            genString.append("<!-- " + FILE_TAG + " -->\n")
             genString.append("<resources>\n")
         }
         else if (type == .javascript || type == .nodejs) {
@@ -2030,7 +2031,7 @@ class App
         }
         
         if (completeOutput) {
-            var outputStr = "/* Generated with Sango, by Afero.io */\n\n"
+            var outputStr = "/* " + FILE_TAG + " */\n\n"
             if (enumsFound.isEmpty == false) {
                 let line = writeEnums(enumsFound, type: type)
                 if (type == .javascript || type == .nodejs) {
