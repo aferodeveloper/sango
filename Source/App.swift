@@ -142,7 +142,7 @@ let optLangType = "-type"
 // The Sango additions for swift are different for swift3 and swift 2.3
 
 let swiftCommon =
-"import UIKit\n" +
+"import Foundation\n" +
 "public struct Sango {\n" +
 "    public static let Version = \"\(App.copyrightNotice)\"\n" +
 "}\n"
@@ -2043,7 +2043,7 @@ class App
             }
             if (genString.isEmpty == false) {
                 if (type == .swift) {
-                    outputStr.append("import UIKit\n")
+                    outputStr.append("import Foundation\n")
                 }
                 else if (type == .java) {
                     if (package.isEmpty) {
