@@ -130,7 +130,11 @@ struct ContentsJSON {
     /// - Throws: See JSONSerialization for possible values.
     mutating func saveToURL(_ url: URL) throws {
         contents["images"] = images
-        let data = try JSONSerialization.data(withJSONObject: contents, options: .prettyPrinted)
+        var keys = JSONSerialization.WritingOptions.prettyPrinted
+        if #available(OSX 10.13, *) {
+            keys = [JSONSerialization.WritingOptions.sortedKeys, JSONSerialization.WritingOptions.prettyPrinted]
+        }
+        let data = try JSONSerialization.data(withJSONObject: contents, options: keys)
         try data.write(to: url.appendingPathComponent("Contents.json", isDirectory: false), options: .atomic)
         images.removeAll()
     }

@@ -40,7 +40,11 @@ open class Utils
 
     public static func toJSON(_ dictionary:Dictionary<String, Any>) -> String? {
         do {
-            let data: Data = try JSONSerialization.data(withJSONObject: dictionary, options: .prettyPrinted)
+            var keys = JSONSerialization.WritingOptions.prettyPrinted
+            if #available(OSX 10.13, *) {
+                keys = [JSONSerialization.WritingOptions.sortedKeys, JSONSerialization.WritingOptions.prettyPrinted]
+            }
+            let data: Data = try JSONSerialization.data(withJSONObject: dictionary, options: keys)
             if let jsonString = NSString(data: data, encoding: String.Encoding.utf8.rawValue) {
                 return jsonString.replacingOccurrences(of: "\\/", with: "/")
             }
