@@ -2043,7 +2043,8 @@ class App
             }
             if (genString.isEmpty == false) {
                 if (type == .swift) {
-                    outputStr.append("import Foundation\n")
+                    //TODO: For macOS use AppKit
+                    outputStr.append("import UIKit\n")
                 }
                 else if (type == .java) {
                     if (package.isEmpty) {
