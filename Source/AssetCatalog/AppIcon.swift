@@ -72,7 +72,7 @@ class AppIcon: NSObject {
                                                     withIntermediateDirectories: true,
                                                     attributes: nil)
 
-            let contentsJson: ContentsJSON?
+            var contentsJson: ContentsJSON?
             if platform == iPhonePlatformName || platform == iPadPlatformName {
                 try self.saveAsset(images: self.images[iOSPlatformName]!, toUrl: saveUrl)
                 contentsJson = try ContentsJSON(forType: IconAssetType.appIcon,
