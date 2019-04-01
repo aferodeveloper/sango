@@ -38,30 +38,30 @@ version:
 	@echo "Current build version: $(REVISION) sha1 $(GIT_SHA1)"
 
 _clean_temps:
-	@rm -rdf temp
-	@rm -rdf temp_ios
-	@rm -rdf temp_android
+	rm -rdf temp
+	rm -rdf temp_ios
+	rm -rdf temp_android
 	
 clean: _clean_temps clear_build
-	@rm -rdf build
-	@xcodebuild clean &>/dev/null
-	@rm -f $(TARGET)
+	rm -rdf build
+	xcodebuild clean &>/dev/null
+	rm -f $(TARGET)
 
 distro: clean set_build
-	@xcodebuild -project Sango.xcodeproj
-	@cp ./build/Release/Sango $(TARGET)
-	@$(MAKE) clear_build
-	@echo "Done!"
+	xcodebuild -project Sango.xcodeproj
+	cp ./build/Release/Sango $(TARGET)
+	"$(MAKE)" clear_build
+	echo "Done!"
 
 set_build:
 	@echo "public let BUILD_DATE = "\"$(BUILD_DATE)\" > Source/Version.swift
 	@echo "public let BUILD_REVISION = $(REVISION)" >> Source/Version.swift
 
 clear_build:
-	@$(REVERT) Source/Version.swift
+	$(REVERT) Source/Version.swift
 
 install: distro
-	@if [ -w /usr/local/bin ]; then \
+	if [ -w /usr/local/bin ]; then \
 	cp $(TARGET) /usr/local/bin/$(TARGET); \
 	else \
 	echo "/usr/local/bin not writable; need permission to install."; \
