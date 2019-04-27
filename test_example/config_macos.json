@@ -1,0 +1,11 @@
+{
+	"input_assets": "simple/assets",
+	"inputs": [
+		"base.json"
+	],
+	"out_source": "results_macos/Constants.swift",
+	"out_assets": "results_macos/Resources",
+	"type": "swift",
+	"platform": "macos",
+	"input_assets_tag": "~"
+}
