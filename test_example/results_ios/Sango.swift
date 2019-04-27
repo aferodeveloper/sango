@@ -1,8 +1,8 @@
-/* Generated with Sango, by Afero.io */
+/* DO NOT MODIFY. Generated with Sango, by Afero.io */
 
-import UIKit
+import Foundation
 public struct Sango {
-    public static let Version = "Sango © 2016,2017 Afero, Inc - Build 258"
+    public static let Version = "Sango © 2016,2017 Afero, Inc - Build 276"
 }
 extension String {
     init(locKey key: String, value: String) {

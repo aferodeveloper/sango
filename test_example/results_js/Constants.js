@@ -1,4 +1,4 @@
-/* Generated with Sango, by Afero.io */
+/* DO NOT MODIFY. Generated with Sango, by Afero.io */
 
 var AuthType = {
 	AFERO: 'AFERO', OAUTH2: 'OAUTH2'

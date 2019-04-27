@@ -1,4 +1,4 @@
-/* Generated with Sango, by Afero.io */
+/* DO NOT MODIFY. Generated with Sango, by Afero.io */
 
 package io.afero.example;
 public final class Constants {

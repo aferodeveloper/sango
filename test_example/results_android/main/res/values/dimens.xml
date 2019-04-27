@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Generated with Sango, by Afero.io -->
+<!-- DO NOT MODIFY. Generated with Sango, by Afero.io -->
 <resources>
 	<dimen name="button_group_spacing">10dp</dimen>
 	<dimen name="button_radius">400dp</dimen>
