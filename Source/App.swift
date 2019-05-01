@@ -73,17 +73,23 @@ let keyAppIcon = "appIcon"
 let keyIOSAppIcon = "appIconIos"
 let keyAndroidAppIcon = "appIconAndroid"
 let keyAndroidLayout = "layoutAndroid"
+let keyPrint = "print"
+// Compile types
 let keyJava = "java"
 let keySwift = "swift"
 let keyJavascript = "javascript"
+// platform variants
+let keyMacOS = "macos"
+let keyIOS = "ios"
 let keyNodeJS = "nodejs"
-let keyPrint = "print"
+let keyAndroid = "android"
+
 let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppIcon,
                                     keyFonts, keyFontRoot, keySchemaVersion, keyAndroidLayout, keyEnums,
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
                                     keyImagesScaledUp, keyImagesScaledIosUp, keyImagesScaledAndroidUp,
                                     keyImages, keyImagesIos, keyImagesAndroid, keyLocale,
-                                    keyJava, keySwift, keyJavascript, keyNodeJS, keyGlobalTint,
+                                    keyJava, keySwift, keyJavascript, keyNodeJS, keyAndroid, keyMacOS, keyGlobalTint,
                                     keyGlobalIosTint, keyGlobalAndroidTint, keyPrint]
 
 enum LangType {
@@ -92,6 +98,14 @@ enum LangType {
     case swift
     case javascript
     case nodejs
+}
+
+enum PlatformType {
+    case inferred
+    case nodejs
+    case android
+    case ios
+    case macos
 }
 
 enum AssetType {
@@ -138,6 +152,7 @@ let optSwift3 = "-swift3"
 let optSwift4 = "-swift4"
 let optUseAppAssetCatalog = "-use_app_asset_catalog"
 let optLangType = "-type"
+let optPlatformType = "-platform"
 
 // The Sango additions for swift are different for swift3 and swift 2.3
 
@@ -178,7 +193,7 @@ let javascriptCommon =
 
 class App
 {
-    static let copyrightNotice = "Sango © 2016,2017 Afero, Inc - Build \(BUILD_REVISION)"
+    static let copyrightNotice = "Sango © 2016-2019 Afero, Inc - Build \(BUILD_REVISION)"
 
     var package:String = ""
     var baseClass:String = ""
@@ -194,6 +209,7 @@ class App
     var assetTag:String? = nil
 
     var compileType:LangType = .unset
+    var platformType:PlatformType = .inferred
 
     var localeOnly:Bool = false
     var localeKeysFound: [String:Any] = [:]
@@ -208,6 +224,7 @@ class App
         case two
         case three
         case four
+        case five
     }
     var swiftOutput = SangoSwiftVersion.four
 
@@ -242,11 +259,12 @@ class App
             optOutSCSS: ["[source.scss]", "when using javascript/node path to scss file"],
             optOutLocales: ["[folder]", "locale folder to write results"],
             optJava: ["", "write java source"],
-            optSwift: ["", "write swift source"],
+            optSwift: ["", "write swift source. Default is 4"],
             optJavascript: ["", "write javascript source"],
             optNodeJS: ["", "write nodejs source"],
             optSwift3: ["", "write Swift 3 compatible Swift source (requires \(optSwift))"],
             optSwift4: ["", "write Swift 4 compatible Swift source (requires \(optSwift))"],
+            optPlatformType: ["[platform]", "\(keyIOS),  \(keyMacOS), \(keyAndroid), \(keyNodeJS). Is inffered"],
             optUseAppAssetCatalog: ["", "write iOS app icons as an asset catalog"],
             optOutAssets: ["[folder]", "asset root folder (write), typically iOS Resource, or Android app/src/main"],
             optInputAssetsTag: ["[tag]", "optional git tag to pull repro at before processing"],
@@ -304,7 +322,6 @@ class App
                        keySwift: "dictionary. keys are base:class name",
                        keyJava: "dictionary. keys are base:class name, package:package name",
                        keyJavascript: "dictionary. keys are base:class name",
-                       keyNodeJS: "dictionary. keys are base:class name",
                        keyGlobalTint: "color. ie #F67D4B. apply as tint to all images saved",
                        keyGlobalIosTint: "color. ie #F67D4B. apply as tint to all images saved for iOS",
                        keyGlobalAndroidTint: "color. ie #F67D4B. apply as tint to all images saved for Android",
@@ -708,6 +725,7 @@ class App
         case CustomEnum = "CustomEnum"
     }
 
+    // reads global platformType
     func parseSwiftConstant(_ key: String, value: Any) -> String {
         var outputString = ""
         let strValue = String(describing: value)
@@ -741,7 +759,19 @@ class App
                 else {
                     let color = parseColor(strValue)
                     if (color != nil) {
-                        let line = "UIColor(red: \(roundTo3f(value: color!.r)), green: \(roundTo3f(value: color!.g)), blue: \(roundTo3f(value: color!.b)), alpha: \(roundTo3f(value: color!.a)))"
+                        var line = ""
+                        if platformType == .ios {
+                            line = "UIColor(red: "
+                        }
+                        else if platformType == .macos {
+                            line = "NSColor(red: "
+                        }
+                        else {
+                            Utils.error("Error: type is swift, but missing platform")
+                            exit(-1)
+                        }
+                        let color = "\(roundTo3f(value: color!.r)), green: \(roundTo3f(value: color!.g)), blue: \(roundTo3f(value: color!.b)), alpha: \(roundTo3f(value: color!.a)))"
+                        line.append(color)
                         outputString.append(line + " /* \(value) */")
                     }
                     else {
@@ -1880,7 +1910,8 @@ class App
         return output
     }
     
-    func consume(_ data: Dictionary <String, Any>, type: LangType, langOutputFile: String) -> Void
+    // reads global vars compileType, and platformType
+    func consume(_ data: Dictionary <String, Any>, langOutputFile: String) -> Void
     {
         Utils.createFolderForFile(langOutputFile)
 
@@ -1918,13 +1949,13 @@ class App
                 globalTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
             }
             else if (key == keyGlobalIosTint) {
-                if (type == .swift) {
+                if (compileType == .swift) {
                     let color = parseColor(value as! String)
                     globalIosTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
                 }
             }
             else if (key == keyGlobalAndroidTint) {
-                if (type == .java) {
+                if (compileType == .java) {
                     let color = parseColor(value as! String)
                     globalAndroidTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
                 }
@@ -1940,7 +1971,7 @@ class App
         var genString = ""
         for (key, value) in Array(data).sorted(by: {$0.0 < $1.0}) {
             if (firstPassIgnoredKeys.contains(key) == false) {
-                let line = writeConstants(key, value:value, type: type)
+                let line = writeConstants(key, value:value, type: compileType)
                 genString.append(line)
             }
         }
@@ -1953,7 +1984,7 @@ class App
         var completeOutput = true
         for (key, value) in data {
             if (key == keyLocale) {
-                copyLocales(value as! Dictionary, type: type)
+                copyLocales(value as! Dictionary, type: compileType)
             }
             if (self.localeOnly == false) {
                 if (key == keyPrint) {
@@ -1962,66 +1993,66 @@ class App
                     }
                 }
                 else if (key == keyCopied) {
-                    copyAssets(value as! Array, type: type, assetType: .raw, destLocation: .relative)
+                    copyAssets(value as! Array, type: compileType, assetType: .raw, destLocation: .relative)
                 }
                 else if (key == keyAppIcon) {
-                    copyAppIcon(value as! String, type: type)
+                    copyAppIcon(value as! String, type: compileType)
                 }
                 else if (key == keyAndroidAppIcon) {
-                    if (type == .java) {
-                        copyAppIcon(value as! String, type: type)
+                    if (compileType == .java) {
+                        copyAppIcon(value as! String, type: compileType)
                     }
                 }
                 else if (key == keyIOSAppIcon) {
-                    if (type == .swift) {
-                        copyAppIcon(value as! String, type: type)
+                    if (compileType == .swift) {
+                        copyAppIcon(value as! String, type: compileType)
                     }
                 }
                 else if (key == keyFonts) {
-                    copyAssets(value as! Array, type: type, assetType: .font, destLocation: .custom, root: fontRoot)
+                    copyAssets(value as! Array, type: compileType, assetType: .font, destLocation: .custom, root: fontRoot)
                 }
                 else if (key == keyImages) {
-                    copyImages(value as! Array, type: type, useRoot: true)
+                    copyImages(value as! Array, type: compileType, useRoot: true)
                 }
                 else if (key == keyImagesScaled) {
-                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .down)
+                    scaleAndCopyImages(value as! Array, type: compileType, useRoot: true, scale: .down)
                 }
                 else if (key == keyImagesScaledIos) {
-                    if (type == .swift) {
-                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .down)
+                    if (compileType == .swift) {
+                        scaleAndCopyImages(value as! Array, type: compileType, useRoot: true, scale: .down)
                     }
                 }
                 else if (key == keyImagesScaledAndroid) {
-                    if (type == .java) {
-                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .down)
+                    if (compileType == .java) {
+                        scaleAndCopyImages(value as! Array, type: compileType, useRoot: true, scale: .down)
                     }
                 }
                 else if (key == keyImagesScaledUp) {
-                    scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .up)
+                    scaleAndCopyImages(value as! Array, type: compileType, useRoot: true, scale: .up)
                 }
                 else if (key == keyImagesScaledIosUp) {
-                    if (type == .swift) {
-                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .up)
+                    if (compileType == .swift) {
+                        scaleAndCopyImages(value as! Array, type: compileType, useRoot: true, scale: .up)
                     }
                 }
                 else if (key == keyImagesScaledAndroidUp) {
-                    if (type == .java) {
-                        scaleAndCopyImages(value as! Array, type: type, useRoot: true, scale: .up)
+                    if (compileType == .java) {
+                        scaleAndCopyImages(value as! Array, type: compileType, useRoot: true, scale: .up)
                     }
                 }
                 else if (key == keyImagesIos) {
-                    if (type == .swift) {
-                        copyImages(value as! Array, type: type, useRoot: true)
+                    if (compileType == .swift) {
+                        copyImages(value as! Array, type: compileType, useRoot: true)
                     }
                 }
                 else if (key == keyImagesAndroid) {
-                    if (type == .java) {
-                        copyImages(value as! Array, type: type, useRoot: true)
+                    if (compileType == .java) {
+                        copyImages(value as! Array, type: compileType, useRoot: true)
                     }
                 }
                 else if (key == keyAndroidLayout) {
-                    if (type == .java) {
-                        copyAssets(value as! Array, type: type, assetType: .layout, destLocation: .root)
+                    if (compileType == .java) {
+                        copyAssets(value as! Array, type: compileType, assetType: .layout, destLocation: .root)
                     }
                 }
             }
@@ -2033,8 +2064,8 @@ class App
         if (completeOutput) {
             var outputStr = "/* " + FILE_TAG + " */\n\n"
             if (enumsFound.isEmpty == false) {
-                let line = writeEnums(enumsFound, type: type)
-                if (type == .javascript || type == .nodejs) {
+                let line = writeEnums(enumsFound, type: compileType)
+                if (compileType == .javascript || compileType == .nodejs) {
                     outputStr.append(line)
                 }
                 else {
@@ -2042,11 +2073,19 @@ class App
                 }
             }
             if (genString.isEmpty == false) {
-                if (type == .swift) {
-                    //TODO: For macOS use AppKit
-                    outputStr.append("import UIKit\n")
+                if (compileType == .swift) {
+                    if platformType == .ios {
+                        outputStr.append("import UIKit\n")
+                    }
+                    else if platformType == .macos {
+                        outputStr.append("import AppKit\n")
+                    }
+                    else {
+                        Utils.error("Error: type is swift, but missing platform")
+                        exit(-1)
+                    }
                 }
-                else if (type == .java) {
+                else if (compileType == .java) {
                     if (package.isEmpty) {
                         outputStr.append("package java.lang;\n")
                     }
@@ -2057,13 +2096,13 @@ class App
 
                 if (baseClass.isEmpty == false) {
                     genString = insertTabPerLine(genString)
-                    if (type == .swift) {
+                    if (compileType == .swift) {
                         outputStr.append("public struct \(baseClass) {")
                     }
-                    else if (type == .java) {
+                    else if (compileType == .java) {
                         outputStr.append("public final class \(baseClass) {")
                     }
-                    else if (type == .javascript || type == .nodejs) {
+                    else if (compileType == .javascript || compileType == .nodejs) {
                         outputStr.append("var \(baseClass) = {")
                     }
 
@@ -2073,23 +2112,23 @@ class App
                     Utils.error("Error: missing base class")
                     exit(-1)
                 }
-                if (type == .nodejs) {
+                if (compileType == .nodejs) {
                     genString.append("\nmodule.exports = \(baseClass);")
                 }
                 outputStr.append(genString + "\n")
                 _ = saveString(outputStr, file: langOutputFile)
             }
             let langOutputFolder = langOutputFile.pathOnlyComponent()
-            writeSangoExtras(type, filePath: langOutputFolder)
-            if (type == .java) {
+            writeSangoExtras(compileType, filePath: langOutputFolder)
+            if (compileType == .java) {
                 let destPath = outputAssetFolder! + "/res/values"
                 writeExternalColors(destPath)
                 writeAndroidDimens()
             }
-            else if (type == .swift) {
+            else if (compileType == .swift) {
                 writeResourceKeysSwift(langOutputFolder)
             }
-            else if (type == .javascript || type == .nodejs) {
+            else if (compileType == .javascript || compileType == .nodejs) {
                 writeExternalColors(langOutputFolder)
             }
         }
@@ -2155,8 +2194,10 @@ class App
                                      "out_source": "path/to/app/source",
                                      "out_scss": "path/to/app/scss",
                                      "out_assets": "path/to/app/resources",
-                                     "type": "swift, java, javascript, or nodejs"
+                                     "type": "swift, java, javascript",
+                                     "platform": "ios, macos, android, nodejs"
     ] as [String : Any]
+
     func createConfigTemplate(_ file: String) -> Void {
         let jsonString = Utils.toJSON(baseConfigTemplate)
         if (jsonString != nil) {
@@ -2199,7 +2240,10 @@ class App
         
         self.localeOnly = findOption(args, option: optLocaleOnly)
         
-        if findOption(args, option: optSwift3) {
+        if findOption(args, option: optSwift) {
+            swiftOutput = .four
+        }
+        else if findOption(args, option: optSwift3) {
             swiftOutput = .three
         }
         else if findOption(args, option: optSwift4) {
@@ -2261,15 +2305,27 @@ class App
                 let type = result![optLangType.removeFirst()] as? String
                 if (type == keyJava) {
                     compileType = .java
+                    platformType = .android
                 }
                 else if (type == keySwift) {
                     compileType = .swift
+                    platformType = .ios
                 }
                 else if (type == keyJavascript) {
                     compileType = .javascript
                 }
                 else if (type == keyNodeJS) {
+                    // NOTE: This will need to be migrated as the language is javascript, but the platform is nodejs
                     compileType = .nodejs
+                    platformType = .nodejs
+                }
+
+                let platform = result![optPlatformType.removeFirst()] as? String
+                if (platform == keyMacOS) {
+                    platformType = .macos
+                }
+                else if (platform == keyNodeJS) {
+                    platformType = .nodejs
                 }
             }
             else {
@@ -2390,7 +2446,7 @@ class App
         
         if (result != nil) {
             // process
-            consume(result!, type: compileType, langOutputFile: outputClassFile!)
+            consume(result!, langOutputFile: outputClassFile!)
         }
         else {
             Utils.error("Error: missing input file")
