@@ -14,17 +14,17 @@
 		AA3599CC2173B78B00230A83 /* LaunchImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3599C82173B78B00230A83 /* LaunchImage.swift */; };
 		AA3599D12173B99E00230A83 /* AssetCatalogErrorTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3599CF2173B99E00230A83 /* AssetCatalogErrorTypes.swift */; };
 		AA3599D22173B99E00230A83 /* AssetCatalogConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA3599D02173B99E00230A83 /* AssetCatalogConstants.swift */; };
-		AA567CDE2173CE95008AD307 /* AppIcon_iPhone.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CD72173CE94008AD307 /* AppIcon_iPhone.c */; };
-		AA567CDF2173CE95008AD307 /* ImageSet.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CD82173CE94008AD307 /* ImageSet.c */; };
-		AA567CE02173CE95008AD307 /* AppIcon_iOS.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CD92173CE94008AD307 /* AppIcon_iOS.c */; };
-		AA567CE12173CE95008AD307 /* AppIcon_Watch.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CDA2173CE94008AD307 /* AppIcon_Watch.c */; };
-		AA567CE22173CE95008AD307 /* AppIcon_Car.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CDB2173CE94008AD307 /* AppIcon_Car.c */; };
-		AA567CE32173CE95008AD307 /* AppIcon_iPad.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CDC2173CE94008AD307 /* AppIcon_iPad.c */; };
-		AA567CE42173CE95008AD307 /* AppIcon_Mac.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CDD2173CE94008AD307 /* AppIcon_Mac.c */; };
-		AA567CEA2173D3E8008AD307 /* LaunchImage_iPad_Portrait.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CE62173D3E8008AD307 /* LaunchImage_iPad_Portrait.c */; };
-		AA567CEB2173D3E8008AD307 /* LaunchImage_iPhone_Portrait.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CE72173D3E8008AD307 /* LaunchImage_iPhone_Portrait.c */; };
-		AA567CEC2173D3E8008AD307 /* LaunchImage_iPad_Landscape.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CE82173D3E8008AD307 /* LaunchImage_iPad_Landscape.c */; };
-		AA567CED2173D3E8008AD307 /* LaunchImage_iPhone_Landscape.c in Sources */ = {isa = PBXBuildFile; fileRef = AA567CE92173D3E8008AD307 /* LaunchImage_iPhone_Landscape.c */; };
+		AA7C9AB8228C702A00858D1B /* AppIcon_Watch.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AA1228C702A00858D1B /* AppIcon_Watch.c */; };
+		AA7C9AB9228C702A00858D1B /* AppIcon_iPad.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AA5228C702A00858D1B /* AppIcon_iPad.c */; };
+		AA7C9ABB228C702A00858D1B /* AppIcon_Mac.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AA8228C702A00858D1B /* AppIcon_Mac.c */; };
+		AA7C9ABC228C702A00858D1B /* LaunchImage_iPad_Landscape.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AA9228C702A00858D1B /* LaunchImage_iPad_Landscape.c */; };
+		AA7C9ABD228C702A00858D1B /* ImageSet.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AAA228C702A00858D1B /* ImageSet.c */; };
+		AA7C9ABE228C702A00858D1B /* AppIcon_iOS.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AAF228C702A00858D1B /* AppIcon_iOS.c */; };
+		AA7C9ABF228C702A00858D1B /* AppIcon_iPhone.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AB0228C702A00858D1B /* AppIcon_iPhone.c */; };
+		AA7C9AC0228C702A00858D1B /* LaunchImage_iPhone_Landscape.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AB1228C702A00858D1B /* LaunchImage_iPhone_Landscape.c */; };
+		AA7C9AC1228C702A00858D1B /* LaunchImage_iPhone_Portrait.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AB2228C702A00858D1B /* LaunchImage_iPhone_Portrait.c */; };
+		AA7C9AC2228C702A00858D1B /* AppIcon_Car.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AB4228C702A00858D1B /* AppIcon_Car.c */; };
+		AA7C9AC3228C702A00858D1B /* LaunchImage_iPad_Portrait.c in Sources */ = {isa = PBXBuildFile; fileRef = AA7C9AB7228C702A00858D1B /* LaunchImage_iPad_Portrait.c */; };
 		AA89E00B1D8760DC00D2D9A8 /* NSString+Extras.m in Sources */ = {isa = PBXBuildFile; fileRef = AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */; };
 		AAB57D9E1D5B883800FA37CA /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB57D9C1D5B883800FA37CA /* App.swift */; };
 		AAB57D9F1D5B883800FA37CA /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAB57D9D1D5B883800FA37CA /* main.swift */; };
@@ -54,19 +54,19 @@
 		AA3599C82173B78B00230A83 /* LaunchImage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchImage.swift; sourceTree = "<group>"; };
 		AA3599CF2173B99E00230A83 /* AssetCatalogErrorTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetCatalogErrorTypes.swift; sourceTree = "<group>"; };
 		AA3599D02173B99E00230A83 /* AssetCatalogConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetCatalogConstants.swift; sourceTree = "<group>"; };
-		AA567CD72173CE94008AD307 /* AppIcon_iPhone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AppIcon_iPhone.c; path = Model/AppIcon_iPhone.c; sourceTree = "<group>"; };
-		AA567CD82173CE94008AD307 /* ImageSet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ImageSet.c; path = Model/ImageSet.c; sourceTree = "<group>"; };
-		AA567CD92173CE94008AD307 /* AppIcon_iOS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AppIcon_iOS.c; path = Model/AppIcon_iOS.c; sourceTree = "<group>"; };
-		AA567CDA2173CE94008AD307 /* AppIcon_Watch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AppIcon_Watch.c; path = Model/AppIcon_Watch.c; sourceTree = "<group>"; };
-		AA567CDB2173CE94008AD307 /* AppIcon_Car.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AppIcon_Car.c; path = Model/AppIcon_Car.c; sourceTree = "<group>"; };
-		AA567CDC2173CE94008AD307 /* AppIcon_iPad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AppIcon_iPad.c; path = Model/AppIcon_iPad.c; sourceTree = "<group>"; };
-		AA567CDD2173CE94008AD307 /* AppIcon_Mac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = AppIcon_Mac.c; path = Model/AppIcon_Mac.c; sourceTree = "<group>"; };
-		AA567CE52173CEC0008AD307 /* IconStructures.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = IconStructures.h; path = Model/IconStructures.h; sourceTree = "<group>"; };
-		AA567CE62173D3E8008AD307 /* LaunchImage_iPad_Portrait.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LaunchImage_iPad_Portrait.c; path = Model/LaunchImage_iPad_Portrait.c; sourceTree = "<group>"; };
-		AA567CE72173D3E8008AD307 /* LaunchImage_iPhone_Portrait.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LaunchImage_iPhone_Portrait.c; path = Model/LaunchImage_iPhone_Portrait.c; sourceTree = "<group>"; };
-		AA567CE82173D3E8008AD307 /* LaunchImage_iPad_Landscape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LaunchImage_iPad_Landscape.c; path = Model/LaunchImage_iPad_Landscape.c; sourceTree = "<group>"; };
-		AA567CE92173D3E8008AD307 /* LaunchImage_iPhone_Landscape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = LaunchImage_iPhone_Landscape.c; path = Model/LaunchImage_iPhone_Landscape.c; sourceTree = "<group>"; };
 		AA6C0D771D5A9AB000ECA808 /* Sango */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Sango; sourceTree = BUILT_PRODUCTS_DIR; };
+		AA7C9AA1228C702A00858D1B /* AppIcon_Watch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppIcon_Watch.c; sourceTree = "<group>"; };
+		AA7C9AA5228C702A00858D1B /* AppIcon_iPad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppIcon_iPad.c; sourceTree = "<group>"; };
+		AA7C9AA8228C702A00858D1B /* AppIcon_Mac.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppIcon_Mac.c; sourceTree = "<group>"; };
+		AA7C9AA9228C702A00858D1B /* LaunchImage_iPad_Landscape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LaunchImage_iPad_Landscape.c; sourceTree = "<group>"; };
+		AA7C9AAA228C702A00858D1B /* ImageSet.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ImageSet.c; sourceTree = "<group>"; };
+		AA7C9AAC228C702A00858D1B /* IconStructures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconStructures.h; sourceTree = "<group>"; };
+		AA7C9AAF228C702A00858D1B /* AppIcon_iOS.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppIcon_iOS.c; sourceTree = "<group>"; };
+		AA7C9AB0228C702A00858D1B /* AppIcon_iPhone.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppIcon_iPhone.c; sourceTree = "<group>"; };
+		AA7C9AB1228C702A00858D1B /* LaunchImage_iPhone_Landscape.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LaunchImage_iPhone_Landscape.c; sourceTree = "<group>"; };
+		AA7C9AB2228C702A00858D1B /* LaunchImage_iPhone_Portrait.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LaunchImage_iPhone_Portrait.c; sourceTree = "<group>"; };
+		AA7C9AB4228C702A00858D1B /* AppIcon_Car.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = AppIcon_Car.c; sourceTree = "<group>"; };
+		AA7C9AB7228C702A00858D1B /* LaunchImage_iPad_Portrait.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = LaunchImage_iPad_Portrait.c; sourceTree = "<group>"; };
 		AA89E0081D8760DB00D2D9A8 /* Sango-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = "Sango-Bridging-Header.h"; path = "Source/Sango-Bridging-Header.h"; sourceTree = "<group>"; };
 		AA89E0091D8760DC00D2D9A8 /* NSString+Extras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+Extras.h"; path = "Source/NSString+Extras.h"; sourceTree = "<group>"; };
 		AA89E00A1D8760DC00D2D9A8 /* NSString+Extras.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+Extras.m"; path = "Source/NSString+Extras.m"; sourceTree = "<group>"; };
@@ -92,18 +92,7 @@
 		AA3599C42173B78B00230A83 /* AssetCatalog */ = {
 			isa = PBXGroup;
 			children = (
-				AA567CE52173CEC0008AD307 /* IconStructures.h */,
-				AA567CDB2173CE94008AD307 /* AppIcon_Car.c */,
-				AA567CD92173CE94008AD307 /* AppIcon_iOS.c */,
-				AA567CDC2173CE94008AD307 /* AppIcon_iPad.c */,
-				AA567CD72173CE94008AD307 /* AppIcon_iPhone.c */,
-				AA567CDD2173CE94008AD307 /* AppIcon_Mac.c */,
-				AA567CDA2173CE94008AD307 /* AppIcon_Watch.c */,
-				AA567CD82173CE94008AD307 /* ImageSet.c */,
-				AA567CE82173D3E8008AD307 /* LaunchImage_iPad_Landscape.c */,
-				AA567CE62173D3E8008AD307 /* LaunchImage_iPad_Portrait.c */,
-				AA567CE92173D3E8008AD307 /* LaunchImage_iPhone_Landscape.c */,
-				AA567CE72173D3E8008AD307 /* LaunchImage_iPhone_Portrait.c */,
+				AA7C9A9F228C702A00858D1B /* Model */,
 				AA3599D02173B99E00230A83 /* AssetCatalogConstants.swift */,
 				AA3599CF2173B99E00230A83 /* AssetCatalogErrorTypes.swift */,
 				AA3599C52173B78B00230A83 /* ImageSet.swift */,
@@ -139,6 +128,25 @@
 				AA6C0D771D5A9AB000ECA808 /* Sango */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AA7C9A9F228C702A00858D1B /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				AA7C9AAC228C702A00858D1B /* IconStructures.h */,
+				AA7C9AAA228C702A00858D1B /* ImageSet.c */,
+				AA7C9AB4228C702A00858D1B /* AppIcon_Car.c */,
+				AA7C9AAF228C702A00858D1B /* AppIcon_iOS.c */,
+				AA7C9AA5228C702A00858D1B /* AppIcon_iPad.c */,
+				AA7C9AB0228C702A00858D1B /* AppIcon_iPhone.c */,
+				AA7C9AA8228C702A00858D1B /* AppIcon_Mac.c */,
+				AA7C9AA1228C702A00858D1B /* AppIcon_Watch.c */,
+				AA7C9AA9228C702A00858D1B /* LaunchImage_iPad_Landscape.c */,
+				AA7C9AB1228C702A00858D1B /* LaunchImage_iPhone_Landscape.c */,
+				AA7C9AB7228C702A00858D1B /* LaunchImage_iPad_Portrait.c */,
+				AA7C9AB2228C702A00858D1B /* LaunchImage_iPhone_Portrait.c */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -182,6 +190,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = AA6C0D6E1D5A9AB000ECA808;
@@ -199,31 +208,31 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AA567CE22173CE95008AD307 /* AppIcon_Car.c in Sources */,
 				AA3599D22173B99E00230A83 /* AssetCatalogConstants.swift in Sources */,
-				AA567CEC2173D3E8008AD307 /* LaunchImage_iPad_Landscape.c in Sources */,
-				AA567CE32173CE95008AD307 /* AppIcon_iPad.c in Sources */,
+				AA7C9AC1228C702A00858D1B /* LaunchImage_iPhone_Portrait.c in Sources */,
 				AA3599CA2173B78B00230A83 /* AppIcon.swift in Sources */,
-				AA567CEB2173D3E8008AD307 /* LaunchImage_iPhone_Portrait.c in Sources */,
 				AAE52D671D6E0568002BDE3D /* Utils.swift in Sources */,
-				AA567CEA2173D3E8008AD307 /* LaunchImage_iPad_Portrait.c in Sources */,
 				AA3599CC2173B78B00230A83 /* LaunchImage.swift in Sources */,
 				AAC944A81E0B8B2C00CFFFA1 /* Reserved.swift in Sources */,
+				AA7C9AC3228C702A00858D1B /* LaunchImage_iPad_Portrait.c in Sources */,
 				AA3599CB2173B78B00230A83 /* ContentsJSON.swift in Sources */,
-				AA567CED2173D3E8008AD307 /* LaunchImage_iPhone_Landscape.c in Sources */,
-				AA567CDE2173CE95008AD307 /* AppIcon_iPhone.c in Sources */,
+				AA7C9AB9228C702A00858D1B /* AppIcon_iPad.c in Sources */,
+				AA7C9ABE228C702A00858D1B /* AppIcon_iOS.c in Sources */,
+				AA7C9ABB228C702A00858D1B /* AppIcon_Mac.c in Sources */,
 				AAB57D9F1D5B883800FA37CA /* main.swift in Sources */,
+				AA7C9AC0228C702A00858D1B /* LaunchImage_iPhone_Landscape.c in Sources */,
+				AA7C9ABF228C702A00858D1B /* AppIcon_iPhone.c in Sources */,
+				AA7C9ABD228C702A00858D1B /* ImageSet.c in Sources */,
 				AA3599C92173B78B00230A83 /* ImageSet.swift in Sources */,
 				AA89E00B1D8760DC00D2D9A8 /* NSString+Extras.m in Sources */,
-				AA567CDF2173CE95008AD307 /* ImageSet.c in Sources */,
 				AACE09741D6627CE003CF4F1 /* Extentions.swift in Sources */,
+				AA7C9AB8228C702A00858D1B /* AppIcon_Watch.c in Sources */,
 				AAE52D651D6E032A002BDE3D /* Shell.swift in Sources */,
 				AA3599D12173B99E00230A83 /* AssetCatalogErrorTypes.swift in Sources */,
 				AA1CA53A1D6E568A009CF0FC /* Version.swift in Sources */,
+				AA7C9ABC228C702A00858D1B /* LaunchImage_iPad_Landscape.c in Sources */,
 				AAB57D9E1D5B883800FA37CA /* App.swift in Sources */,
-				AA567CE12173CE95008AD307 /* AppIcon_Watch.c in Sources */,
-				AA567CE02173CE95008AD307 /* AppIcon_iOS.c in Sources */,
-				AA567CE42173CE95008AD307 /* AppIcon_Mac.c in Sources */,
+				AA7C9AC2228C702A00858D1B /* AppIcon_Car.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
