@@ -138,6 +138,12 @@ struct ContentsJSON {
             if let r = right["expected-size"] {
                 rightValue = Int(r) ?? 0
             }
+            let il = left["filename"] ?? "0"
+            let ir = right["filename"] ?? "1"
+
+            if leftValue == rightValue {
+                return il < ir
+            }
             return leftValue < rightValue
         })
         var keys = JSONSerialization.WritingOptions.prettyPrinted
