@@ -129,7 +129,17 @@ struct ContentsJSON {
     /// - Parameter url: The file URL to save the Contents.json to.
     /// - Throws: See JSONSerialization for possible values.
     mutating func saveToURL(_ url: URL) throws {
-        contents["images"] = images
+        contents["images"] = images.sorted(by: { (left, right) -> Bool in
+            var leftValue = 0
+            var rightValue = 0
+            if let l = left["expected-size"] {
+                leftValue = Int(l) ?? 0
+            }
+            if let r = right["expected-size"] {
+                rightValue = Int(r) ?? 0
+            }
+            return leftValue < rightValue
+        })
         var keys = JSONSerialization.WritingOptions.prettyPrinted
         if #available(OSX 10.13, *) {
             keys = [JSONSerialization.WritingOptions.sortedKeys, JSONSerialization.WritingOptions.prettyPrinted]
