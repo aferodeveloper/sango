@@ -2313,7 +2313,7 @@ class App
                         outputStr.append("/* default */\n")
                     }
                     else {
-                        outputStr.append("package \(package);\n")
+                        outputStr.append("package \(package)\n")
                     }
                 }
 
