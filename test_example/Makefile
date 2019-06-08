@@ -14,7 +14,7 @@
 # limitations under the License.
 #
 
-SANGO = sango
+SANGO ?= sango
 SANGO_OPTS = -swift4
 RESULTS_IOS = results_ios
 RESULTS_MACOS = results_macos
