@@ -19,11 +19,13 @@ SANGO_OPTS = -swift4
 RESULTS_IOS = results_ios
 RESULTS_MACOS = results_macos
 RESULTS_ANDROID = results_android
+RESULTS_ANDROID_KOTLIN = results_android_kotlin
 RESULTS_JS = results_js
 
 all:
 	@echo "Example to build sango data for iOS, Android, NodeJS, Javascript, used for testing."
 	@echo " build_android"
+	@echo " build_android_kotlin"
 	@echo " build_ios"
 	@echo " build_macos"
 	@echo " build_js"
@@ -32,9 +34,11 @@ all:
 
 clean:
 	@rm -rdf $(RESULTS_ANDROID)
+	@rm -rdf $(RESULTS_ANDROID_KOTLIN)
 	@rm -rdf $(RESULTS_IOS)
 	@rm -rdf $(RESULTS_MACOS)
 	@rm -rdf $(RESULTS_JS)
+	@git checkout $(RESULTS_ANDROID_KOTLIN)
 	@git checkout $(RESULTS_ANDROID)
 	@git checkout $(RESULTS_IOS)
 	@git checkout $(RESULTS_MACOS)
@@ -43,6 +47,10 @@ clean:
 build_android:
 	@rm -rdf $(RESULTS_ANDROID)
 	$(SANGO) $(SANGO_OPTS) -config config_android.json -verbose
+	
+build_android_kotlin:
+	@rm -rdf $(RESULTS_ANDROID_KOTLIN)
+	$(SANGO) $(SANGO_OPTS) -config config_android_kotlin.json -verbose
 	
 build_ios:
 	@rm -rdf $(RESULTS_IOS)
@@ -59,6 +67,7 @@ build_js:
 build_all:
 	set -e
 	@$(MAKE) build_android
+	@$(MAKE) build_android_kotlin
 	@$(MAKE) build_ios
 	@$(MAKE) build_macos
 	@$(MAKE) build_js
