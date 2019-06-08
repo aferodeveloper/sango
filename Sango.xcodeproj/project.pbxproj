@@ -176,7 +176,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Afero, Inc";
 				TargetAttributes = {
 					AA6C0D761D5A9AB000ECA808 = {
@@ -187,11 +187,11 @@
 			};
 			buildConfigurationList = AA6C0D721D5A9AB000ECA808 /* Build configuration list for PBXProject "Sango" */;
 			compatibilityVersion = "Xcode 6.3";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = AA6C0D6E1D5A9AB000ECA808;
 			productRefGroup = AA6C0D781D5A9AB000ECA808 /* Products */;
