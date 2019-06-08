@@ -1,8 +1,8 @@
 {
 	"input_assets": "simple/assets",
 	"inputs": ["base.json"],
-	"out_source": "config_android_kotlin/main/java/Constants.kt",
-	"out_assets": "config_android_kotlin/main",
+	"out_source": "results_android_kotlin/main/java/Constants.kt",
+	"out_assets": "results_android_kotlin/main",
 	"type": "kotlin",
 	"platform": "android",
 	"input_assets_tag": "~"

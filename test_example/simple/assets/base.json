@@ -5,6 +5,11 @@
 		"launcher_icon_name": "android_launcher_icon",
 		"base": "Constants"
 	},
+	"kotlin": {
+		"package": "io.afero.example",
+		"launcher_icon_name": "android_launcher_icon",
+		"base": "Constants"
+	},
 	"swift": {
 		"base": "Constants"
 	},
