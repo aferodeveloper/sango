@@ -770,6 +770,7 @@ class App
         case Float = "double"
         case Boolean = "Boolean"
         case CustomEnum = "CustomEnum"
+        case Unknown = "Unknown"
     }
 
     // reads global platformType
@@ -886,6 +887,37 @@ class App
         return (type:type, output:outputString, results:enums)
     }
 
+    
+    private func arrayType(_ array: [Any]) -> ValueType {
+        var valueType = ValueType.Unknown
+        if array.count == 0 {
+            valueType = .String
+        }
+        // order is important. Swift evaluates Bools as both Int and Double
+        else if array is [Bool] {
+            valueType = .Boolean
+        }
+        else if array is [Int] {
+            valueType = .Int
+        }
+        else if array is [Double] {
+            valueType = .Float
+        }
+        else if array is [String] {
+            // as a fallback check string values
+            if hasArrayFloats(array) {
+                valueType = .Float
+            }
+            else if hasArrayInts(array) {
+                valueType = .Int
+            }
+            else {
+                valueType = .String
+            }
+        }
+        return valueType
+    }
+
     func writeConstants(_ name: String, value: Any, type: LangType) -> String {
         var outputString = "\n"
         if (reservedWords.contains(name.lowercased())) {
@@ -908,7 +940,7 @@ class App
                 }
                 outputString.append("}")
             }
-            else if let constantsArray = value as? Array<Any> {
+            else if let constantsArray = value as? [Any] {
                 outputString.append("public static let \(name) = [\n\t\t")
                 let lastItm = constantsArray.count - 1
                 for (index, itm) in constantsArray.enumerated() {
@@ -962,33 +994,27 @@ class App
                     }
                 }
             }
-            else if let constantsArray = value as? Array<Any> {
+            else if let constantsArray = value as? [Any] {
                 let lastItm = constantsArray.count - 1
                 var ending = false
                 // ok we have an array of strings, int, floats, we have to figure out a type before hand for Java
-                var type:ValueType = .String
-                if (hasArrayFloats(value)) {
-                    type = .Float
-                }
-                else if (hasArrayInts(value)) {
-                    type = .Int
-                }
-                else {
+                var valueType = arrayType(constantsArray)
+                if [ValueType.Float, ValueType.Boolean, ValueType.Int].contains(valueType) == false {
                     for (index, itm) in constantsArray.enumerated() {
                         let lineValue = parseJavaConstant(String(index), value: itm)
                         if (lineValue.type == .Color) {
-                            type = .Color
+                            valueType = .Color
                             break
                         }
                         if (lineValue.type == .CustomEnum) {
-                            type = .CustomEnum
+                            valueType = .CustomEnum
                             outputString.append("public static final \(lineValue.results.enumType.snakeCaseToCamelCase()) \(name)[] = {\n\t")
                             break
                         }
                     }
                 }
-                if (type != .Color && type != .CustomEnum) {
-                    outputString.append("public static final \(type.rawValue) \(name)[] = {\n\t")
+                if (valueType != .Color && valueType != .CustomEnum) {
+                    outputString.append("public static final \(valueType.rawValue) \(name)[] = {\n\t")
                 }
 
                 //TODO: Need to pay attention to platformType
@@ -1070,18 +1096,12 @@ class App
                     }
                 }
             }
-            else if let constantsArray = value as? Array<Any> {
+            else if let constantsArray = value as? [Any] {
                 let lastItm = constantsArray.count - 1
                 var ending = false
                 // ok we have an array of strings, int, floats, we have to figure out a type before hand for Java
-                var valueType = ValueType.String
-                if (hasArrayFloats(value)) {
-                    valueType = .Float
-                }
-                else if (hasArrayInts(value)) {
-                    valueType = .Int
-                }
-                else {
+                var valueType = arrayType(constantsArray)
+                if [ValueType.Float, ValueType.Boolean, ValueType.Int].contains(valueType) == false {
                     for (index, itm) in constantsArray.enumerated() {
                         let lineValue = parseJavaConstant(String(index), value: itm)
                         if (lineValue.type == .Color) {
@@ -1192,32 +1212,26 @@ class App
                     }
                 }
             }
-            else if let constantsArray = value as? Array<Any> {
+            else if let constantsArray = value as? [Any] {
                 let lastItm = constantsArray.count - 1
                 var ending = false
                 // ok we have an array of strings, int, floats, we have to figure out a type before hand for Java
-                var type:ValueType = .String
-                if (hasArrayFloats(value)) {
-                    type = .Float
-                }
-                else if (hasArrayInts(value)) {
-                    type = .Int
-                }
-                else {
+                var valueType = arrayType(constantsArray)
+                if [ValueType.Float, ValueType.Boolean, ValueType.Int].contains(valueType) == false {
                     for (index, itm) in constantsArray.enumerated() {
                         let lineValue = parseJavaConstant(String(index), value: itm)
                         if (lineValue.type == .Color) {
-                            type = .Color
+                            valueType = .Color
                             break
                         }
                         if (lineValue.type == .CustomEnum) {
-                            type = .CustomEnum
+                            valueType = .CustomEnum
                             outputString.append("\(name): [\n\t")
                             break
                         }
                     }
                 }
-                if (type != .Color && type != .CustomEnum) {
+                if (valueType != .Color && valueType != .CustomEnum) {
                     outputString.append("\(name): [\n\t")
                 }
                 
@@ -2151,7 +2165,7 @@ class App
                 let options = value as! Dictionary<String, Any>
                 baseClass = options["base"] as! String
             }
-            else if key == keyJavascript && compileType == .javascript {
+            else if key == keyJavascript && (compileType == .javascript || compileType == .nodejs) {
                 let options = value as! Dictionary<String, Any>
                 baseClass = options["base"] as! String
             }

@@ -590,46 +590,60 @@ public extension String
     }
 }
 
-public func hasArrayFloats(_ list: Any) -> Bool {
+public func hasArrayBoolean(_ list: [Any]) -> Bool {
     var valid = false
-    let alist = list as? Array<Any>
-    if (alist != nil) {
-        for itm in alist! {
-            if let itm = itm as? String {
-                if (itm.isFloat()) {
-                    valid = true
-                    break
-                }
+    for itm in list {
+        if let itm = itm as? String {
+            if (itm.isBoolean()) {
+                valid = true
+                break
             }
-            else if ((itm is Double) || (itm is Int)) {
-                let strItm = String(describing: itm)
-                if (strItm.isFloat()) {
-                    valid = true
-                    break
-                }
+        }
+        else if itm is Bool {
+            let strItm = String(describing: itm)
+            if (strItm.isBoolean()) {
+                valid = true
+                break
             }
         }
     }
     return valid
 }
 
-public func hasArrayInts(_ list: Any) -> Bool {
+public func hasArrayFloats(_ list: [Any]) -> Bool {
     var valid = false
-    let alist = list as? Array<Any>
-    if (alist != nil) {
-        for itm in alist! {
-            if let itm = itm as? String {
-                if (itm.isInteger()) {
-                    valid = true
-                    break
-                }
+    for itm in list {
+        if let itm = itm as? String {
+            if (itm.isFloat()) {
+                valid = true
+                break
             }
-            else if (itm is Int) {
-                let strItm = String(describing: itm)
-                if (strItm.isInteger()) {
-                    valid = true
-                    break
-                }
+        }
+        else if itm is Double || itm is Int {
+            let strItm = String(describing: itm)
+            if (strItm.isFloat()) {
+                valid = true
+                break
+            }
+        }
+    }
+    return valid
+}
+
+public func hasArrayInts(_ list: [Any]) -> Bool {
+    var valid = false
+    for itm in list {
+        if let itm = itm as? String {
+            if (itm.isInteger()) {
+                valid = true
+                break
+            }
+        }
+        else if itm is Int {
+            let strItm = String(describing: itm)
+            if (strItm.isInteger()) {
+                valid = true
+                break
             }
         }
     }
