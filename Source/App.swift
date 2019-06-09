@@ -20,22 +20,26 @@ import CoreGraphics
 
 /* enums
  
- java
+ //java
  public enum Day {
     SUNDAY, MONDAY, TUESDAY, WEDNESDAY,
     THURSDAY, FRIDAY, SATURDAY
  }
- swift
+ 
+ //kotlin
+ enum class Day {
+    MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, SUNDAY
+ }
+ 
+ //swift
  enum Day {
- case Sunday
- case Monday
- case Tuesday
- case Wednesday
+     case Sunday
+     case Monday
+     case Tuesday
+     case Wednesday
  }
 
-*/
-
-/*
+ //javascript
  var Auto = {
 	CONSTANT1: "const1",
     CONSTANT2: "const2",
@@ -74,10 +78,13 @@ let keyIOSAppIcon = "appIconIos"
 let keyAndroidAppIcon = "appIconAndroid"
 let keyAndroidLayout = "layoutAndroid"
 let keyPrint = "print"
+
 // Compile types
 let keyJava = "java"
 let keySwift = "swift"
+let keyKotlin = "kotlin"
 let keyJavascript = "javascript"
+
 // platform variants
 let keyMacOS = "macos"
 let keyIOS = "ios"
@@ -89,12 +96,13 @@ let firstPassIgnoredKeys = [keyCopied, keyIOSAppIcon, keyAndroidAppIcon, keyAppI
                                     keyImagesScaled, keyImagesScaledIos, keyImagesScaledAndroid,
                                     keyImagesScaledUp, keyImagesScaledIosUp, keyImagesScaledAndroidUp,
                                     keyImages, keyImagesIos, keyImagesAndroid, keyLocale,
-                                    keyJava, keySwift, keyJavascript, keyNodeJS, keyAndroid, keyMacOS, keyGlobalTint,
+                                    keyJava, keySwift, keyJavascript, keyKotlin, keyNodeJS, keyAndroid, keyMacOS, keyGlobalTint,
                                     keyGlobalIosTint, keyGlobalAndroidTint, keyPrint]
 
 enum LangType {
     case unset
     case java
+    case kotlin
     case swift
     case javascript
     case nodejs
@@ -139,6 +147,7 @@ let optOutSource = "-out_source"
 let optOutSCSS = "-out_scss"
 let optOutLocales = "-out_locales"
 let optJava = "-java"
+let optKotlin = "-kotlin"
 let optSwift = "-swift"
 let optJavascript = "-javascript"
 let optNodeJS = "-nodejs"
@@ -153,6 +162,51 @@ let optSwift4 = "-swift4"
 let optUseAppAssetCatalog = "-use_app_asset_catalog"
 let optLangType = "-type"
 let optPlatformType = "-platform"
+
+let usagePage1 = [
+    optAssetTemplates: ["[basename]", "creates a json template, specifically for the assets"],
+    optConfigTemplate: ["[file.json]", "creates a json template, specifically for the app"],
+    optConfig: ["[file.json]", "use config file for options, instead of command line"],
+    optValidate: ["[asset_file.json, ...]", "validates asset JSON file(s), requires \(optInputAssets)"],
+    optValidateIos: ["[asset_file.json, ...]", "validates iOS asset JSON file(s), requires \(optInputAssets)"],
+    optValidateAndroid: ["[asset_file.json, ...]", "validates Android asset JSON file(s), requires \(optInputAssets)"],
+    optValidateJavascript: ["[asset_file.json, ...]", "validates Javascript asset JSON file(s), requires \(optInputAssets)"],
+    optValidateNodejs: ["[asset_file.json, ...]", "validates NodeJS asset JSON file(s), requires \(optInputAssets)"],
+    optInput: ["[file.json]", "asset json file"],
+    optInputs: ["[file1.json file2.json ...]", "merges asset files and process"],
+    optInputAssets: ["[folder]", "asset source folder (read)"],
+    optOutSource: ["[source.java|swift|js]", "path to result of language"]
+]
+let usagePage2 = [
+    optOutSCSS: ["[source.scss]", "when using javascript/node path to scss file"],
+    optOutLocales: ["[folder]", "locale folder to write results"],
+    optJava: ["", "write java source"],
+    optKotlin: ["", "write kotlin source"],
+    optSwift: ["", "write swift source. Default is 4"],
+    optJavascript: ["", "write javascript source"],
+    optNodeJS: ["", "write nodejs source"],
+    optSwift3: ["", "write Swift 3 compatible Swift source (requires \(optSwift))"],
+    optSwift4: ["", "write Swift 4 compatible Swift source (requires \(optSwift))"],
+    optPlatformType: ["[\(optPlatformType.removeFirst())]", "\(keyIOS),  \(keyMacOS), \(keyAndroid), \(keyNodeJS). Is inffered"],
+    optUseAppAssetCatalog: ["", "write iOS app icons as an asset catalog"],
+    optOutAssets: ["[folder]", "asset root folder (write), typically iOS Resource, or Android app/src/main"],
+    optInputAssetsTag: ["[tag]", "optional git tag to pull repro at before processing"],
+    optVerbose: ["", "be verbose in details"],
+    optHelpKeys: ["", "display JSON keys and their use"],
+    optVersion: ["", "version"],
+    optLocaleOnly: ["", "when included, process localization files only"]
+]
+let usageDetails = (usagePage1 + usagePage2) as! [String: [String]]
+
+let javaCommon =
+"public final class Sango {\n" +
+"    public static final String VERSION = \"\(App.copyrightNotice)\";\n" +
+"}\n"
+
+let kotlinCommon =
+"object Sango {\n" +
+"    val VERSION = \"\(App.copyrightNotice)\"\n" +
+"}\n"
 
 // The Sango additions for swift are different for swift3 and swift 2.3
 
@@ -241,42 +295,9 @@ class App
     var enumsFound: [String:Any] = [:]
 
     func usage() -> Void {
-        let page1 = [
-            optAssetTemplates: ["[basename]", "creates a json template, specifically for the assets"],
-            optConfigTemplate: ["[file.json]", "creates a json template, specifically for the app"],
-            optConfig: ["[file.json]", "use config file for options, instead of command line"],
-            optValidate: ["[asset_file.json, ...]", "validates asset JSON file(s), requires \(optInputAssets)"],
-            optValidateIos: ["[asset_file.json, ...]", "validates iOS asset JSON file(s), requires \(optInputAssets)"],
-            optValidateAndroid: ["[asset_file.json, ...]", "validates Android asset JSON file(s), requires \(optInputAssets)"],
-            optValidateJavascript: ["[asset_file.json, ...]", "validates Javascript asset JSON file(s), requires \(optInputAssets)"],
-            optValidateNodejs: ["[asset_file.json, ...]", "validates NodeJS asset JSON file(s), requires \(optInputAssets)"],
-            optInput: ["[file.json]", "asset json file"],
-            optInputs: ["[file1.json file2.json ...]", "merges asset files and process"],
-            optInputAssets: ["[folder]", "asset source folder (read)"],
-            optOutSource: ["[source.java|swift|js]", "path to result of language"]
-        ]
-        let page2 = [
-            optOutSCSS: ["[source.scss]", "when using javascript/node path to scss file"],
-            optOutLocales: ["[folder]", "locale folder to write results"],
-            optJava: ["", "write java source"],
-            optSwift: ["", "write swift source. Default is 4"],
-            optJavascript: ["", "write javascript source"],
-            optNodeJS: ["", "write nodejs source"],
-            optSwift3: ["", "write Swift 3 compatible Swift source (requires \(optSwift))"],
-            optSwift4: ["", "write Swift 4 compatible Swift source (requires \(optSwift))"],
-            optPlatformType: ["[platform]", "\(keyIOS),  \(keyMacOS), \(keyAndroid), \(keyNodeJS). Is inffered"],
-            optUseAppAssetCatalog: ["", "write iOS app icons as an asset catalog"],
-            optOutAssets: ["[folder]", "asset root folder (write), typically iOS Resource, or Android app/src/main"],
-            optInputAssetsTag: ["[tag]", "optional git tag to pull repro at before processing"],
-            optVerbose: ["", "be verbose in details"],
-            optHelpKeys: ["", "display JSON keys and their use"],
-            optVersion: ["", "version"],
-            optLocaleOnly: ["", "when included, process localization files only"]
-        ]
-        let details = (page1 + page2) as! [String: [String]]
         var keyLength = 0
         var parmLength = 0
-        for (key, value) in details {
+        for (key, value) in usageDetails {
             if key.utf8.count > keyLength {
                 keyLength = key.utf8.count
             }
@@ -287,7 +308,7 @@ class App
         
         print(App.copyrightNotice)
         print("Usage:")
-        for (key, value) in Array(details).sorted(by: {$0.0 < $1.0}) {
+        for (key, value) in Array(usageDetails).sorted(by: {$0.0 < $1.0}) {
             let item1 = value[0]
             let item2 = value[1]
             let output = key.padding(toLength: keyLength + 3, withPad: " ", startingAt: 0) +
@@ -321,6 +342,7 @@ class App
                        keyAndroidLayout: "array. path to layout files that is Android only",
                        keySwift: "dictionary. keys are base:class name",
                        keyJava: "dictionary. keys are base:class name, package:package name",
+                       keyKotlin: "dictionary. keys are base:class name, package:package name",
                        keyJavascript: "dictionary. keys are base:class name",
                        keyGlobalTint: "color. ie #F67D4B. apply as tint to all images saved",
                        keyGlobalIosTint: "color. ie #F67D4B. apply as tint to all images saved for iOS",
@@ -485,7 +507,7 @@ class App
     func writeEnums(_ enums: Dictionary<String, Any>, type: LangType) -> String {
         var outputString = ""
         let sorted = Array(enums).sorted(by: {$0.0 < $1.0})
-        if (type == .swift) {
+        if type == .swift {
             for (key, value) in sorted {
                 let list:[String] = value as! [String]
                 outputString.append("public enum \(key.snakeCaseToCamelCase()) {\n")
@@ -499,7 +521,7 @@ class App
                 outputString.append("}\n")
             }
         }
-        else if (type == .java) {
+        else if type == .java {
             for (key, value) in sorted {
                 let list:[String] = value as! [String]
                 outputString.append("public enum \(key.snakeCaseToCamelCase()) {\n\t")
@@ -516,7 +538,25 @@ class App
                 outputString.append("\n}\n")
             }
         }
-        else if (type == .javascript || type == .nodejs) {
+        else if type == .kotlin {
+            //kt
+            for (key, value) in sorted {
+                let list:[String] = value as! [String]
+                outputString.append("enum class \(key.snakeCaseToCamelCase()) {\n\t")
+                var firstComma = false
+                for itm in list {
+                    if (firstComma) {
+                        outputString.append(", ")
+                    }
+                    else {
+                        firstComma = true
+                    }
+                    outputString.append(itm.uppercased())
+                }
+                outputString.append("\n}\n")
+            }
+        }
+        else if type == .javascript || type == .nodejs {
             for (key, value) in sorted {
                 let list:[String] = value as! [String]
                 outputString.append("var \(key.snakeCaseToCamelCase()) = {\n\t")
@@ -535,7 +575,7 @@ class App
             }
         }
         else {
-            Utils.error("Error: invalid output type")
+            Utils.error("Error: Enum write. Invalid output type")
             exit(-1)
         }
         return outputString
@@ -544,7 +584,7 @@ class App
     func writeSangoExtras(_ type: LangType, filePath: String) -> Void {
         var sangoFile = filePath
         var outputStr = "/* " + FILE_TAG + " */\n\n"
-        if (type == .swift) {
+        if type == .swift {
             outputStr.append(swiftCommon)
             if [.three, .four].contains(swiftOutput) {
                 outputStr.append(swift3Additions)
@@ -554,19 +594,27 @@ class App
             }
             sangoFile += "/Sango.swift"
         }
-        else if (type == .java) {
+        else if type == .java {
             if (package.isEmpty) {
                 outputStr.append("package java.lang;\n")
             }
             else {
                 outputStr.append("package \(package);\n")
             }
-            outputStr.append("public final class Sango {\n")
-            outputStr.append("\tpublic static final String VERSION = \"\(App.copyrightNotice)\";\n")
-            outputStr.append("}\n")
+            outputStr.append(javaCommon);
             sangoFile += "/Sango.java"
         }
-        else if (type == .javascript || type == .nodejs) {
+        else if type == .kotlin {
+            if (package.isEmpty) {
+                outputStr.append("/* default package */\n")
+            }
+            else {
+                outputStr.append("package \(package)\n")
+            }
+            outputStr.append(kotlinCommon);
+            sangoFile += "/Sango.kt"
+        }
+        else if type == .javascript || type == .nodejs {
             outputStr.append(javascriptCommon)
             if type == .nodejs {
                 outputStr.append("\nmodule.exports = Sango;\n")
@@ -615,6 +663,7 @@ class App
         if (colorsFound.count > 0) {
             var destPath = destFolder
             Utils.createFolder(destPath)
+            //TODO: change to platformType
             if compileType == .java {
                 destPath.append("/colors.xml")
                 var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
@@ -656,7 +705,6 @@ class App
             }
         }
     }
-    
     
     func writeAndroidDimens() -> Void {
         if (androidDimens.count > 0) {
@@ -723,6 +771,7 @@ class App
         case Float = "double"
         case Boolean = "Boolean"
         case CustomEnum = "CustomEnum"
+        case Unknown = "Unknown"
     }
 
     // reads global platformType
@@ -839,13 +888,44 @@ class App
         return (type:type, output:outputString, results:enums)
     }
 
+    
+    private func arrayType(_ array: [Any]) -> ValueType {
+        var valueType = ValueType.Unknown
+        if array.count == 0 {
+            valueType = .String
+        }
+        // order is important. Swift evaluates Bools as both Int and Double
+        else if array is [Bool] {
+            valueType = .Boolean
+        }
+        else if array is [Int] {
+            valueType = .Int
+        }
+        else if array is [Double] {
+            valueType = .Float
+        }
+        else if array is [String] {
+            // as a fallback check string values
+            if hasArrayFloats(array) {
+                valueType = .Float
+            }
+            else if hasArrayInts(array) {
+                valueType = .Int
+            }
+            else {
+                valueType = .String
+            }
+        }
+        return valueType
+    }
+
     func writeConstants(_ name: String, value: Any, type: LangType) -> String {
         var outputString = "\n"
         if (reservedWords.contains(name.lowercased())) {
             Utils.error("Error: Class '\(name)' is a reserved word and has to be changed")
             exit(-1)
         }
-        if (type == .swift) {
+        if type == .swift {
             if let constantsDictionary = value as? Dictionary<String, Any> {
                 outputString.append("public struct ")
                 outputString.append(name + " {\n")
@@ -861,7 +941,7 @@ class App
                 }
                 outputString.append("}")
             }
-            else if let constantsArray = value as? Array<Any> {
+            else if let constantsArray = value as? [Any] {
                 outputString.append("public static let \(name) = [\n\t\t")
                 let lastItm = constantsArray.count - 1
                 for (index, itm) in constantsArray.enumerated() {
@@ -874,7 +954,7 @@ class App
                 outputString.append("\n\t]");
             }
         }
-        else if (type == .java) {
+        else if type == .java {
             var skipClass = true
             var outputClassString = ""
             
@@ -887,59 +967,58 @@ class App
                     let strValue = String(describing: value)
                     var lineValue = parseJavaConstant(key, value: value)
                     
-                    if name == "Dimen" {
+                    if name == ValueType.Dimen.rawValue {
                         lineValue.type = .Dimen
                     }
-                    
+                    //TODO: Need to pay attention to platformType
                     switch lineValue.type {
                     case .Color:
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(key)"
                         colorsFound[colorKey.lowercased()] = strValue as Any?
+                        break
                     case .Dimen:
                         androidDimens[key.lowercased()] = strValue as Any?
+                        break
                     case .CustomEnum:
                         let line = "\tpublic static final " + lineValue.results.enumType.snakeCaseToCamelCase() + " " +
                             key.uppercased() + " = \(lineValue.output);\n"
                         outputClassString.append(line)
                         skipClass = false
+                        break
                     default:
                         let line = "\tpublic static final " + lineValue.type.rawValue + " " +
                             key.uppercased() + " = \(lineValue.output);\n"
                         outputClassString.append(line)
                         skipClass = false
+                        break
                     }
                 }
             }
-            else if let constantsArray = value as? Array<Any> {
+            else if let constantsArray = value as? [Any] {
                 let lastItm = constantsArray.count - 1
                 var ending = false
                 // ok we have an array of strings, int, floats, we have to figure out a type before hand for Java
-                var type:ValueType = .String
-                if (hasArrayFloats(value)) {
-                    type = .Float
-                }
-                else if (hasArrayInts(value)) {
-                    type = .Int
-                }
-                else {
+                var valueType = arrayType(constantsArray)
+                if [ValueType.Float, ValueType.Boolean, ValueType.Int].contains(valueType) == false {
                     for (index, itm) in constantsArray.enumerated() {
                         let lineValue = parseJavaConstant(String(index), value: itm)
                         if (lineValue.type == .Color) {
-                            type = .Color
+                            valueType = .Color
                             break
                         }
                         if (lineValue.type == .CustomEnum) {
-                            type = .CustomEnum
+                            valueType = .CustomEnum
                             outputString.append("public static final \(lineValue.results.enumType.snakeCaseToCamelCase()) \(name)[] = {\n\t")
                             break
                         }
                     }
                 }
-                if (type != .Color && type != .CustomEnum) {
-                    outputString.append("public static final \(type.rawValue) \(name)[] = {\n\t")
+                if (valueType != .Color && valueType != .CustomEnum) {
+                    outputString.append("public static final \(valueType.rawValue) \(name)[] = {\n\t")
                 }
 
+                //TODO: Need to pay attention to platformType
                 if constantsArray.count > 0 {
                     for (index, itm) in constantsArray.enumerated() {
                         let lineValue = parseJavaConstant(String(index), value: itm)
@@ -948,15 +1027,18 @@ class App
                             // ok, we have a color, so we're going to store it
                             let colorKey = name + "_\(index)"
                             colorsFound[colorKey.lowercased()] = String(describing: itm)
+                            break
                         case .Dimen:
                             let dimensKey = name + "_\(index)"
                             androidDimens[dimensKey.lowercased()] = String(describing: itm)
+                            break
                         default:
                             ending = true
                             outputString.append(lineValue.output);
                             if (index < lastItm) {
                                 outputString.append(",\n\t")
                             }
+                            break
                         }
                     }
                 }
@@ -975,7 +1057,131 @@ class App
                 outputString.append("}")
             }
         }
-        else if (type == .javascript || type == .nodejs) {
+        else if type == .kotlin {
+            var skipClass = true
+            var outputClassString = ""
+            
+            if let constantsDictionary = value as? Dictionary<String, Any> {
+                for (key, value) in Array(constantsDictionary).sorted(by: {$0.0 < $1.0}) {
+                    if (reservedWords.contains(key.lowercased())) {
+                        Utils.error("Error: Constant '\(name).\(key)' is a reserved word and has to be changed")
+                        exit(-1)
+                    }
+                    let strValue = String(describing: value)
+                    var lineValue = parseJavaConstant(key, value: value)
+                    
+                    if name == ValueType.Dimen.rawValue {
+                        lineValue.type = .Dimen
+                    }
+                    //TODO: Need to pay attention to platformType
+                    switch lineValue.type {
+                    case .Color:
+                        // ok, we have a color, so we're going to store it
+                        let colorKey = name + "_\(key)"
+                        colorsFound[colorKey.lowercased()] = strValue as Any?
+                        break
+                    case .Dimen:
+                        androidDimens[key.lowercased()] = strValue as Any?
+                        break
+                    case .CustomEnum:
+                        let line = "\tval " + key.uppercased() + " = \(lineValue.output)\n"
+                        outputClassString.append(line)
+                        skipClass = false
+                        break
+                    default:
+                        let line = "\tval " +
+                            key.uppercased() + " = \(lineValue.output)\n"
+                        outputClassString.append(line)
+                        skipClass = false
+                        break
+                    }
+                }
+            }
+            else if let constantsArray = value as? [Any] {
+                let lastItm = constantsArray.count - 1
+                var ending = false
+                // ok we have an array of strings, int, floats, we have to figure out a type before hand for Java
+                var valueType = arrayType(constantsArray)
+                if [ValueType.Float, ValueType.Boolean, ValueType.Int].contains(valueType) == false {
+                    for (index, itm) in constantsArray.enumerated() {
+                        let lineValue = parseJavaConstant(String(index), value: itm)
+                        if (lineValue.type == .Color) {
+                            valueType = .Color
+                            break
+                        }
+                        if (lineValue.type == .CustomEnum) {
+                            valueType = .CustomEnum
+                            outputString.append("val \(name) = arrayOf(\n\t")
+                            break
+                        }
+                    }
+                }
+                
+                if valueType == .Float {
+                    outputString.append("val \(name) = doubleArrayOf(\n\t")
+                }
+                else if valueType == .Int {
+                    outputString.append("val \(name) = intArrayOf(\n\t")
+                }
+                else if valueType == .String {
+                    if constantsArray.count == 0 {
+                        outputString.append("val \(name) = arrayOf<String>(\n\t")
+                    }
+                    else {
+                        outputString.append("val \(name) = arrayOf(\n\t")
+                    }
+                }
+                else if valueType == .Boolean {
+                    outputString.append("val \(name) = booleanArrayOf(\n\t")
+                }
+                
+                //TODO: Need to pay attention to platformType
+                if constantsArray.count > 0 {
+                    for (index, itm) in constantsArray.enumerated() {
+                        let lineValue = parseJavaConstant(String(index), value: itm)
+                        switch lineValue.type {
+                        case .Color:
+                            // ok, we have a color, so we're going to store it
+                            let colorKey = name + "_\(index)"
+                            colorsFound[colorKey.lowercased()] = String(describing: itm)
+                            break
+                        case .Dimen:
+                            let dimensKey = name + "_\(index)"
+                            androidDimens[dimensKey.lowercased()] = String(describing: itm)
+                            break
+                        default:
+                            ending = true
+                            var value = lineValue.output
+                            if valueType != lineValue.type {
+                                // Kotlin double arrays don't like integter constants
+                                if valueType == .Float {
+                                    value.append(".0")
+                                }
+                            }
+                            outputString.append(value);
+                            if (index < lastItm) {
+                                outputString.append(",\n\t")
+                            }
+                            break
+                        }
+                    }
+                }
+                else {
+                    ending = true
+                }
+                if (ending) {
+                    outputString.append("\n)");
+                }
+            }
+            
+            if (skipClass == false) {
+                outputString.append("object ")
+                outputString.append(name + " {\n")
+                outputString.append(outputClassString)
+                outputString.append("}")
+            }
+        }
+        else if type == .javascript || type == .nodejs {
             var skipClass = true
             var outputClassString = ""
             
@@ -993,46 +1199,44 @@ class App
                         // ok, we have a color, so we're going to store it
                         let colorKey = name + "_\(key)"
                         colorsFound[colorKey.uppercased()] = strValue as Any?
+                        break
                     case .CustomEnum:
                         let line = "\t " + key.uppercased() + ": \(lineValue.output),\n"
                         outputClassString.append(line)
                         skipClass = false
+                        break
                     default:
                         let line = "\t " + key.uppercased() + ": \(lineValue.output),\n"
                         outputClassString.append(line)
                         skipClass = false
+                        break
                     }
                 }
             }
-            else if let constantsArray = value as? Array<Any> {
+            else if let constantsArray = value as? [Any] {
                 let lastItm = constantsArray.count - 1
                 var ending = false
                 // ok we have an array of strings, int, floats, we have to figure out a type before hand for Java
-                var type:ValueType = .String
-                if (hasArrayFloats(value)) {
-                    type = .Float
-                }
-                else if (hasArrayInts(value)) {
-                    type = .Int
-                }
-                else {
+                var valueType = arrayType(constantsArray)
+                if [ValueType.Float, ValueType.Boolean, ValueType.Int].contains(valueType) == false {
                     for (index, itm) in constantsArray.enumerated() {
                         let lineValue = parseJavaConstant(String(index), value: itm)
                         if (lineValue.type == .Color) {
-                            type = .Color
+                            valueType = .Color
                             break
                         }
                         if (lineValue.type == .CustomEnum) {
-                            type = .CustomEnum
+                            valueType = .CustomEnum
                             outputString.append("\(name): [\n\t")
                             break
                         }
                     }
                 }
-                if (type != .Color && type != .CustomEnum) {
+                if (valueType != .Color && valueType != .CustomEnum) {
                     outputString.append("\(name): [\n\t")
                 }
                 
+                //TODO: Need to pay attention to platformType
                 if constantsArray.count > 0 {
                     for (index, itm) in constantsArray.enumerated() {
                         let lineValue = parseJavaConstant(String(index), value: itm)
@@ -1041,12 +1245,14 @@ class App
                             // ok, we have a color, so we're going to store it
                             let colorKey = name + "_\(index)"
                             colorsFound[colorKey.uppercased()] = String(describing: itm)
+                            break
                         default:
                             ending = true
                             outputString.append(lineValue.output);
                             if (index < lastItm) {
                                 outputString.append(",\n\t")
                             }
+                            break
                         }
                     }
                 }
@@ -1065,7 +1271,7 @@ class App
             }
         }
         else {
-            Utils.error("Error: invalid output type")
+            Utils.error("Error: Constants write. Invalid output type")
             exit(-1)
         }
         return outputString
@@ -1100,7 +1306,8 @@ class App
                 Utils.error("Error: missing file \(filePath)")
                 exit(-1)
             }
-            if (type == .swift || type == .javascript || type == .nodejs) {
+            //TODO: Needs to use platformType
+            if type == .swift || type == .javascript || type == .nodejs {
                 let iosScales: [CGFloat:String] = [
                     100:   "@3x.png",
                     66.67: "@2x.png",
@@ -1127,7 +1334,7 @@ class App
                 }
                 addImageKey(fileName)
             }
-            else if (type == .java) {
+            else if type == .java || type == .kotlin {
                 let androidScales: [CGFloat:String] = [
                     100:   "/res/drawable-xxhdpi/", // 3x
                     66.67: "/res/drawable-xhdpi/",  // 2x
@@ -1159,7 +1366,7 @@ class App
                 }
             }
             else {
-                Utils.error("Error: wrong type")
+                Utils.error("Error: ScaleAndCopy. Wrong type")
                 exit(-1)
             }
         }
@@ -1195,13 +1402,14 @@ class App
         let fileName = file.fileNameOnly()
         let fileExt = file.fileExtention()
         
-        if (type == .swift) {
+        //TODO: Needs to use platformType
+        if type == .swift {
             // do nothing
         }
-        else if (type == .javascript || type == .nodejs) {
+        else if type == .javascript || type == .nodejs {
             // do nothing
         }
-        else if (type == .java) {
+        else if type == .java || type == .kotlin {
             let result = NSImage.getScaleFrom(fileName)
             var drawable = iOStoAndroid[result.scale]!
             // if our image is a jpg, just place it into the xxhdpi folder
@@ -1212,7 +1420,7 @@ class App
             destFile = destPath + result.file + ".\(fileExt)"
         }
         else {
-            Utils.error("Error: Wrong type")
+            Utils.error("Error: imagePath. Wrong type")
             exit(-1)
         }
         return (sourceFile: filePath, destFile: destFile, destPath: destPath)
@@ -1414,7 +1622,7 @@ class App
             Utils.debug("Warn: using javascript, can't copy app icons")
         }
         else {
-            Utils.error("Error: wrong type")
+            Utils.error("Error: Copy App Icon. Wrong type")
             exit(-1)
         }
     }
@@ -1497,17 +1705,17 @@ class App
     func updateStringParameters(_ string:String, type: LangType) -> String
     {
         var newString = string
-        if (type == .swift) {
+        if type == .swift {
             if (string.contains("$s")) {
                 newString = string.replacingOccurrences(of: "$s", with: "$@")
             }
         }
-        else if (type == .java) {
+        else if type == .java || type == .kotlin {
             if (string.contains("$@")) {
                 newString = string.replacingOccurrences(of: "$@", with: "$s")
             }
         }
-        else if (type == .javascript || type == .nodejs) {
+        else if type == .javascript || type == .nodejs {
             let orderedParams = findGroups(string, regexPattern: LocaleOrderedParam)
             let soloParams = findGroups(string, regexPattern: LocaleParam)
             if soloParams.count > 0 && orderedParams.count > 0 {
@@ -1530,7 +1738,7 @@ class App
             }
         }
         else {
-            Utils.error("Error: incorrect type")
+            Utils.error("Error: updateStringParameters. Incorrect type")
             exit(-1)
         }
         return newString
@@ -1641,7 +1849,7 @@ class App
         // for Android, path name is:
         // res/values/strings.xml
         // res/values-fr/strings.xml
-        if (hasLocaleDefault(locales) == false) {
+        if hasLocaleDefault(locales) == false {
             Utils.error("Error: Missing 'default' language key")
             exit(-1)
         }
@@ -1658,7 +1866,8 @@ class App
                     exit(-1)
                 }
             }
-            if (prop.count > 0) {
+            //TODO: Needs to use platformType
+            if prop.count > 0 {
                 var destPath = outputAssetFolder!
                 if outputLocaleFolder != nil {
                     destPath = outputLocaleFolder!
@@ -1675,7 +1884,7 @@ class App
                     }
                     fileName = "Localizable.strings"
                 }
-                else if (type == .java) {
+                else if type == .java || type == .kotlin {
                     if isLocaleDefault(langLower) {
                         destPath.append("/res/values")
                     }
@@ -1684,7 +1893,7 @@ class App
                     }
                     fileName = "strings.xml"
                 }
-                else if (type == .javascript || type == .nodejs) {
+                else if type == .javascript || type == .nodejs {
                     if outputLocaleFolder == nil {
                         destPath.append("/locales")
                     }
@@ -1697,7 +1906,7 @@ class App
                     fileName = "messages.json"
                 }
                 else {
-                    Utils.error("Error: wrong type")
+                    Utils.error("Error: CopyLocales. Wrong type")
                     exit(-1)
                 }
                 Utils.createFolder(destPath)
@@ -1777,13 +1986,18 @@ class App
                     exit(-1)
                 }
             }
+            else if (type == .kotlin) {
+                if (Utils.copyFile(filePath, dest: destFile) == false) {
+                    exit(-1)
+                }
+            }
             else if (type == .javascript || type == .nodejs) {
                 if (Utils.copyFile(filePath, dest: destFile) == false) {
                     exit(-1)
                 }
             }
             else {
-                Utils.error("Error: wrong type")
+                Utils.error("Error: CopyAssets. Wrong type")
                 exit(-1)
             }
         }
@@ -1917,14 +2131,14 @@ class App
 
         // process first pass keys
         for (key, value) in data {
-            if (key == keySchemaVersion) {
+            if key == keySchemaVersion {
                 let version = value as! Int
                 if (version != SchemaVersion) {
                     Utils.error("Error: mismatched schema. Got \(version), expected \(SchemaVersion)")
                     exit(-1)
                 }
             }
-            else if (key == keyJava) {
+            else if key == keyJava && compileType == .java {
                 let options = value as! Dictionary<String, Any>
                 baseClass = options["base"] as! String
                 package = options["package"] as! String
@@ -1936,38 +2150,54 @@ class App
                     appIconName = name!
                 }
             }
-            else if (key == keySwift) {
+            else if key == keyKotlin && compileType == .kotlin {
+                let options = value as! Dictionary<String, Any>
+                baseClass = options["base"] as! String
+                package = options["package"] as! String
+                var name = options["launcher_icon_name"] as? String
+                if (name != nil) {
+                    if (name!.hasSuffix(".png") == false) {
+                        name!.append(".png")
+                    }
+                    appIconName = name!
+                }
+            }
+            else if key == keySwift && compileType == .swift {
                 let options = value as! Dictionary<String, Any>
                 baseClass = options["base"] as! String
             }
-            else if (key == keyJavascript || key == keyNodeJS) {
+            else if key == keyJavascript && (compileType == .javascript || compileType == .nodejs) {
                 let options = value as! Dictionary<String, Any>
                 baseClass = options["base"] as! String
             }
-            else if (key == keyGlobalTint) {
+            else if key == keyNodeJS && compileType == .nodejs {
+                let options = value as! Dictionary<String, Any>
+                baseClass = options["base"] as! String
+            }
+            else if key == keyGlobalTint {
                 let color = parseColor(value as! String)
                 globalTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
             }
-            else if (key == keyGlobalIosTint) {
+            else if key == keyGlobalIosTint {
                 if (compileType == .swift) {
                     let color = parseColor(value as! String)
                     globalIosTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
                 }
             }
-            else if (key == keyGlobalAndroidTint) {
+            else if key == keyGlobalAndroidTint {
                 if (compileType == .java) {
                     let color = parseColor(value as! String)
                     globalAndroidTint = NSColor(calibratedRed: CGFloat(color!.r), green: CGFloat(color!.g), blue: CGFloat(color!.b), alpha: CGFloat(color!.a))
                 }
             }
-            else if (key == keyEnums) {
+            else if key == keyEnums {
                 if let enums = value as? [String:Any] {
                     enumsFound = enumsFound + enums     // merge
                 }
             }
         }
         
-        // everything else is converted to Java, Swift classes
+        // everything else is converted to language specific classes
         var genString = ""
         for (key, value) in Array(data).sorted(by: {$0.0 < $1.0}) {
             if (firstPassIgnoredKeys.contains(key) == false) {
@@ -2093,6 +2323,14 @@ class App
                         outputStr.append("package \(package);\n")
                     }
                 }
+                else if (compileType == .kotlin) {
+                    if (package.isEmpty) {
+                        outputStr.append("/* default */\n")
+                    }
+                    else {
+                        outputStr.append("package \(package)\n")
+                    }
+                }
 
                 if (baseClass.isEmpty == false) {
                     genString = insertTabPerLine(genString)
@@ -2101,6 +2339,9 @@ class App
                     }
                     else if (compileType == .java) {
                         outputStr.append("public final class \(baseClass) {")
+                    }
+                    else if (compileType == .kotlin) {
+                        outputStr.append("object \(baseClass) {")
                     }
                     else if (compileType == .javascript || compileType == .nodejs) {
                         outputStr.append("var \(baseClass) = {")
@@ -2120,7 +2361,7 @@ class App
             }
             let langOutputFolder = langOutputFile.pathOnlyComponent()
             writeSangoExtras(compileType, filePath: langOutputFolder)
-            if (compileType == .java) {
+            if compileType == .java || compileType == .kotlin {
                 let destPath = outputAssetFolder! + "/res/values"
                 writeExternalColors(destPath)
                 writeAndroidDimens()
@@ -2176,6 +2417,7 @@ class App
     func createAssetTemplate(_ base: String) -> Void {
         var temp = baseAssetTemplate as Dictionary<String,Any>
         temp[keyJava] = ["package" : "one.two", "base": base]
+        temp[keyKotlin] = ["package": "one.two", "base": base]
         temp[keySwift] = ["base": base]
         temp[keyJavascript] = ["base": base]
         temp[keyNodeJS] = ["base": base]
@@ -2207,12 +2449,32 @@ class App
         }
     }
     
+    private func validateOptions(_ args: [String]) -> Bool {
+        var validated = false
+        
+        for argument in args {
+            for (key, _) in usageDetails {
+                if argument == key {
+                    validated = true
+                }
+            }
+        }
+
+        return validated
+    }
+    
     func start(_ args: [String]) -> Void {
         if (findOption(args, option: "-h") || findOption(args, option: "-help") || args.count == 0) {
             usage()
             exit(0)
         }
 
+        if validateOptions(args) == false {
+            Utils.error("Invalid option")
+            usage()
+            exit(-1)
+        }
+        
         if (findOption(args, option: optHelpKeys)) {
             helpKeys()
             exit(0)
@@ -2289,43 +2551,51 @@ class App
             exit(0)
         }
         
-        let configFile = getOption(args, option: optConfig)
-        if (configFile != nil) {
-            let result = Utils.fromJSONFile(configFile!)
-            if (result != nil) {
-                inputFile = result![optInput.removeFirst()] as? String
-                inputFiles = result![optInputs.removeFirst()] as? [String]
-                sourceAssetFolder = result![optInputAssets.removeFirst()] as? String
-                outputClassFile = result![optOutSource.removeFirst()] as? String
-                outputSCSSFile = result![optOutSCSS.removeFirst()] as? String
-                outputLocaleFolder = result![optOutLocales.removeFirst()] as? String
-                outputAssetFolder = result![optOutAssets.removeFirst()] as? String
-                assetTag = result![optInputAssetsTag.removeFirst()] as? String
-                useAppAssetCatalog = result![optUseAppAssetCatalog.removeFirst()] as? Bool ?? false
-                let type = result![optLangType.removeFirst()] as? String
-                if (type == keyJava) {
+        if let configFile = getOption(args, option: optConfig) {
+            if let result = Utils.fromJSONFile(configFile) {
+                inputFile = result[optInput.removeFirst()] as? String
+                inputFiles = result[optInputs.removeFirst()] as? [String]
+                sourceAssetFolder = result[optInputAssets.removeFirst()] as? String
+                outputClassFile = result[optOutSource.removeFirst()] as? String
+                outputSCSSFile = result[optOutSCSS.removeFirst()] as? String
+                outputLocaleFolder = result[optOutLocales.removeFirst()] as? String
+                outputAssetFolder = result[optOutAssets.removeFirst()] as? String
+                assetTag = result[optInputAssetsTag.removeFirst()] as? String
+                useAppAssetCatalog = result[optUseAppAssetCatalog.removeFirst()] as? Bool ?? false
+                let type = result[optLangType.removeFirst()] as? String
+                if type == keyJava {
                     compileType = .java
                     platformType = .android
                 }
-                else if (type == keySwift) {
+                else if type == keyKotlin {
+                    compileType = .kotlin
+                    platformType = .android
+                }
+                else if type == keySwift {
                     compileType = .swift
                     platformType = .ios
                 }
-                else if (type == keyJavascript) {
+                else if type == keyJavascript {
                     compileType = .javascript
                 }
-                else if (type == keyNodeJS) {
-                    // NOTE: This will need to be migrated as the language is javascript, but the platform is nodejs
+                else if type == keyNodeJS {
+                    //TODO: This will need to be migrated as the language is javascript, but the platform is nodejs
                     compileType = .nodejs
                     platformType = .nodejs
                 }
 
-                let platform = result![optPlatformType.removeFirst()] as? String
-                if (platform == keyMacOS) {
+                let platform = result[optPlatformType.removeFirst()] as? String
+                if platform == keyMacOS {
                     platformType = .macos
                 }
-                else if (platform == keyNodeJS) {
+                else if platform == keyNodeJS {
                     platformType = .nodejs
+                }
+                else if platform == keyAndroid {
+                    platformType = .android
+                }
+                else if platform == keyIOS {
+                    platformType = .ios
                 }
             }
             else {
@@ -2336,7 +2606,6 @@ class App
         if findOption(args, option: optUseAppAssetCatalog) {
             useAppAssetCatalog = true
         }
-        
 
         // allow for an override of the asset tag
         if let overrideTag = getOption(args, option: optInputAssetsTag) {
@@ -2344,20 +2613,23 @@ class App
         }
 
         if (compileType == .unset) {
-            if (findOption(args, option: optJava)) {
+            if findOption(args, option: optJava) {
                 compileType = .java
             }
-            else if (findOption(args, option: optSwift)) {
+            else if findOption(args, option: optKotlin) {
+                compileType = .kotlin
+            }
+            else if findOption(args, option: optSwift) {
                 compileType = .swift
             }
-            else if (findOption(args, option: optJavascript)) {
+            else if findOption(args, option: optJavascript) {
                 compileType = .javascript
             }
-            else if (findOption(args, option: optNodeJS)) {
+            else if findOption(args, option: optNodeJS) {
                 compileType = .nodejs
             }
             else {
-                Utils.error("Error: need either \(optSwift) \(optJava) \(optJavascript) \(optNodeJS)")
+                Utils.error("Error: need one of \(optSwift) \(optJava) \(optKotlin) \(optJavascript) \(optNodeJS)")
                 exit(-1)
             }
         }

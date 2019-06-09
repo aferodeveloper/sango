@@ -109,7 +109,7 @@ public extension NSImage
     /**
      *  Given a file path, load and return an NSImage
      */
-    public static func loadFrom(_ file: String) -> NSImage! {
+    static func loadFrom(_ file: String) -> NSImage! {
         // Loading directly with NSImage, doesn't take in account of scale
         if let imageReps = NSBitmapImageRep.imageReps(withContentsOfFile: file) {
             var width = 0
@@ -135,7 +135,7 @@ public extension NSImage
      *  Given a file, image.png, image@2.png, image@3.png, return the scaling factor
      *  1, 2, 3
      */
-    public static func getScaleFrom(_ file :String) -> (scale: Int, file: String) {
+    static func getScaleFrom(_ file :String) -> (scale: Int, file: String) {
         var scale = 1
         var fileName = file.lastPathComponent()
         fileName = (fileName as NSString).deletingPathExtension
@@ -154,7 +154,7 @@ public extension NSImage
         return (scale: scale, file: fileName)
     }
     
-    public func saveTo(_ file: String) -> Bool {
+    func saveTo(_ file: String) -> Bool {
         let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
                                       pixelsWide: Int(self.size.width),
                                       pixelsHigh: Int(self.size.height),
@@ -188,7 +188,7 @@ public extension NSImage
         return ok
     }
     
-    public func scale(_ percent: CGFloat) -> NSImage {
+    func scale(_ percent: CGFloat) -> NSImage {
         if (percent == 100) {
             return self
         }
@@ -218,7 +218,7 @@ public extension NSImage
         }
     }
     
-    public func tint(_ color: NSColor) -> NSImage {
+    func tint(_ color: NSColor) -> NSImage {
         let destSize = self.size
         let rect = NSMakeRect(0, 0, self.size.width, self.size.height)
         let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
@@ -255,7 +255,7 @@ public extension NSImage
         return NSImage(data: newImage.tiffRepresentation!)!
     }
 
-    public func roundCorner(_ radiusX: CGFloat, _ radiusY : CGFloat) -> NSImage? {
+    func roundCorner(_ radiusX: CGFloat, _ radiusY : CGFloat) -> NSImage? {
         let imageFrame = NSMakeRect(0, 0, self.size.width, self.size.height)
         
         let composedImage = NSImage(size: imageFrame.size)
@@ -276,7 +276,7 @@ public extension NSImage
         return composedImage
     }
 
-    public func resize(_ width: CGFloat, height: CGFloat) -> NSImage {
+    func resize(_ width: CGFloat, height: CGFloat) -> NSImage {
         let destSize = NSMakeSize(width, height)
         let bitmap = NSBitmapImageRep(bitmapDataPlanes: nil,
                                       pixelsWide: Int(destSize.width),
@@ -402,7 +402,7 @@ public func roundTo2f(value: Double) -> Double {
 
 public extension Character
 {
-    public func unicodeScalarCodePoint() -> UnicodeScalar {
+    func unicodeScalarCodePoint() -> UnicodeScalar {
         let characterString = String(self)
         let scalars = characterString.unicodeScalars
         
@@ -412,21 +412,21 @@ public extension Character
 
 public extension String
 {
-    public func lowercasedFirst() -> String {
+    func lowercasedFirst() -> String {
         let first = String(prefix(1)).lowercased()
         return first + String(dropFirst())
     }
     
-    public func uppercasedFirst() -> String {
+    func uppercasedFirst() -> String {
         let first = String(prefix(1)).uppercased()
         return first + String(dropFirst())
     }
 
-    public func removeFirst() -> String {
+    func removeFirst() -> String {
         return String(dropFirst())
     }
 
-    public func snakeCaseToCamelCase() -> String {
+    func snakeCaseToCamelCase() -> String {
         let items = self.components(separatedBy: "_")
         var camelCase = ""
         items.enumerated().forEach {
@@ -441,7 +441,7 @@ public extension String
     }
     
     // from http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf
-    public func escapeStr() -> String {
+    func escapeStr() -> String {
         let set = [
             "\"":"\u{005C}\"",
             "/":"\\/",
@@ -485,24 +485,24 @@ public extension String
         return escaped
     }
 
-    public func lastPathComponent() -> String {
+    func lastPathComponent() -> String {
         return (self as NSString).lastPathComponent
     }
 
-    public func pathOnlyComponent() -> String {
+    func pathOnlyComponent() -> String {
         return (self as NSString).deletingLastPathComponent
     }
 
-    public func fileExtention() -> String {
+    func fileExtention() -> String {
         return (self as NSString).pathExtension.lowercased()
     }
 
-    public func fileNameOnly() -> String {
+    func fileNameOnly() -> String {
         let fileName = self.lastPathComponent()
         return (fileName as NSString).deletingPathExtension
     }
 
-    public func removeScale() -> String {
+    func removeScale() -> String {
         var file = self.replacingOccurrences(of: "@1x", with: "")
         file = file.replacingOccurrences(of: "@2x", with: "")
         return file.replacingOccurrences(of: "@3x", with: "")
@@ -511,7 +511,7 @@ public extension String
     /**
      * File-based resource names must contain only lowercase a-z, 0-9, or underscore
      */
-    public func isAndroidCompatible() -> Bool {
+    func isAndroidCompatible() -> Bool {
         let set:NSMutableCharacterSet = NSMutableCharacterSet()
         set.formUnion(with: CharacterSet.lowercaseLetters)
         set.formUnion(with: CharacterSet.decimalDigits)
@@ -527,7 +527,7 @@ public extension String
     /**
      *  Remove digits from the start of a string only
      */
-    public func removeDigitsPrefix() -> String {
+    func removeDigitsPrefix() -> String {
         var newString = String()
         let numbers = CharacterSet.decimalDigits
         var finished = false
@@ -541,11 +541,11 @@ public extension String
         return newString
     }
 
-    public func removeWhitespace() -> String {
+    func removeWhitespace() -> String {
         return self.removeCharacters(.whitespacesAndNewlines)
     }
 
-    public func removeCharacters(_ set: CharacterSet) -> String {
+    func removeCharacters(_ set: CharacterSet) -> String {
         var newString = String()
         for (_, c) in self.enumerated() {
             let uc = c.unicodeScalarCodePoint()
@@ -556,7 +556,7 @@ public extension String
         return newString
     }
 
-    public func trunc(_ length: Int, trailing: String? = "…") -> String {
+    func trunc(_ length: Int, trailing: String? = "…") -> String {
         if self.count > length {
             return String(self.prefix(length)) + (trailing ?? "")
         }
@@ -565,12 +565,12 @@ public extension String
         }
     }
 
-    public func isInteger() -> Bool {
+    func isInteger() -> Bool {
         let numberCharacters = CharacterSet.decimalDigits.inverted
         return !self.isEmpty && self.rangeOfCharacter(from: numberCharacters) == nil
     }
 
-    public func isFloat() -> Bool {
+    func isFloat() -> Bool {
         var floaty = false
         if (!self.isEmpty) {
             let numberCharacters = NSMutableCharacterSet.decimalDigit()
@@ -585,51 +585,65 @@ public extension String
         return floaty
     }
     
-    public func isBoolean() -> Bool {
+    func isBoolean() -> Bool {
         return !self.isEmpty && self.lowercased() == "true"
     }
 }
 
-public func hasArrayFloats(_ list: Any) -> Bool {
+public func hasArrayBoolean(_ list: [Any]) -> Bool {
     var valid = false
-    let alist = list as? Array<Any>
-    if (alist != nil) {
-        for itm in alist! {
-            if let itm = itm as? String {
-                if (itm.isFloat()) {
-                    valid = true
-                    break
-                }
+    for itm in list {
+        if let itm = itm as? String {
+            if (itm.isBoolean()) {
+                valid = true
+                break
             }
-            else if ((itm is Double) || (itm is Int)) {
-                let strItm = String(describing: itm)
-                if (strItm.isFloat()) {
-                    valid = true
-                    break
-                }
+        }
+        else if itm is Bool {
+            let strItm = String(describing: itm)
+            if (strItm.isBoolean()) {
+                valid = true
+                break
             }
         }
     }
     return valid
 }
 
-public func hasArrayInts(_ list: Any) -> Bool {
+public func hasArrayFloats(_ list: [Any]) -> Bool {
     var valid = false
-    let alist = list as? Array<Any>
-    if (alist != nil) {
-        for itm in alist! {
-            if let itm = itm as? String {
-                if (itm.isInteger()) {
-                    valid = true
-                    break
-                }
+    for itm in list {
+        if let itm = itm as? String {
+            if (itm.isFloat()) {
+                valid = true
+                break
             }
-            else if (itm is Int) {
-                let strItm = String(describing: itm)
-                if (strItm.isInteger()) {
-                    valid = true
-                    break
-                }
+        }
+        else if itm is Double || itm is Int {
+            let strItm = String(describing: itm)
+            if (strItm.isFloat()) {
+                valid = true
+                break
+            }
+        }
+    }
+    return valid
+}
+
+public func hasArrayInts(_ list: [Any]) -> Bool {
+    var valid = false
+    for itm in list {
+        if let itm = itm as? String {
+            if (itm.isInteger()) {
+                valid = true
+                break
+            }
+        }
+        else if itm is Int {
+            let strItm = String(describing: itm)
+            if (strItm.isInteger()) {
+                valid = true
+                break
             }
         }
     }

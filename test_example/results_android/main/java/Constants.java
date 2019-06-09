@@ -46,6 +46,13 @@ public final class Constants {
 		TemperatureUnit.CELSIUS,
 		TemperatureUnit.KELVIN
 	};
+	public static final Boolean TruthyBools[] = {
+		true,
+		true,
+		false,
+		true,
+		false
+	};
 	public enum AuthType {
 		AFERO, OAUTH2
 	}

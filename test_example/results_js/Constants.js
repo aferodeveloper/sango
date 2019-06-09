@@ -80,5 +80,12 @@ var Constants = {
 		TemperatureUnit.CELSIUS,
 		TemperatureUnit.KELVIN
 	],
+	TruthyBools: [
+		true,
+		true,
+		false,
+		true,
+		false
+	],
 }
 module.exports = Constants;

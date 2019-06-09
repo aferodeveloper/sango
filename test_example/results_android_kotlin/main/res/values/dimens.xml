@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DO NOT MODIFY. Generated with Sango, by Afero.io -->
+<resources>
+	<dimen name="button_group_spacing">10dp</dimen>
+	<dimen name="button_radius">400dp</dimen>
+	<dimen name="offline_schedule_day_editor_ring_width">35dp</dimen>
+	<dimen name="oobe_arrow_size">120dp</dimen>
+	<dimen name="oobe_icon_size">100dp</dimen>
+	<dimen name="oobe_madal_hline">40dp</dimen>
+	<dimen name="oobe_modal_vline">80dp</dimen>
+	<dimen name="view_onboarding_board">400dp</dimen>
+	<dimen name="view_onboarding_board_margin_top">50dp</dimen>
+	<dimen name="view_onboarding_board_wrapper">600dp</dimen>
+	<dimen name="view_onboarding_label_margin_side">20dp</dimen>
+	<dimen name="view_onboarding_label_margin_top">75dp</dimen>
+</resources>

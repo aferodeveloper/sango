@@ -93,6 +93,13 @@ public struct Constants {
 			TemperatureUnit.celsius,
 			TemperatureUnit.kelvin
 		]
+	public static let TruthyBools = [
+			true,
+			true,
+			false,
+			true,
+			false
+		]
 	public enum AuthType {
 		case afero
 		case oauth2
