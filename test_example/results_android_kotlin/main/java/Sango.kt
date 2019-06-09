@@ -2,5 +2,5 @@
 
 package io.afero.example
 object Sango {
-    val VERSION = "Sango © 2016-2019 Afero, Inc - Build 291"
+    val VERSION = "Sango © 2016-2019 Afero, Inc - Build 295"
 }
