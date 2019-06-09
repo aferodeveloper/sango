@@ -24,12 +24,12 @@ RESULTS_JS = results_js
 
 all:
 	@echo "Example to build sango data for iOS, Android, NodeJS, Javascript, used for testing."
-	@echo " build_android"
-	@echo " build_android_kotlin"
-	@echo " build_ios"
-	@echo " build_macos"
-	@echo " build_js"
-	@echo " build_all"
+	@echo " test_android"
+	@echo " test_android_kotlin"
+	@echo " test_ios"
+	@echo " test_macos"
+	@echo " test_js"
+	@echo " test_all"
 	@echo " validate"
 
 clean:
@@ -44,33 +44,33 @@ clean:
 	@git checkout $(RESULTS_MACOS)
 	@git checkout $(RESULTS_JS)
 
-build_android:
+test_android:
 	@rm -rdf $(RESULTS_ANDROID)
 	$(SANGO) $(SANGO_OPTS) -config config_android.json -verbose
 	
-build_android_kotlin:
+test_android_kotlin:
 	@rm -rdf $(RESULTS_ANDROID_KOTLIN)
 	$(SANGO) $(SANGO_OPTS) -config config_android_kotlin.json -verbose
 	
-build_ios:
+test_ios:
 	@rm -rdf $(RESULTS_IOS)
 	$(SANGO) $(SANGO_OPTS) -config config_ios.json -verbose
 
-build_macos:
+test_macos:
 	@rm -rdf $(RESULTS_MACOS)
 	$(SANGO) $(SANGO_OPTS) -config config_macos.json -verbose
 
-build_js:
+test_js:
 	@rm -rdf $(RESULTS_JS)
 	$(SANGO) $(SANGO_OPTS) -config config_javascript.json -verbose
 
-build_all:
+test_all:
 	set -e
-	@$(MAKE) build_android
-	@$(MAKE) build_android_kotlin
-	@$(MAKE) build_ios
-	@$(MAKE) build_macos
-	@$(MAKE) build_js
+	@$(MAKE) test_android
+	@$(MAKE) test_android_kotlin
+	@$(MAKE) test_ios
+	@$(MAKE) test_macos
+	@$(MAKE) test_js
 
 validate:
 	$(SANGO) $(SANGO_OPTS) -verbose -input_assets simple/assets -validate simple/assets/*.json

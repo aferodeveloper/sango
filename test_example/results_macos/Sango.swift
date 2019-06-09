@@ -2,7 +2,7 @@
 
 import Foundation
 public struct Sango {
-    public static let Version = "Sango © 2016-2019 Afero, Inc - Build 278"
+    public static let Version = "Sango © 2016-2019 Afero, Inc - Build 291"
 }
 extension String {
     init(locKey key: String, value: String) {

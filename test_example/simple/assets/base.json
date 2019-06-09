@@ -72,6 +72,13 @@
 		"two",
 		"three"
 	],
+	"TruthyBools": [
+		true,
+		true,
+		false,
+		true,
+		false
+	],
 	"FloatyNumbers": [
 		1,
 		2,
