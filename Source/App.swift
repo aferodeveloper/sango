@@ -163,6 +163,41 @@ let optUseAppAssetCatalog = "-use_app_asset_catalog"
 let optLangType = "-type"
 let optPlatformType = "-platform"
 
+let usagePage1 = [
+    optAssetTemplates: ["[basename]", "creates a json template, specifically for the assets"],
+    optConfigTemplate: ["[file.json]", "creates a json template, specifically for the app"],
+    optConfig: ["[file.json]", "use config file for options, instead of command line"],
+    optValidate: ["[asset_file.json, ...]", "validates asset JSON file(s), requires \(optInputAssets)"],
+    optValidateIos: ["[asset_file.json, ...]", "validates iOS asset JSON file(s), requires \(optInputAssets)"],
+    optValidateAndroid: ["[asset_file.json, ...]", "validates Android asset JSON file(s), requires \(optInputAssets)"],
+    optValidateJavascript: ["[asset_file.json, ...]", "validates Javascript asset JSON file(s), requires \(optInputAssets)"],
+    optValidateNodejs: ["[asset_file.json, ...]", "validates NodeJS asset JSON file(s), requires \(optInputAssets)"],
+    optInput: ["[file.json]", "asset json file"],
+    optInputs: ["[file1.json file2.json ...]", "merges asset files and process"],
+    optInputAssets: ["[folder]", "asset source folder (read)"],
+    optOutSource: ["[source.java|swift|js]", "path to result of language"]
+]
+let usagePage2 = [
+    optOutSCSS: ["[source.scss]", "when using javascript/node path to scss file"],
+    optOutLocales: ["[folder]", "locale folder to write results"],
+    optJava: ["", "write java source"],
+    optKotlin: ["", "write kotlin source"],
+    optSwift: ["", "write swift source. Default is 4"],
+    optJavascript: ["", "write javascript source"],
+    optNodeJS: ["", "write nodejs source"],
+    optSwift3: ["", "write Swift 3 compatible Swift source (requires \(optSwift))"],
+    optSwift4: ["", "write Swift 4 compatible Swift source (requires \(optSwift))"],
+    optPlatformType: ["[\(optPlatformType.removeFirst())]", "\(keyIOS),  \(keyMacOS), \(keyAndroid), \(keyNodeJS). Is inffered"],
+    optUseAppAssetCatalog: ["", "write iOS app icons as an asset catalog"],
+    optOutAssets: ["[folder]", "asset root folder (write), typically iOS Resource, or Android app/src/main"],
+    optInputAssetsTag: ["[tag]", "optional git tag to pull repro at before processing"],
+    optVerbose: ["", "be verbose in details"],
+    optHelpKeys: ["", "display JSON keys and their use"],
+    optVersion: ["", "version"],
+    optLocaleOnly: ["", "when included, process localization files only"]
+]
+let usageDetails = (usagePage1 + usagePage2) as! [String: [String]]
+
 let javaCommon =
 "public final class Sango {\n" +
 "    public static final String VERSION = \"\(App.copyrightNotice)\";\n" +
@@ -260,43 +295,9 @@ class App
     var enumsFound: [String:Any] = [:]
 
     func usage() -> Void {
-        let page1 = [
-            optAssetTemplates: ["[basename]", "creates a json template, specifically for the assets"],
-            optConfigTemplate: ["[file.json]", "creates a json template, specifically for the app"],
-            optConfig: ["[file.json]", "use config file for options, instead of command line"],
-            optValidate: ["[asset_file.json, ...]", "validates asset JSON file(s), requires \(optInputAssets)"],
-            optValidateIos: ["[asset_file.json, ...]", "validates iOS asset JSON file(s), requires \(optInputAssets)"],
-            optValidateAndroid: ["[asset_file.json, ...]", "validates Android asset JSON file(s), requires \(optInputAssets)"],
-            optValidateJavascript: ["[asset_file.json, ...]", "validates Javascript asset JSON file(s), requires \(optInputAssets)"],
-            optValidateNodejs: ["[asset_file.json, ...]", "validates NodeJS asset JSON file(s), requires \(optInputAssets)"],
-            optInput: ["[file.json]", "asset json file"],
-            optInputs: ["[file1.json file2.json ...]", "merges asset files and process"],
-            optInputAssets: ["[folder]", "asset source folder (read)"],
-            optOutSource: ["[source.java|swift|js]", "path to result of language"]
-        ]
-        let page2 = [
-            optOutSCSS: ["[source.scss]", "when using javascript/node path to scss file"],
-            optOutLocales: ["[folder]", "locale folder to write results"],
-            optJava: ["", "write java source"],
-            optKotlin: ["", "write kotlin source"],
-            optSwift: ["", "write swift source. Default is 4"],
-            optJavascript: ["", "write javascript source"],
-            optNodeJS: ["", "write nodejs source"],
-            optSwift3: ["", "write Swift 3 compatible Swift source (requires \(optSwift))"],
-            optSwift4: ["", "write Swift 4 compatible Swift source (requires \(optSwift))"],
-            optPlatformType: ["[\(optPlatformType.removeFirst())]", "\(keyIOS),  \(keyMacOS), \(keyAndroid), \(keyNodeJS). Is inffered"],
-            optUseAppAssetCatalog: ["", "write iOS app icons as an asset catalog"],
-            optOutAssets: ["[folder]", "asset root folder (write), typically iOS Resource, or Android app/src/main"],
-            optInputAssetsTag: ["[tag]", "optional git tag to pull repro at before processing"],
-            optVerbose: ["", "be verbose in details"],
-            optHelpKeys: ["", "display JSON keys and their use"],
-            optVersion: ["", "version"],
-            optLocaleOnly: ["", "when included, process localization files only"]
-        ]
-        let details = (page1 + page2) as! [String: [String]]
         var keyLength = 0
         var parmLength = 0
-        for (key, value) in details {
+        for (key, value) in usageDetails {
             if key.utf8.count > keyLength {
                 keyLength = key.utf8.count
             }
@@ -307,7 +308,7 @@ class App
         
         print(App.copyrightNotice)
         print("Usage:")
-        for (key, value) in Array(details).sorted(by: {$0.0 < $1.0}) {
+        for (key, value) in Array(usageDetails).sorted(by: {$0.0 < $1.0}) {
             let item1 = value[0]
             let item2 = value[1]
             let output = key.padding(toLength: keyLength + 3, withPad: " ", startingAt: 0) +
@@ -2448,12 +2449,32 @@ class App
         }
     }
     
+    private func validateOptions(_ args: [String]) -> Bool {
+        var validated = false
+        
+        for argument in args {
+            for (key, _) in usageDetails {
+                if argument == key {
+                    validated = true
+                }
+            }
+        }
+
+        return validated
+    }
+    
     func start(_ args: [String]) -> Void {
         if (findOption(args, option: "-h") || findOption(args, option: "-help") || args.count == 0) {
             usage()
             exit(0)
         }
 
+        if validateOptions(args) == false {
+            Utils.error("Invalid option")
+            usage()
+            exit(-1)
+        }
+        
         if (findOption(args, option: optHelpKeys)) {
             helpKeys()
             exit(0)
