@@ -1535,8 +1535,8 @@ class App
 
     // http://iconhandbook.co.uk/reference/chart/android/
     // https://developer.apple.com/library/ios/qa/qa1686/_index.html
-    func copyAppIcon(_ file: String, type: LangType) -> Void {
-        if (type == .java) {
+    func copyAppIcon(_ file: String, type: PlatformType) -> Void {
+        if type == .android {
             if (file.isAndroidCompatible() == false) {
                 Utils.error("Error: \(file) must contain only lowercase a-z, 0-9, or underscore")
                 exit(-1)
@@ -1548,8 +1548,8 @@ class App
             Utils.error("Error: missing file \(filePath)")
             exit(-1)
         }
-        if (type == .swift) {
-            
+        
+        if type == .ios || type == .macos {
             if useAppAssetCatalog {
                 let destPath = outputAssetFolder! + "/Images.xcassets"
                 Utils.createFolder(destPath)
@@ -1594,7 +1594,7 @@ class App
                 }
             }
         }
-        else if (type == .java) {
+        else if type == .android {
             for (key, value) in AndroidIconSizes {
                 let width = CGFloat(value)
                 let height = CGFloat(value)
@@ -1618,7 +1618,7 @@ class App
                 }
             }
         }
-        else if (type == .javascript || type == .nodejs) {
+        else if type == .nodejs {
             Utils.debug("Warn: using javascript, can't copy app icons")
         }
         else {
@@ -2226,17 +2226,13 @@ class App
                     copyAssets(value as! Array, type: compileType, assetType: .raw, destLocation: .relative)
                 }
                 else if (key == keyAppIcon) {
-                    copyAppIcon(value as! String, type: compileType)
+                    copyAppIcon(value as! String, type: platformType)
                 }
                 else if (key == keyAndroidAppIcon) {
-                    if (compileType == .java) {
-                        copyAppIcon(value as! String, type: compileType)
-                    }
+                    copyAppIcon(value as! String, type: platformType)
                 }
                 else if (key == keyIOSAppIcon) {
-                    if (compileType == .swift) {
-                        copyAppIcon(value as! String, type: compileType)
-                    }
+                    copyAppIcon(value as! String, type: platformType)
                 }
                 else if (key == keyFonts) {
                     copyAssets(value as! Array, type: compileType, assetType: .font, destLocation: .custom, root: fontRoot)
