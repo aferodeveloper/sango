@@ -1084,12 +1084,12 @@ class App
                         androidDimens[key.lowercased()] = strValue as Any?
                         break
                     case .CustomEnum:
-                        let line = "\tval " + key.uppercased() + " = \(lineValue.output)\n"
+                        let line = "\tconst val " + key.uppercased() + " = \(lineValue.output)\n"
                         outputClassString.append(line)
                         skipClass = false
                         break
                     default:
-                        let line = "\tval " +
+                        let line = "\tconst val " +
                             key.uppercased() + " = \(lineValue.output)\n"
                         outputClassString.append(line)
                         skipClass = false

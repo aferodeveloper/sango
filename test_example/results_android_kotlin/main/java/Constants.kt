@@ -25,21 +25,21 @@ object Constants {
 		100
 	)
 	object Service {
-		val BASE_URL_PROD_USW2 = "prod.example.com"
-		val BASE_URL_STAGE = "dev.example.com"
-		val BROWSE_TYPE = DeviceBrowserType.CARDS
-		val LOGIN_TYPE = AuthType.OAUTH2
-		val MENU_VIEW = MenuViewType.SETTINGS
+		const val BASE_URL_PROD_USW2 = "prod.example.com"
+		const val BASE_URL_STAGE = "dev.example.com"
+		const val BROWSE_TYPE = DeviceBrowserType.CARDS
+		const val LOGIN_TYPE = AuthType.OAUTH2
+		const val MENU_VIEW = MenuViewType.SETTINGS
 	}
 	object Settings {
-		val DEBUG_ENABLED = true
-		val DEFAULT_AVATAR = "account_avatar1"
-		val DEFAULT_DISPLAY_UI_STYLE = 1
-		val DEFAULT_UI_FONT = "GT-Walsheim-Black.ttf"
-		val PREF_ACCOUNT_NAME = "pref_account_display_name"
-		val PREF_SERVICE = "pref_service_name"
-		val SCALE = 1.5
-		val SHOW_UI = false
+		const val DEBUG_ENABLED = true
+		const val DEFAULT_AVATAR = "account_avatar1"
+		const val DEFAULT_DISPLAY_UI_STYLE = 1
+		const val DEFAULT_UI_FONT = "GT-Walsheim-Black.ttf"
+		const val PREF_ACCOUNT_NAME = "pref_account_display_name"
+		const val PREF_SERVICE = "pref_service_name"
+		const val SCALE = 1.5
+		const val SHOW_UI = false
 	}
 	val TemperatureUnits = arrayOf(
 		TemperatureUnit.FAHRENHEIT,
