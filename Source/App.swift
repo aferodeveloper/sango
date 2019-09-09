@@ -205,7 +205,7 @@ let javaCommon =
 
 let kotlinCommon =
 "object Sango {\n" +
-"    val VERSION = \"\(App.copyrightNotice)\"\n" +
+"    const val VERSION = \"\(App.copyrightNotice)\"\n" +
 "}\n"
 
 // The Sango additions for swift are different for swift3 and swift 2.3
