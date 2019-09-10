@@ -655,6 +655,7 @@ class App
             }
             outputStr.append("}\n")
             let resourceKeyFile = filePath + "/R.swift"
+            Utils.debug("Save R -> \(resourceKeyFile)")
             saveString(outputStr, file: resourceKeyFile)
         }
     }
@@ -663,8 +664,7 @@ class App
         if (colorsFound.count > 0) {
             var destPath = destFolder
             Utils.createFolder(destPath)
-            //TODO: change to platformType
-            if compileType == .java {
+            if platformType == .android {
                 destPath.append("/colors.xml")
                 var outputStr = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!-- Generated with Sango, by Afero.io -->\n"
                 outputStr.append("<resources>\n")
@@ -678,9 +678,10 @@ class App
                     }
                 }
                 outputStr.append("</resources>\n")
+                Utils.debug("Save colors -> \(destPath)")
                 saveString(outputStr, file: destPath)
             }
-            else if (compileType == .javascript || compileType == .nodejs) {
+            else if platformType == .nodejs {
                 if let outputSCSSFile = outputSCSSFile {
                     var outputStr = "// Generated with Sango, by Afero.io\n\n"
                     let sorted = colorsFound.keys.sorted()
@@ -696,6 +697,7 @@ class App
                             }
                         }
                     }
+                    Utils.debug("Save colors -> \(outputSCSSFile)")
                     saveString(outputStr, file: outputSCSSFile)
                 }
                 else {
@@ -720,6 +722,7 @@ class App
                 }
             }
             outputStr.append("</resources>\n")
+            Utils.debug("Save dimens -> \(destPath)")
             saveString(outputStr, file: destPath)
         }
     }
@@ -1585,7 +1588,7 @@ class App
                     if let newImage = iconImage?.resize(width, height: height) {
                         let destFile = destPath + "/" + key
                         saveImage(newImage, file: destFile)
-                        Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
+                        Utils.debug("Image scale icon and copy \(appIconName) -> \(destFile)")
                     }
                     else {
                         Utils.error("Error: Failed to resize \(filePath)")
@@ -1595,6 +1598,7 @@ class App
             }
         }
         else if type == .android {
+            let fileOnly = appIconName.fileNameOnly()
             for (key, value) in AndroidIconSizes {
                 let width = CGFloat(value)
                 let height = CGFloat(value)
@@ -1606,11 +1610,10 @@ class App
                     
                     
                     if let roundImage = newImage.roundCorner(width / 2, height / 2) {
-                        let fileOnly = appIconName.fileNameOnly()
                         let destFile = destPath + "/" + fileOnly + "_round.png"
                         saveImage(roundImage, file: destFile)
                     }
-                    Utils.debug("Image scale icon and copy \(filePath) -> \(destFile)")
+                    Utils.debug("Image scale icon and copy \(appIconName) -> \(destFile)")
                 }
                 else {
                     Utils.error("Error: Failed to resize \(filePath)")
@@ -1786,7 +1789,6 @@ class App
             }
             propCount += 1
         }
-        Utils.debug("Generate locale \(localePath)")
         if (type == .swift) {
         }
         else if (type == .java) {
@@ -1795,7 +1797,7 @@ class App
         else if (type == .javascript || type == .nodejs) {
             genString.append("}\n")
         }
-
+        Utils.debug("Save locales -> \(localePath)")
         saveString(genString, file: localePath)
     }
     
@@ -2353,6 +2355,7 @@ class App
                     genString.append("\nmodule.exports = \(baseClass);")
                 }
                 outputStr.append(genString + "\n")
+                Utils.debug("Save Constants -> \(langOutputFile)")
                 _ = saveString(outputStr, file: langOutputFile)
             }
             let langOutputFolder = langOutputFile.pathOnlyComponent()

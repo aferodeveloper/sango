@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated with Sango, by Afero.io -->
+<resources>
+	<color name="colors_gray01">#E1DFDC</color>
+	<color name="colors_gray01_50">#F2EDEB</color>
+	<color name="colors_gray02">#BFBCB7</color>
+	<color name="colors_gray02_50">#D0CBC7</color>
+	<color name="colors_gray03">#9D9C98</color>
+	<color name="colors_gray03_50">#A4A099</color>
+	<color name="colors_gray04">#85878A</color>
+	<color name="colors_gray04_50">#7E7B77</color>
+	<color name="colors_gray05">#717375</color>
+	<color name="colors_gray06">#616264</color>
+	<color name="colors_gray07">#535557</color>
+	<color name="colors_orange01">#EDAC93</color>
+	<color name="colors_orange01_50">#F67D4B</color>
+	<color name="colors_orange02">#EBA485</color>
+	<color name="colors_orange03">#EF9471</color>
+	<color name="colors_orange04">#F2845B</color>
+	<color name="colors_orange05">#F47344</color>
+	<color name="colors_orange06">#F67D4B</color>
+	<color name="colors_white01">#FFFFFF</color>
+	<color name="colors_white01_50">#FFFFFF</color>
+	<color name="rainbowcolors_0">#535557</color>
+	<color name="rainbowcolors_1">#9D9C98</color>
+	<color name="rainbowcolors_2">#F2845B</color>
+	<color name="rainbowcolors_3">#F67D4B</color>
+	<color name="rainbowcolors_4">#EDAC93</color>
+	<color name="settings_ui_base_color">#FF43A3C7</color>
+	<color name="settings_ui_base_color2">#1443A3C7</color>
+	<color name="settings_ui_secondary_color">#431298</color>
+	<color name="settings_ui_secondary_color_low">#80431298</color>
+</resources>
